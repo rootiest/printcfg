@@ -1,4 +1,37 @@
+<!--
+ Copyright (C) 2023 Chris Laprade (chris@rootiest.com)
+ 
+ This file is part of printcfg.
+ 
+ printcfg is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ printcfg is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+
 # PrintCFG Klipper Suite
+
+- [PrintCFG Klipper Suite](#printcfg-klipper-suite)
+  - [!!! WARNING: THIS IS STILL A WORK IN PROGRESS !!!](#-warning-this-is-still-a-work-in-progress-)
+  - [Overview](#overview)
+  - [Installation](#installation)
+  - [Configuration](#configuration)
+  - [Using the suite](#using-the-suite)
+
+## !!! WARNING: THIS IS STILL A WORK IN PROGRESS !!!
+
+ > I am currently running this suite on my personal machine so I consider it to be ready for brave testers to play around with. Expect to encounter issues! But please tell me about them so I can fix them in a later revision!
+
+## Overview
 
 This set of macros is a full suite of features for Klipper.
 
@@ -52,7 +85,9 @@ Stay tuned!
 
 The most important step to using this suite comes from the necessary additions in your slicer.
 
-The Start gcode is the most important part: (SuperSlicer)
+The Start gcode is the most important part.
+
+Start Gcode: (SuperSlicer)
 
     ;print_cfg variables
     SET_GCODE_VARIABLE MACRO=_printcfg VARIABLE=extruder_temp VALUE={first_layer_temperature[initial_extruder] + extruder_temperature_offset[initial_extruder]}
@@ -65,3 +100,51 @@ The Start gcode is the most important part: (SuperSlicer)
     SET_GCODE_VARIABLE MACRO=_printcfg VARIABLE=tool_name VALUE="'{tool_name[initial_extruder]}'"
     start_print
 
+End Gcode: (SuperSlicer)
+
+    end_print
+
+Before Layer Change: (SuperSlicer)
+
+    ;print_cfg variables
+    SET_GCODE_VARIABLE MACRO=_printcfg VARIABLE=material_type VALUE="'{filament_type[initial_extruder]}'"
+    SET_GCODE_VARIABLE MACRO=_printcfg VARIABLE=material_color VALUE={filament_colour_int}
+    SET_GCODE_VARIABLE MACRO=_printcfg VARIABLE=layer_count VALUE={total_layer_count}
+    SET_GCODE_VARIABLE MACRO=_printcfg VARIABLE=layer_num VALUE={layer_num}
+    SET_GCODE_VARIABLE MACRO=_printcfg VARIABLE=layer_z VALUE={layer_z}
+
+After Layer Change: (SuperSlicer)
+
+    ;print_cfg variables
+    SET_GCODE_VARIABLE MACRO=_printcfg VARIABLE=material_type VALUE="'{filament_type[initial_extruder]}'"
+    SET_GCODE_VARIABLE MACRO=_printcfg VARIABLE=material_color VALUE={filament_colour_int}
+    SET_GCODE_VARIABLE MACRO=_printcfg VARIABLE=layer_count VALUE={total_layer_count}
+    SET_GCODE_VARIABLE MACRO=_printcfg VARIABLE=layer_num VALUE={layer_num}
+    SET_GCODE_VARIABLE MACRO=_printcfg VARIABLE=layer_z VALUE={layer_z}
+
+    ; Increment layer in Klipper
+    SET_PRINT_STATS_INFO TOTAL_LAYER={total_layer_count} CURRENT_LAYER={layer_num}
+    _BEGIN_LAYER
+
+Color Change: (SuperSlicer)
+
+    ;print_cfg variables
+    SET_GCODE_VARIABLE MACRO=_printcfg VARIABLE=material_type VALUE="'{filament_type[initial_extruder]}'"
+    SET_GCODE_VARIABLE MACRO=_printcfg VARIABLE=material_color VALUE={filament_colour_int}
+
+    ; ESTIMATOR_ADD_TIME 240 Filament Change
+    COLOR_CHANGE
+
+As you can see, we use `SET_GCODE_VARIABLE` command extensively.
+
+This allows all the macros in the suite to be kept apprised of any slicer values we may want to access.
+
+It's completely ok if you don't use these settings in your klipper install or even in your slicer!
+
+This suite is built to support ***everything*** so that the user can simply set the configuration values (either manually in the config file or via `SET_GCODE_VARIABLE` commands)
+
+The idea is that you don't need to worry about the correct way to configure the slicer for your needs or even finding (or creating!) the right macros for your needs.
+
+Everything is provided and you simply configure them to fit your requirements. No coding skills required :)
+
+I promise this will be better documented in the future!
