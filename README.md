@@ -72,15 +72,27 @@ This adds some moonraker configuration, specifically the `update_manager` for pr
 
 The vast majority of the configuration is done via the `_printcfg` macro in `user_profile.cfg`.
 
-The `_CLIENT_VARIABLE` macro in that same file is used to customize the ui macros supplied by mainsail/fluidd (which printcfg is designed to work alongside)
+Additional configuration may be required via the `user_config.cfg` file.
 
-More documentation will be added to give more detailed explanations of each of the many config options.
+Please only modify files that begin with `user_` so that the update system can successfully merge changes.
+
+You will be notified if/when an update requires new variables to be added to `user_profile.cfg`.
+
+The `_CLIENT_VARIABLE` macro in the `user_profile.cfg` file is used to customize the UI macros supplied by mainsail/fluidd.
+
+printcfg is designed to work alongside those macros to enhance the experience.
+
+More documentation will be added soon to give more detailed explanations of each of the many config options.
 
 Stay tuned!
 
 ## Using the suite
 
 The most important step to using this suite comes from the necessary additions in your slicer.
+
+These commands will pass values from the slicer which the macros can then use to define the behavior.
+
+This collects data such as the preheat temperatures, filament type/color, tool changes, filament changes, and layer counts.
 
 The Start gcode is the most important part.
 
