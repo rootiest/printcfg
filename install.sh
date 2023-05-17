@@ -49,7 +49,7 @@ else
     echo "Installing printcfg..."
     # Clone the repo
     git clone https://github.com/"$owner"/"$repo"
-    if [ -f requirements.txt ]; then
+    if [ -d ~/printcfg ]; 
         echo "printcfg installed successfully."
     else
         echo "Error: printcfg not installed."
