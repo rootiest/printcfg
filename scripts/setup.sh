@@ -68,5 +68,3 @@ else
     echo
     exit 0
 fi
-
-echo -e "\e[32mSetup checks complete.\e[0m"
