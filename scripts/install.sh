@@ -39,7 +39,8 @@ echo "This script will download and install the printcfg package from GitHub."
 echo "Press Ctrl+C to cancel or any other key to continue."
 read -n 1
 
-echo "\n Installing printcfg..."
+echo
+echo "Installing printcfg..."
 
 # Check if the repo exists
 if ! git ls-remote https://github.com/"$owner"/"$repo" >/dev/null; then
@@ -139,7 +140,8 @@ else
     sed -i '1s/^/[include printcfg\/moonraker-printcfg.conf]\n/' "$moonraker"
 fi
 
-echo "Install complete.\n"
+echo "Install complete."
+echo 
 
 # Perform all checks to make sure printcfg is installed correctly
 echo "Checking printcfg installation..."
