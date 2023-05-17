@@ -117,7 +117,7 @@ then
         exit 1
     fi
 else
-    echo "Link already exists."
+    echo -e "\e[33mprintcfg symlink already exists.\e[0m"
 fi
 
 # Check if moonraker config exists
@@ -180,10 +180,10 @@ then
     exit 1
 fi
 
-# Check if link exists
+# Check if printcfg symlink exists
 if [ ! -L ~/printer_data/config/printcfg ]
 then
-    echo -e "\e[31mError: Link not created.\e[0m"
+    echo -e "\e[31mError: printcfg symlink not created.\e[0m"
     exit 1
 fi
 
