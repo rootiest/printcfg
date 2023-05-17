@@ -51,7 +51,7 @@ fi
 cd ~
 
 # Check if printcfg is already installed
-if [ -d ~/printcfg ]; 
+if [ -d ~/$repo ]; 
 then
     echo -e "\e[33mprintcfg repo is already installed.\e[0m"
 else
@@ -59,7 +59,7 @@ else
     # Clone the repo
     git clone https://github.com/"$owner"/"$repo"
     # Check if the repo was cloned
-    if [ ! -d ~/printcfg ]; then
+    if [ ! -d ~/$repo ]; then
         echo -e "\e[31mError: Repo not cloned.\e[0m"
         exit 1
     else
@@ -101,23 +101,23 @@ then
 fi
 
 # Check if user variables file exists
-if [ ! -f $repo/print_variables.cfg ]
+if [ ! -f ~/$repo/print_variables.cfg ]
 then
     # Copy printcfg variables to config directory
     echo "Copying user variables to config directory..."
-    cp -r $repo/src/src_variables.cfg $repo/print_variables.cfg
+    cp -r ~/$repo/src/src_variables.cfg ~/$repo/print_variables.cfg
 else
     echo -e "\e[33mUser variables already exist.\e[0m"
 fi
 
 # Check if link already exists
-if [ ! -L ~/printer_data/config/printcfg ]
+if [ ! -L $config/$repo ]
 then
     # Link printcfg to the printer config directory
     echo "Linking printcfg to the printer config directory..."
-    ln -s ~/printcfg ~/printer_data/config/printcfg
+    ln -s ~/$repo $config/printcfg
     # Check if the link was created
-    if [ ! -L ~/printer_data/config/printcfg ]
+    if [ ! -L $config/$repo ]
     then
         echo -e "\e[31mError: Link not created.\e[0m"
         exit 1
@@ -161,7 +161,7 @@ echo
 echo "Checking printcfg installation..."
 
 # Check if the repo exists
-if [ ! -d ~/printcfg ]; then
+if [ ! -d ~/$repo ]; then
     echo -e "\e[31mError: Repo not cloned.\e[0m"
     exit 1
 fi
@@ -197,14 +197,14 @@ then
 fi
 
 # Check if printcfg symlink exists
-if [ ! -L ~/printer_data/config/printcfg ]
+if [ ! -L $config/$repo ]
 then
     echo -e "\e[31mError: printcfg symlink not created.\e[0m"
     exit 1
 fi
 
 # Check if user variables file exists
-if [ ! -f $repo/print_variables.cfg ]
+if [ ! -f ~/$repo/print_variables.cfg ]
 then
     echo -e "\e[31mError: printcfg user variables not found.\e[0m"
     exit 1
