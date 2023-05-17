@@ -57,4 +57,7 @@ if [ "$user_vars_version" != "$src_vars_version" ]; then
     echo "Source version: $src_vars_version"
     echo -e "\e[31mPlease update the user variables file.\e[0m"
     exit 1
+else
+    echo -e "\e[32mUser variables file is up to date.\e[0m"
+fi
 fi
