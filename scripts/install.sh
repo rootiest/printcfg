@@ -52,14 +52,14 @@ cd ~
 # Check if printcfg is already installed
 if [ -d ~/printcfg ]; 
 then
-    echo "printcfg repo is already installed."
+    echo -e "\e[33mprintcfg repo is already installed.\e[0m"
 else
     echo "Installing printcfg repo..."
     # Clone the repo
     git clone https://github.com/"$owner"/"$repo"
     # Check if the repo was cloned
     if [ ! -d ~/printcfg ]; then
-        echo "Error: Repo not cloned."
+        echo -e "\e[31mError: Repo not cloned.\e[0m"
         exit 1
     else
         echo "Repo cloned successfully."
@@ -86,7 +86,7 @@ fi
 # Check if the file exists
 if [ ! -f "$printer" ]
 then
-    echo "Error: File '$printer' not found."
+    echo -e "\e[31mError: File '$printer' not found.\e[0m"
     echo "Please make sure you have klipper installed and your config is located in $printer"
     exit 1
 fi
@@ -94,7 +94,7 @@ fi
 # Check if the config already contains the printcfg config
 if grep -qFx "[include printcfg/print_config.cfg]" "$printer"
 then
-    echo "printcfg config already included."
+    echo -e "\e[33mprintcfg config already included.\e[0m"
 else
     echo "Adding printcfg config to $printer..."
     # Add printcfg config to beginning of file
@@ -113,7 +113,7 @@ then
     # Check if the link was created
     if [ ! -L ~/printer_data/config/printcfg ]
     then
-        echo "Error: Link not created."
+        echo -e "\e[31mError: Link not created.\e[0m"
         exit 1
     fi
 else
@@ -123,7 +123,7 @@ fi
 # Check if moonraker config exists
 if [ ! -f "$moonraker" ]
 then
-    echo "Error: File '$moonraker' not found."
+    echo -e "\e[31mError: File '$moonraker' not found.\e[0m"
     echo "Please make sure you have moonraker installed and your config is located in $moonraker"
     exit 1
 fi
@@ -131,7 +131,7 @@ fi
 # Check if the moonraker config already contains printcfg config
 if grep -qFx "[include printcfg/moonraker-printcfg.conf]" "$moonraker"
 then
-    echo "printcfg moonraker already included."
+    echo -e "\e[33mprintcfg moonraker already included.\e[0m"
 else
     echo "Adding printcfg config to $moonraker..."
     # Add printcfg config to beginning of file
@@ -146,7 +146,7 @@ echo "Checking printcfg installation..."
 
 # Check if the repo exists
 if [ ! -d ~/printcfg ]; then
-    echo "Error: Repo not cloned."
+    echo -e "\e[31mError: Repo not cloned.\e[0m"
     exit 1
 fi
 
