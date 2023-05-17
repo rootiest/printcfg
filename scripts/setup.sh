@@ -67,7 +67,9 @@ if [ "$user_vars_version" != "$src_vars_version" ]; then
             # Fix the user profile
             echo "Updating user profile..."
             cp $src_vars $user_vars
-            user_vars_version = $src_vars_version
+            # update user_vars_version variable
+            user_vars_version=$(grep -oP '(variable_version: ).*' $user_vars)
+            user_vars_version=${user_vars_version#variable_version: }
             echo "User profile updated."
             echo
         else
