@@ -34,8 +34,8 @@ if [ ! -f $user_vars ]; then
 fi
 
 # Find version of user variables
-user_vars_version=$(grep -FxP '(variable_version: ).*' $user_vars)
-src_vars_version=$(grep -FxP '(variable_version: ).*' $src_vars)
+user_vars_version=$(grep -oP '(variable_version: ).*' $user_vars)
+src_vars_version=$(grep -oP '(variable_version: ).*' $src_vars)
 
 # Check if user variables file is up to date
 if [ "$user_vars_version" != "$src_vars_version" ]; then
