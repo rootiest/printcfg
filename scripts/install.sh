@@ -157,7 +157,7 @@ then
 fi
 
 # Check if printcfg is included in the printer.cfg file
-if ! grep -qFx "[include printcfg/moonraker-printcfg.conf]" "$printer"
+if ! grep -qFx "[include printcfg/print_config.cfg]" "$printer"
 then
     echo "Error: printcfg config not included in $printer"
     exit 1
