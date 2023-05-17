@@ -23,7 +23,7 @@
 
 # This script will download and install the printcfg package from GitHub.
 # Run the following:
-# curl -H 'Cache-Control: no-cache, no-store' https://raw.githubusercontent.com/rootiest/printcfg/master/install.sh | bash
+# curl https://raw.githubusercontent.com/rootiest/printcfg/master/install.sh | bash
 
 # Set the owner and repo name
 owner="rootiest"
@@ -31,6 +31,7 @@ repo="printcfg"
 
 # Define the klipper config file
 printer=~/printer_data/config/printer.cfg
+moonraker=~/printer_data/config/moonraker.conf
 
 # Check if the repo exists
 if ! git ls-remote https://github.com/"$owner"/"$repo" >/dev/null; then
@@ -84,7 +85,7 @@ then
 fi
 
 # Check if the config already contains the printcfg config
-if grep -q "[include printcfg/*]" "$printer"
+if grep -q "[include printcfg/print_config.cfg]" "$printer"
 then
     echo "printcfg config already included."
 else
@@ -109,6 +110,24 @@ else
     echo "Link already exists."
 fi
 
+# Check if moonraker config exists
+if [ ! -f "$moonraker" ]
+then
+    echo "Error: File '$moonraker' not found."
+    echo "Please make sure you have moonraker installed and your config is located in $moonraker"
+    exit 1
+fi
+
+# Check if the moonraker config already contains printcfg config
+if grep -q "[include printcfg/moonraker_config.conf]" "$moonraker"
+then
+    echo "printcfg config already included."
+else
+    echo "Adding printcfg config to $moonraker..."
+    # Add printcfg config to beginning of file
+    sed -i '1s/^/[include printcfg\/moonraker_config.conf]\n/' "$moonraker"
+fi
+
 # Perform all checks to make sure printcfg is installed correctly
 echo "Checking printcfg installation..."
 
@@ -126,10 +145,25 @@ then
     exit 1
 fi
 
+# Check if moonraker config exists
+if [ ! -f "$moonraker" ]
+then
+    echo "Error: File '$moonraker' not found."
+    echo "Please make sure you have moonraker installed and your config is located in $moonraker"
+    exit 1
+fi
+
 # Check if printcfg is included in the printer.cfg file
 if ! grep -q "[include printcfg/*]" "$printer"
 then
     echo "Error: printcfg config not included in $printer"
+    exit 1
+fi
+
+# Check if the moonraker config contains printcfg config
+if ! grep -q "[include printcfg/moonraker_config.conf]" "$moonraker"
+then
+    echo "Error: printcfg config not included in $moonraker"
     exit 1
 fi
 
@@ -142,6 +176,14 @@ fi
 
 # Acknowledge that the installation checks passed
 echo "printcfg installation checks passed."
+
+# Restart klipper
+echo "Restarting klipper..."
+systemctl restart klipper
+
+# Restart moonraker
+echo "Restarting moonraker..."
+systemctl restart moonraker
 
 # Success!
 echo "Printcfg has been successfully downloaded and installed."
