@@ -18,21 +18,34 @@
 
 #####################################
 ##      Printcfg Install Script    ##
-##      Version 3.5.5 2023-5-17    ##
+##      Version 3.5.9 2023-5-17    ##
 #####################################
 
 # This script will download and install the printcfg package from GitHub.
 # Run the following:
 # curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash
 
-# Set the owner and repo name
-owner="rootiest"
+# Set the dev and repo name
+dev="rootiest"
 repo="printcfg"
 
 # Define the klipper config file
 config=~/printer_data/config
 printer=~/printer_data/config/printer.cfg
 moonraker=~/printer_data/config/moonraker.conf
+default_src=default.cfg
+
+# Check if any parameters were provided
+if [ $# -eq 0 ]
+then
+    src=$default_src
+else
+    # Check if the first parameter is the dev
+    if [ -n "$1" ]
+    then
+        src="$1"
+    fi
+fi
 
 # Welcome message
 echo "Welcome to the printcfg install script."
@@ -42,7 +55,7 @@ echo
 echo "Installing printcfg..."
 
 # Check if the repo exists
-if ! git ls-remote https://github.com/"$owner"/"$repo" >/dev/null; then
+if ! git ls-remote https://github.com/"$dev"/"$repo" >/dev/null; then
     echo "The repo does not exist."
     exit 1
 fi
@@ -57,7 +70,7 @@ then
 else
     echo "Installing printcfg repo..."
     # Clone the repo
-    git clone https://github.com/"$owner"/"$repo"
+    git clone https://github.com/"$dev"/"$repo"
     # Check if the repo was cloned
     if [ ! -d ~/$repo ]; then
         echo -e "\e[31mError: Repo not cloned.\e[0m"
@@ -103,11 +116,18 @@ fi
 # Check if user variables file exists
 if [ ! -f ~/$repo/print_variables.cfg ]
 then
+    # Check if profile exists
+    if [ ! -f ~/$repo/profiles/$src ]
+    then
+        echo -e "\e[31mError: File '$src' not found.\e[0m"
+        echo "Using default: $default_src"
+        src=$default_src
+    fi
     # Copy printcfg variables to config directory
     echo "Copying user variables to config directory..."
-    cp -r ~/$repo/src/src_variables.cfg ~/$repo/print_variables.cfg
+    cp -r ~/$repo/profiles/$src ~/$repo/print_variables.cfg
 else
-    echo -e "\e[33mUser variables already exist.\e[0m"
+    echo -e "\e[32mUser variables already exist.\e[0m"
 fi
 
 # Check if link already exists
@@ -217,7 +237,13 @@ echo
 # Finalize setup
 echo "Finalizing setup..."
 source ~/$repo/scripts/setup.sh
-cat setup.out
+
+# Check if setup.out exists
+if [ -f setup.out ]
+then
+    cat setup.out
+fi
+
 
 # Restart klipper
 echo "Restarting klipper..."
