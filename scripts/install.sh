@@ -50,7 +50,7 @@ if [ $# -eq 0 ]
 then
     src=$default_src
 else
-    # Check if the first parameter is the dev
+    # Set the src file
     if [ -n "$1" ]
     then
         src="$1"
@@ -246,7 +246,7 @@ echo
 
 # Finalize setup
 echo "Finalizing setup..."
-source ~/$repo/scripts/setup.sh
+source ~/$repo/scripts/setup.sh $src
 
 # Check if setup.out exists
 if [ -f setup.out ]

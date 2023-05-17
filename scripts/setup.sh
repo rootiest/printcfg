@@ -25,7 +25,18 @@ config=~/printer_data/config
 printer=~/printer_data/config/printer.cfg
 moonraker=~/printer_data/config/moonraker.conf
 user_vars=$config/$repo/print_variables.cfg
-src_vars=$config/$repo/src/src_variables.cfg
+
+# Check if any parameters were provided
+if [ $# -eq 0 ]
+then
+    ssrc_vars=$config/$repo/profiles/default.cfg
+else
+    # Set the src_vars file
+    if [ -n "$1" ]
+    then
+        src_vars=$config/$repo/src/$1
+    fi
+fi
 
 # Check that user variables file exists
 if [ ! -f $user_vars ]; then
