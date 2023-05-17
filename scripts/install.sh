@@ -129,6 +129,22 @@ then
     exit 1
 fi
 
+# Check if user_config file exists
+if [ ! -f ~/$repo/user_config.cfg ]
+then
+    # Check if src config exists
+    if [ ! -f ~/$repo/src/config.cfg ]
+    then
+        echo -e "\e[31mError: Config source not found.\e[0m"
+        exit 1
+    fi
+    # Copy user_config to config directory
+    echo "Creating user config in config directory..."
+    cp -r ~/$repo/src/config.cfg ~/$repo/user_config.cfg
+else
+    echo -e "\e[32mUser config already exists.\e[0m"
+fi
+
 # Check if user variables file exists
 if [ ! -f ~/$repo/user_profile.cfg ]
 then
@@ -144,7 +160,7 @@ then
     echo "Creating user profile in config directory..."
     cp -r ~/$repo/profiles/$src.cfg ~/$repo/user_profile.cfg
 else
-    echo -e "\e[32mUser profile already exist.\e[0m"
+    echo -e "\e[32mUser profile already exists.\e[0m"
 fi
 
 # Check if link already exists
@@ -191,7 +207,7 @@ else
     sed -i '1s/^/[include printcfg\/moonraker-printcfg.conf]\n/' "$moonraker"
 fi
 
-echo "Install complete."
+echo -e "\e[32mInstall complete.\e[0m"
 echo 
 
 # Perform all checks to make sure printcfg is installed correctly
@@ -237,6 +253,13 @@ fi
 if [ ! -L $config/$repo ]
 then
     echo -e "\e[31mError: printcfg symlink not created.\e[0m"
+    exit 1
+fi
+
+# Check if user config exists
+if [ ! -f ~/$repo/user_config.cfg ]
+then
+    echo -e "\e[31mError: printcfg user config not found.\e[0m"
     exit 1
 fi
 

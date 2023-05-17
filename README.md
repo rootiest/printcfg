@@ -24,6 +24,7 @@
   - [!!! WARNING: THIS IS STILL A WORK IN PROGRESS !!!](#-warning-this-is-still-a-work-in-progress-)
   - [Overview](#overview)
   - [Installation](#installation)
+    - [What the install script does](#what-the-install-script-does)
   - [Configuration](#configuration)
   - [Using the suite](#using-the-suite)
 
@@ -35,7 +36,7 @@
 
 This set of macros is a full suite of features for Klipper.
 
-It requires a fair bit of configuration, but everything can be configured by setting the values of variables in the [print_variables.cfg](print_variables.cfg) file.
+It requires a fair bit of configuration, but everything can be configured by setting the values of variables in the [user_profile.cfg](profiles/default.cfg) file.
 
 You can also change any of these settings at runtime using `SET_GCODE_VARIABLE` commands.
 
@@ -43,39 +44,35 @@ These `SET_GCODE_VARIABLE` commands are also used to pass values from the slicer
 
 ## Installation
 
-To install the suite, run the following command:
+To install the suite using the default presets, run the following command:
 
     curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash
 
-This command will clone the repo into your config in a folder named `printcfg`.
+You can also specify a preset profile for a more printer-specific default config:
+
+    curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash -s -- hephaestus
+
+### What the install script does
+
+The install script will clone the repo into your home directory in a folder named `printcfg`.
 
 The following line will be added to your `printer.cfg` file:
 
     [include printcfg/print_config.cfg]
 
-This tells Klipper to include that file. The other files will be included from there.
+This tells Klipper to include the printcfg config file. The other files will be included from there.
 
 The following line will be added to your `moonraker.conf` file:
 
     [include printcfg/moonraker-printcfg.conf]
 
-This adds some moonraker configs, mainly the `update_manager` for printcfg updates.
+This adds some moonraker configuration, specifically the `update_manager` for printcfg updates.
 
 ## Configuration
 
-The vast majority of the configuration is done via the `_printcfg` macro in `print_variables.cfg`.
+The vast majority of the configuration is done via the `_printcfg` macro in `user_profile.cfg`.
 
-The `_CLIENT_VARIABLE` macro in that same file is used to customize the default mainsail macros (which printcfg is designed to work with)
-
-Additionally, there are some configurations you should be aware of `print_config.cfg`
-
-That file contains various configuration sections the suite depends on, as well as optional includes that can be used to add additional functionality.
-
-The necessary filament sensor configurations are also included there, as well as an `_extract_filament` macro that is used to perform filament unloads.
-
-The suite is designed to be fully customizable without modifying any macros in the `print_macros.cfg` file.
-
-For this reason, `_extract_filament` is kept in `print_config.cfg` to allow for easy customization if you have special needs for the unload procedure.
+The `_CLIENT_VARIABLE` macro in that same file is used to customize the ui macros supplied by mainsail/fluidd (which printcfg is designed to work alongside)
 
 More documentation will be added to give more detailed explanations of each of the many config options.
 
