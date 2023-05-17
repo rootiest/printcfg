@@ -276,14 +276,6 @@ fi
 echo -e "\e[32mprintcfg installation checks passed.\e[0m"
 echo
 
-# Restart klipper
-echo "Restarting klipper..."
-systemctl restart klipper
-
-# Restart moonraker
-echo "Restarting moonraker..."
-systemctl restart moonraker
-
 # Success!
 echo
 echo -e "\e[32mPrintcfg has been successfully downloaded and installed.\e[0m"
@@ -301,4 +293,12 @@ then
 else
     echo -e "\e[32mSetup checks passed.\e[0m"
 fi
+
+# Restart klipper
+echo "Restarting klipper..."
+systemctl restart klipper
+
+# Restart moonraker
+echo "Restarting moonraker..."
+systemctl restart moonraker
 
