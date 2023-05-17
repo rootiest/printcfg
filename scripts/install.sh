@@ -30,6 +30,7 @@ owner="rootiest"
 repo="printcfg"
 
 # Define the klipper config file
+config=~/printer_data/config
 printer=~/printer_data/config/printer.cfg
 moonraker=~/printer_data/config/moonraker.conf
 
@@ -83,12 +84,30 @@ fi
 
 ### Install into klippers config ###
 
+# Check if config directory exists
+if [ ! -d "$config" ]
+then
+    echo -e "\e[31mError: Directory '$config' not found.\e[0m"
+    echo "Please make sure you have klipper installed and your config is located in $config"
+    exit 1
+fi
+
 # Check if the file exists
 if [ ! -f "$printer" ]
 then
     echo -e "\e[31mError: File '$printer' not found.\e[0m"
     echo "Please make sure you have klipper installed and your config is located in $printer"
     exit 1
+fi
+
+# Check if user variables file exists
+if [ ! -f $config/user_variables.cfg ]
+then
+    # Copy printcfg variables to config directory
+    echo "Copying user variables to config directory..."
+    cp -r ~/printcfg/printcfg_variables.cfg $config/user_variables.cfg
+else
+    echo -e "\e[33mUser variables already exist.\e[0m"
 fi
 
 # Check if link already exists
@@ -181,6 +200,13 @@ fi
 if [ ! -L ~/printer_data/config/printcfg ]
 then
     echo -e "\e[31mError: printcfg symlink not created.\e[0m"
+    exit 1
+fi
+
+# Check if user variables file exists
+if [ ! -f $config/user_variables.cfg ]
+then
+    echo -e "\e[31mError: printcfg user variables not found.\e[0m"
     exit 1
 fi
 
