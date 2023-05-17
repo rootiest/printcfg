@@ -135,7 +135,7 @@ then
         src=$default_src
     fi
     # Copy printcfg variables to config directory
-    echo "Using profile: $src"
+    echo -e "\e[34mUsing profile: $src\e[0m"
     echo "Copying user variables to config directory..."
     cp -r ~/$repo/profiles/$src.cfg ~/$repo/print_variables.cfg
 else
