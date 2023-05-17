@@ -251,17 +251,6 @@ fi
 echo -e "\e[32mprintcfg installation checks passed.\e[0m"
 echo
 
-# Finalize setup
-echo "Finalizing setup..."
-source ~/$repo/scripts/setup.sh $src.cfg
-
-# Check if setup.out exists
-if [ -f setup.out ]
-then
-    cat setup.out
-fi
-
-
 # Restart klipper
 echo "Restarting klipper..."
 systemctl restart klipper
@@ -273,3 +262,13 @@ systemctl restart moonraker
 # Success!
 echo
 echo -e "\e[32mPrintcfg has been successfully downloaded and installed.\e[0m"
+
+# Finalize setup
+echo "Finalizing setup..."
+source ~/$repo/scripts/setup.sh $src.cfg
+
+# Check if setup.out exists
+if [ -f setup.out ]
+then
+    cat setup.out
+fi
