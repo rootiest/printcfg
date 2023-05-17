@@ -42,8 +42,8 @@ src_vars_version=${src_vars_version#variable_version: }
 # Check if user variables file is up to date
 if [ "$user_vars_version" != "$src_vars_version" ]; then
     echo -e "\e[31mUser variables file is not up to date.\e[0m"
-    echo -e "\e[31mPlease update the user variables file.\e[0m"
     echo "User version:   $user_vars_version"
     echo "Source version: $src_vars_version"
+    echo -e "\e[31mPlease update the user variables file.\e[0m"
     exit 1
 fi
