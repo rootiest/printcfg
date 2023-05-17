@@ -216,7 +216,8 @@ echo
 
 # Finalize setup
 echo "Finalizing setup..."
-bash ~/$repo/src/setup.sh
+source ~/$repo/scripts/setup.sh
+cat setup.out
 
 # Restart klipper
 echo "Restarting klipper..."
