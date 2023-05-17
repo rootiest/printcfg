@@ -141,10 +141,10 @@ then
     fi
     # Copy printcfg variables to config directory
     echo -e "\e[36mUsing profile: $src\e[0m"
-    echo "Copying user variables to config directory..."
+    echo "Creating user profile in config directory..."
     cp -r ~/$repo/profiles/$src.cfg ~/$repo/print_profile.cfg
 else
-    echo -e "\e[32mUser variables already exist.\e[0m"
+    echo -e "\e[32mUser profile already exist.\e[0m"
 fi
 
 # Check if link already exists
@@ -240,10 +240,10 @@ then
     exit 1
 fi
 
-# Check if user variables file exists
+# Check if user profile exists
 if [ ! -f ~/$repo/print_profile.cfg ]
 then
-    echo -e "\e[31mError: printcfg user variables not found.\e[0m"
+    echo -e "\e[31mError: printcfg user profile not found.\e[0m"
     exit 1
 fi
 

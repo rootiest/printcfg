@@ -42,19 +42,19 @@ fi
 
 echo "Checking user profile..."
 
-# Check that user variables file exists
+# Check that user profile exists
 if [ ! -f $user_vars ]; then
-    echo -e "\e[31mUser variables file does not exist.\e[0m"
+    echo -e "\e[31mUser profile does not exist.\e[0m"
     exit 1
 fi
 
-# Find version of user variables
+# Find version of user profile
 user_vars_version=$(grep -oP '(variable_version: ).*' $user_vars)
 user_vars_version=${user_vars_version#variable_version: }
 src_vars_version=$(grep -oP '(variable_version: ).*' $src_vars)
 src_vars_version=${src_vars_version#variable_version: }
 
-# Check if user variables file is up to date
+# Check if user profile is up to date
 if [ "$user_vars_version" != "$src_vars_version" ]; then
     echo -e "\e[31mUser profile is not up to date.\e[0m"
     echo "User version:   $user_vars_version"
