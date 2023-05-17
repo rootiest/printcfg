@@ -109,5 +109,39 @@ else
     echo "Link already exists."
 fi
 
+# Perform all checks to make sure printcfg is installed correctly
+echo "Checking printcfg installation..."
+
+# Check if the repo exists
+if [ ! -d ~/printcfg ]; then
+    echo "Error: Repo not cloned."
+    exit 1
+fi
+
+# Check if the printer.cfg exists
+if [ ! -f "$printer" ]
+then
+    echo "Error: File '$printer' not found."
+    echo "Please make sure you have klipper installed and your config is located in $printer"
+    exit 1
+fi
+
+# Check if printcfg is included in the printer.cfg file
+if [! grep -q "[include printcfg/*]" "$printer"]
+then
+    echo "Error: printcfg config not included in $printer"
+    exit 1
+fi
+
+# Check if link exists
+if [ ! -L ~/printer_data/config/printcfg ]
+then
+    echo "Error: Link not created."
+    exit 1
+fi
+
+# Acknowledge that the installation checks passed
+echo "printcfg installation checks passed."
+
 # Success!
 echo "Printcfg has been successfully downloaded and installed."
