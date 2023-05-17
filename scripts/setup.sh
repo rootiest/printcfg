@@ -26,7 +26,7 @@ printer=~/printer_data/config/printer.cfg
 moonraker=~/printer_data/config/moonraker.conf
 # Set the default profile
 default_src=default
-user_vars=$config/$repo/print_profile.cfg
+user_vars=$config/$repo/user_profile.cfg
 
 # Check if any parameters were provided
 if [ $# -eq 0 ]
