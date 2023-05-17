@@ -78,6 +78,11 @@ cd ~
 if [ -d ~/$repo ]; 
 then
     echo -e "\e[33mprintcfg repo is already installed.\e[0m"
+    echo "Updating printcfg repo..."
+    # Change to the repo directory
+    cd ~/$repo
+    # Pull the latest changes
+    git pull
 else
     echo "Installing printcfg repo..."
     # Clone the repo
@@ -92,7 +97,7 @@ else
 fi
 
 # Change to the repo directory
-cd "$repo"
+cd ~/$repo
 
 ### Run any setup scripts ###
 
