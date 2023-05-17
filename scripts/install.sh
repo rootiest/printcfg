@@ -91,19 +91,6 @@ then
     exit 1
 fi
 
-# Check if the config already contains the printcfg config
-if grep -qFx "[include printcfg/print_config.cfg]" "$printer"
-then
-    echo -e "\e[33mprintcfg config already included.\e[0m"
-else
-    echo "Adding printcfg config to $printer..."
-    # Add printcfg config to beginning of file
-    sed -i '1s/^/[include printcfg\/print_config.cfg]\n/' "$printer"
-fi
-
-# Check if include line exists in printer.cfg
-
-
 # Check if link already exists
 if [ ! -L ~/printer_data/config/printcfg ]
 then
@@ -120,7 +107,17 @@ else
     echo -e "\e[33mprintcfg symlink already exists.\e[0m"
 fi
 
-# Check if moonraker config exists
+# Check if include line exists in printer.cfg
+if grep -qFx "[include printcfg/print_config.cfg]" "$printer"
+then
+    echo -e "\e[33mprintcfg config already included.\e[0m"
+else
+    echo "Adding printcfg config to $printer..."
+    # Add printcfg config to beginning of file
+    sed -i '1s/^/[include printcfg\/print_config.cfg]\n/' "$printer"
+fi
+
+# Check if include line exists in moonraker.conf
 if [ ! -f "$moonraker" ]
 then
     echo -e "\e[31mError: File '$moonraker' not found.\e[0m"
