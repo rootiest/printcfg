@@ -56,22 +56,26 @@ src_vars_version=${src_vars_version#variable_version: }
 
 # Check if user profile is up to date
 if [ "$user_vars_version" != "$src_vars_version" ]; then
-    echo -e "\e[31mUser profile is not up to date.\e[0m"
-    echo "User version:   $user_vars_version"
-    echo "Source version: $src_vars_version"
-    echo -e "\e[31mPlease update the user profile.\e[0m"
-    echo
-    echo -e "\e[31mSetup checks failed.\e[0m"
-        if [ -n "$2" ]
+    if [ -n "$2" ]
     then
         # If second argument is "force"
         if [ "$2" == "force" ]
         then
+            echo -e "\e[31mUser profile is not up to date.\e[0m"
+            echo "User version:   $user_vars_version"
+            echo "Source version: $src_vars_version"
             # Fix the user profile
-            echo "Fixing user profile..."
+            echo "Updating user profile..."
             cp $src_vars $user_vars
-            echo "User profile fixed."
+            echo "User profile updated."
             echo
+        else
+            echo -e "\e[31mUser profile is not up to date.\e[0m"
+            echo "User version:   $user_vars_version"
+            echo "Source version: $src_vars_version"
+            echo -e "\e[31mPlease update the user profile.\e[0m"
+            echo
+            echo -e "\e[31mSetup checks failed.\e[0m"
         fi
     else
         echo
