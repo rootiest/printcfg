@@ -31,12 +31,12 @@ user_vars=$config/$repo/user_profile.cfg
 # Check if any parameters were provided
 if [ $# -eq 0 ]
 then
-    src_vars=$config/$repo/profiles/$default_src.cfg
+    src_vars=$config/$repo/profiles/$default_src/variables.cfg
 else
     # Set the src_vars file
     if [ -n "$1" ]
     then
-        src_vars=$config/$repo/profiles/$1
+        src_vars=$config/$repo/profiles/$1/variables.cfg
     fi
 fi
 

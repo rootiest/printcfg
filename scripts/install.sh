@@ -18,7 +18,7 @@
 
 #####################################
 ##      Printcfg Install Script    ##
-##      Version 3.6.1 2023-5-17    ##
+##      Version 3.6.5 2023-5-17    ##
 #####################################
 
 # This script will download and install the printcfg package from GitHub.
@@ -132,15 +132,17 @@ fi
 # Check if user_config file exists
 if [ ! -f ~/$repo/user_config.cfg ]
 then
-    # Check if src config exists
-    if [ ! -f ~/$repo/src/config.cfg ]
+    # Check if profile config exists
+    if [ ! -f ~/$repo/profiles/$src/config.cfg ]
     then
-        echo -e "\e[31mError: Config source not found.\e[0m"
-        exit 1
+        echo -e "\e[31mError: Config Profile '$src' not found.\e[0m"
+        echo "Using default config profile: $default_src"
+        src=$default_src
     fi
-    # Copy user_config to config directory
-    echo "Creating user config in config directory..."
-    cp -r ~/$repo/src/config.cfg ~/$repo/user_config.cfg
+    # Copy user profile to config directory
+    echo -e "\e[36mUsing config profile: $src\e[0m"
+    echo "Creating user_config in config directory..."
+    cp -r ~/$repo/profiles/$src/config.cfg ~/$repo/user_config.cfg
 else
     echo -e "\e[32mUser config already exists.\e[0m"
 fi
@@ -149,7 +151,7 @@ fi
 if [ ! -f ~/$repo/user_profile.cfg ]
 then
     # Check if profile exists
-    if [ ! -f ~/$repo/profiles/$src.cfg ]
+    if [ ! -f ~/$repo/profiles/$src/variables.cfg ]
     then
         echo -e "\e[31mError: Profile '$src' not found.\e[0m"
         echo "Using default profile: $default_src"
@@ -158,7 +160,7 @@ then
     # Copy user profile to config directory
     echo -e "\e[36mUsing profile: $src\e[0m"
     echo "Creating user profile in config directory..."
-    cp -r ~/$repo/profiles/$src.cfg ~/$repo/user_profile.cfg
+    cp -r ~/$repo/profiles/$src/variables.cfg ~/$repo/user_profile.cfg
 else
     echo -e "\e[32mUser profile already exists.\e[0m"
 fi
