@@ -36,8 +36,6 @@ moonraker=~/printer_data/config/moonraker.conf
 # Welcome message
 echo "Welcome to the printcfg install script."
 echo "This script will download and install the printcfg package from GitHub."
-echo "Press Ctrl+C to cancel or any other key to continue."
-read -n 1
 
 echo
 echo "Installing printcfg..."
