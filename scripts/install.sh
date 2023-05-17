@@ -23,7 +23,7 @@
 
 # This script will download and install the printcfg package from GitHub.
 # Run the following:
-# curl https://raw.githubusercontent.com/rootiest/printcfg/master/install.sh | bash
+# curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash
 
 # Set the owner and repo name
 owner="rootiest"
@@ -119,13 +119,13 @@ then
 fi
 
 # Check if the moonraker config already contains printcfg config
-if grep -q "[include printcfg/moonraker_config.conf]" "$moonraker"
+if grep -q "[include printcfg/moonraker-printcfg.conf]" "$moonraker"
 then
-    echo "printcfg config already included."
+    echo "printcfg moonraker already included."
 else
     echo "Adding printcfg config to $moonraker..."
     # Add printcfg config to beginning of file
-    sed -i '1s/^/[include printcfg\/moonraker_config.conf]\n/' "$moonraker"
+    sed -i '1s/^/[include printcfg\/moonraker-printcfg.conf]\n/' "$moonraker"
 fi
 
 # Perform all checks to make sure printcfg is installed correctly
@@ -161,7 +161,7 @@ then
 fi
 
 # Check if the moonraker config contains printcfg config
-if ! grep -q "[include printcfg/moonraker_config.conf]" "$moonraker"
+if ! grep -q "[include printcfg/moonraker-printcfg.conf]" "$moonraker"
 then
     echo "Error: printcfg config not included in $moonraker"
     exit 1
