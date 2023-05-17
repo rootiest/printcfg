@@ -294,6 +294,8 @@ else
     echo -e "\e[32mSetup checks passed.\e[0m"
 fi
 
+echo
+
 # Restart klipper
 echo "Restarting klipper..."
 systemctl restart klipper
@@ -301,4 +303,7 @@ systemctl restart klipper
 # Restart moonraker
 echo "Restarting moonraker..."
 systemctl restart moonraker
+
+echo
+echo -e "\e[32mInstallation completed successfully.\e[0m"
 
