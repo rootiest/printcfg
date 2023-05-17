@@ -86,7 +86,7 @@ if [ "$user_vars_version" != "$src_vars_version" ]; then
         echo -e "\e[31mNOTE:\e[0m"
         echo -e "\e[31mThis will overwrite any changes you have made to the user profile.\e[0m"
         echo
-        echo "Otherwise, please update the user profile manually following the changelog."
+        echo -e "\e[33mOtherwise, please update the user profile manually following the changelog.\e[0m"
         
         exit 1
     fi
