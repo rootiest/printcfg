@@ -60,4 +60,3 @@ if [ "$user_vars_version" != "$src_vars_version" ]; then
 else
     echo -e "\e[32mUser variables file is up to date.\e[0m"
 fi
-fi
