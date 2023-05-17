@@ -105,7 +105,7 @@ if [ ! -f $config/user_variables.cfg ]
 then
     # Copy printcfg variables to config directory
     echo "Copying user variables to config directory..."
-    cp -r ~/printcfg/printcfg_variables.cfg $config/user_variables.cfg
+    cp -r ~/printcfg/print_variables.cfg $config/user_variables.cfg
 else
     echo -e "\e[33mUser variables already exist.\e[0m"
 fi
