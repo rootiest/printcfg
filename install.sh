@@ -127,9 +127,9 @@ then
 fi
 
 # Check if printcfg is included in the printer.cfg file
-if grep -q "[include printcfg/*]" "$printer";
+if grep -q "[include printcfg/*]" "$printer"
 then
-
+    # do nothing
 else
     echo "Error: printcfg config not included in $printer"
     exit 1
