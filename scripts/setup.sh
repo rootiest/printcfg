@@ -64,8 +64,8 @@ if [ "$user_vars_version" != "$src_vars_version" ]; then
     echo -e "\e[31mSetup checks failed.\e[0m"
         if [ -n "$2" ]
     then
-        # If second argument is "fix"
-        if [ "$2" == "fix" ]
+        # If second argument is "force"
+        if [ "$2" == "force" ]
         then
             # Fix the user profile
             echo "Fixing user profile..."
@@ -74,9 +74,20 @@ if [ "$user_vars_version" != "$src_vars_version" ]; then
             echo
         fi
     else
-        echo "To fix the user profile, run the setup.sh with:"
+        echo
+        echo -e "\e[31mUser profile is not up to date.\e[0m"
+        echo
+        echo
+        echo "To force update, run setup.sh with the following arguments:"
         echo "The first argument set to the profile you want to use."
-        echo "The second argument set to \"fix\"."
+        echo "The second argument set to \"force\"."
+        echo "Example: ~/$repo/scripts/setup.sh default force"
+        echo
+        echo -e "\e[31mNOTE:\e[0m"
+        echo -e "\e[31mThis will overwrite any changes you have made to the user profile.\e[0m"
+        echo
+        echo "Otherwise, please update the user profile manually following the changelog."
+        
         exit 1
     fi
     
