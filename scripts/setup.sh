@@ -34,7 +34,7 @@ else
     # Set the src_vars file
     if [ -n "$1" ]
     then
-        src_vars=$config/$repo/src/$1
+        src_vars=$config/$repo/profiles/$1
     fi
 fi
 
