@@ -49,11 +49,12 @@ else
     echo "Installing printcfg..."
     # Clone the repo
     git clone https://github.com/"$owner"/"$repo"
-    if [ -d ~/printcfg ]; 
-        echo "printcfg installed successfully."
-    else
-        echo "Error: printcfg not installed."
+    # Check if the repo was cloned
+    if [ ! -d ~/printcfg ]; then
+        echo "Error: Repo not cloned."
         exit 1
+    else
+        echo "Repo cloned successfully."
     fi
 fi
 
