@@ -22,8 +22,18 @@
 #####################################
 
 # This script will download and install the printcfg package from GitHub.
-# Run the following:
-# curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash
+
+####################################################################################################
+
+# To run this script, open a terminal and run the following:
+
+# curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash 
+
+# or:
+
+# curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash -s -- default.cfg
+
+####################################################################################################
 
 # Set the dev and repo name
 dev="rootiest"
