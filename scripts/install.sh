@@ -154,11 +154,11 @@ then
     if [ ! -f ~/$repo/profiles/$src/variables.cfg ]
     then
         echo -e "\e[31mError: Profile '$src' not found.\e[0m"
-        echo "Using default profile: $default_src"
+        echo "Using default variables profile: $default_src"
         src=$default_src
     fi
     # Copy user profile to config directory
-    echo -e "\e[36mUsing profile: $src\e[0m"
+    echo -e "\e[36mUsing variables profile: $src\e[0m"
     echo "Creating user profile in config directory..."
     cp -r ~/$repo/profiles/$src/variables.cfg ~/$repo/user_profile.cfg
 else
