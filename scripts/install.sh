@@ -18,7 +18,7 @@
 
 #####################################
 ##      Printcfg Install Script    ##
-##      Version 3.6.0 2023-5-17    ##
+##      Version 3.6.1 2023-5-17    ##
 #####################################
 
 # This script will download and install the printcfg package from GitHub.
@@ -145,7 +145,7 @@ else
     echo -e "\e[32mUser config already exists.\e[0m"
 fi
 
-# Check if user variables file exists
+# Check if user profile file exists
 if [ ! -f ~/$repo/user_profile.cfg ]
 then
     # Check if profile exists
@@ -155,7 +155,7 @@ then
         echo "Using default profile: $default_src"
         src=$default_src
     fi
-    # Copy printcfg variables to config directory
+    # Copy user profile to config directory
     echo -e "\e[36mUsing profile: $src\e[0m"
     echo "Creating user profile in config directory..."
     cp -r ~/$repo/profiles/$src.cfg ~/$repo/user_profile.cfg
@@ -180,13 +180,13 @@ else
 fi
 
 # Check if include line exists in printer.cfg
-if grep -qFx "[include printcfg/print_config.cfg]" "$printer"
+if grep -qFx "[include printcfg/user_config.cfg]" "$printer"
 then
     echo -e "\e[33mprintcfg config already included.\e[0m"
 else
     echo "Adding printcfg config to $printer..."
     # Add printcfg config to beginning of file
-    sed -i '1s/^/[include printcfg\/print_config.cfg]\n/' "$printer"
+    sed -i '1s/^/[include printcfg\/user_config.cfg]\n/' "$printer"
 fi
 
 # Check if include line exists in moonraker.conf
@@ -236,7 +236,7 @@ then
 fi
 
 # Check if printcfg is included in the printer.cfg file
-if ! grep -qFx "[include printcfg/print_config.cfg]" "$printer"
+if ! grep -qFx "[include printcfg/user_config.cfg]" "$printer"
 then
     echo -e "\e[31mError: printcfg config not included in $printer\e[0m"
     exit 1
