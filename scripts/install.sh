@@ -33,6 +33,14 @@ repo="printcfg"
 printer=~/printer_data/config/printer.cfg
 moonraker=~/printer_data/config/moonraker.conf
 
+# Welcome message
+echo "Welcome to the printcfg install script."
+echo "This script will download and install the printcfg package from GitHub."
+echo "Press Ctrl+C to cancel or any other key to continue."
+read -n 1
+
+echo "\n Installing printcfg..."
+
 # Check if the repo exists
 if ! git ls-remote https://github.com/"$owner"/"$repo" >/dev/null; then
     echo "The repo does not exist."
@@ -45,9 +53,9 @@ cd ~
 # Check if printcfg is already installed
 if [ -d ~/printcfg ]; 
 then
-    echo "printcfg is already installed."
+    echo "printcfg repo is already installed."
 else
-    echo "Installing printcfg..."
+    echo "Installing printcfg repo..."
     # Clone the repo
     git clone https://github.com/"$owner"/"$repo"
     # Check if the repo was cloned
@@ -130,6 +138,8 @@ else
     # Add printcfg config to beginning of file
     sed -i '1s/^/[include printcfg\/moonraker-printcfg.conf]\n/' "$moonraker"
 fi
+
+echo "Install complete.\n"
 
 # Perform all checks to make sure printcfg is installed correctly
 echo "Checking printcfg installation..."
