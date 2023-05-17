@@ -266,6 +266,7 @@ echo
 
 # Perform setup checks
 echo "Performing Setup Checks..."
+echo
 source ~/$repo/scripts/setup.sh $src.cfg
 
 # Check if setup.out exists
