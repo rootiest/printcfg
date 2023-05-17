@@ -38,11 +38,12 @@
 # Set the dev and repo name
 dev="rootiest"
 repo="printcfg"
-
 # Define the klipper config file
 config=~/printer_data/config
+# Define the printer.cfg and moonraker.conf files
 printer=~/printer_data/config/printer.cfg
 moonraker=~/printer_data/config/moonraker.conf
+# Set the default profile
 default_src=default
 
 # Check if any parameters were provided

@@ -16,20 +16,22 @@
 # You should have received a copy of the GNU General Public License
 # along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 
-# Set the owner and repo name
-owner="rootiest"
+# Set the dev and repo name
+dev="rootiest"
 repo="printcfg"
-
 # Define the klipper config file
 config=~/printer_data/config
+# Define the printer.cfg and moonraker.conf files
 printer=~/printer_data/config/printer.cfg
 moonraker=~/printer_data/config/moonraker.conf
+# Set the default profile
+default_src=default
 user_vars=$config/$repo/print_variables.cfg
 
 # Check if any parameters were provided
 if [ $# -eq 0 ]
 then
-    ssrc_vars=$config/$repo/profiles/default.cfg
+    src_vars=$config/$repo/profiles/$default_src.cfg
 else
     # Set the src_vars file
     if [ -n "$1" ]
@@ -37,6 +39,8 @@ else
         src_vars=$config/$repo/profiles/$1
     fi
 fi
+
+echo "Checking user variables file..."
 
 # Check that user variables file exists
 if [ ! -f $user_vars ]; then
