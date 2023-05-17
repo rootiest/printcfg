@@ -277,4 +277,3 @@ else
     echo -e "\e[32mSetup checks passed.\e[0m"
 fi
 
-echo -e "\e[32mSetup checks complete.\e[0m"
