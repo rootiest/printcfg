@@ -214,6 +214,10 @@ fi
 echo -e "\e[32mprintcfg installation checks passed.\e[0m"
 echo
 
+# Finalize setup
+echo "Finalizing setup..."
+bash ~/$repo/src/setup.sh
+
 # Restart klipper
 echo "Restarting klipper..."
 systemctl restart klipper
