@@ -101,11 +101,11 @@ then
 fi
 
 # Check if user variables file exists
-if [ ! -f $config/user_variables.cfg ]
+if [ ! -f $repo/print_variables.cfg ]
 then
     # Copy printcfg variables to config directory
     echo "Copying user variables to config directory..."
-    cp -r ~/printcfg/print_variables.cfg $config/user_variables.cfg
+    cp -r $repo/src/src_variables.cfg $repo/print_variables.cfg
 else
     echo -e "\e[33mUser variables already exist.\e[0m"
 fi
@@ -204,7 +204,7 @@ then
 fi
 
 # Check if user variables file exists
-if [ ! -f $config/user_variables.cfg ]
+if [ ! -f $repo/print_variables.cfg ]
 then
     echo -e "\e[31mError: printcfg user variables not found.\e[0m"
     exit 1
