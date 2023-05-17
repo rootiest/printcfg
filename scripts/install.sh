@@ -31,7 +31,7 @@
 
 # or:
 
-# curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash -s -- default.cfg
+# curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash -s -- default
 
 ####################################################################################################
 
@@ -43,7 +43,7 @@ repo="printcfg"
 config=~/printer_data/config
 printer=~/printer_data/config/printer.cfg
 moonraker=~/printer_data/config/moonraker.conf
-default_src=default.cfg
+default_src=default
 
 # Check if any parameters were provided
 if [ $# -eq 0 ]
@@ -127,15 +127,15 @@ fi
 if [ ! -f ~/$repo/print_variables.cfg ]
 then
     # Check if profile exists
-    if [ ! -f ~/$repo/profiles/$src ]
+    if [ ! -f ~/$repo/profiles/$src.cfg ]
     then
-        echo -e "\e[31mError: File '$src' not found.\e[0m"
-        echo "Using default: $default_src"
+        echo -e "\e[31mError: File '$src.cfg' not found.\e[0m"
+        echo "Using default: $default_src.cfg"
         src=$default_src
     fi
     # Copy printcfg variables to config directory
     echo "Copying user variables to config directory..."
-    cp -r ~/$repo/profiles/$src ~/$repo/print_variables.cfg
+    cp -r ~/$repo/profiles/$src.cfg ~/$repo/print_variables.cfg
 else
     echo -e "\e[32mUser variables already exist.\e[0m"
 fi
@@ -246,7 +246,7 @@ echo
 
 # Finalize setup
 echo "Finalizing setup..."
-source ~/$repo/scripts/setup.sh $src
+source ~/$repo/scripts/setup.sh $src.cfg
 
 # Check if setup.out exists
 if [ -f setup.out ]
