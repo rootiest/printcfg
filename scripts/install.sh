@@ -273,6 +273,7 @@ source ~/$repo/scripts/setup.sh $src.cfg
 if [ -f setup.out ]
 then
     cat setup.out
+    echo -e "\e[31mSetup checks failed.\e[0m"
 else
     echo -e "\e[32mSetup checks passed.\e[0m"
 fi

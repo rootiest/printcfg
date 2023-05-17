@@ -61,12 +61,10 @@ if [ "$user_vars_version" != "$src_vars_version" ]; then
     echo "Source version: $src_vars_version"
     echo -e "\e[31mPlease update the user profile.\e[0m"
     echo
-    echo -e "\e[31mSetup checks failed.\e[0m"
+    
     exit 1
 else
     echo -e "\e[32mUser profile is up to date.\e[0m"
     echo "User version:   $user_vars_version"
     echo
 fi
-
-echo -e "\e[32mSetup checks complete.\e[0m"
