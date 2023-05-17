@@ -153,7 +153,7 @@ fi
 # Check if the printer.cfg exists
 if [ ! -f "$printer" ]
 then
-    echo "Error: File '$printer' not found."
+    echo -e "\e[31mError: File '$printer' not found.\e[0m"
     echo "Please make sure you have klipper installed and your config is located in $printer"
     exit 1
 fi
@@ -161,7 +161,7 @@ fi
 # Check if moonraker config exists
 if [ ! -f "$moonraker" ]
 then
-    echo "Error: File '$moonraker' not found."
+    echo -e "\e[31mError: File '$moonraker' not found.\e[0m"
     echo "Please make sure you have moonraker installed and your config is located in $moonraker"
     exit 1
 fi
@@ -169,26 +169,27 @@ fi
 # Check if printcfg is included in the printer.cfg file
 if ! grep -qFx "[include printcfg/print_config.cfg]" "$printer"
 then
-    echo "Error: printcfg config not included in $printer"
+    echo -e "\e[31mError: printcfg config not included in $printer\e[0m"
     exit 1
 fi
 
 # Check if the moonraker config contains printcfg config
 if ! grep -qFx "[include printcfg/moonraker-printcfg.conf]" "$moonraker"
 then
-    echo "Error: printcfg config not included in $moonraker"
+    echo -e "\e[31mError: printcfg config not included in $moonraker\e[0m"
     exit 1
 fi
 
 # Check if link exists
 if [ ! -L ~/printer_data/config/printcfg ]
 then
-    echo "Error: Link not created."
+    echo -e "\e[31mError: Link not created.\e[0m"
     exit 1
 fi
 
 # Acknowledge that the installation checks passed
-echo "printcfg installation checks passed."
+echo -e "\e[32mprintcfg installation checks passed.\e[0m"
+echo
 
 # Restart klipper
 echo "Restarting klipper..."
@@ -199,4 +200,5 @@ echo "Restarting moonraker..."
 systemctl restart moonraker
 
 # Success!
-echo "Printcfg has been successfully downloaded and installed."
+echo
+echo -e "\e[32mPrintcfg has been successfully downloaded and installed.\e[0m"
