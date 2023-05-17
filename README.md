@@ -45,7 +45,7 @@ These `SET_GCODE_VARIABLE` commands are also used to pass values from the slicer
 
 To install the suite, run the following command:
 
-    Command to be added shortly
+    curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash
 
 This command will clone the repo into your config in a folder named `printcfg`.
 
@@ -59,7 +59,7 @@ The following line will be added to your `moonraker.conf` file:
 
     [include printcfg/moonraker-printcfg.conf]
 
-This adds some moonraker configs, mainly the update_manager for printcfg updates.
+This adds some moonraker configs, mainly the `update_manager` for printcfg updates.
 
 ## Configuration
 
