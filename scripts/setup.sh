@@ -62,8 +62,24 @@ if [ "$user_vars_version" != "$src_vars_version" ]; then
     echo -e "\e[31mPlease update the user profile.\e[0m"
     echo
     echo -e "\e[31mSetup checks failed.\e[0m"
-    exit 1
-else
+        if [ -n "$2" ]
+    then
+        # If second argument is "fix"
+        if [ "$2" == "fix" ]
+        then
+            # Fix the user profile
+            echo "Fixing user profile..."
+            cp $src_vars $user_vars
+            echo "User profile fixed."
+            echo
+        fi
+    else
+        echo "To fix the user profile, run the setup.sh with:"
+        echo "The first argument set to the profile you want to use."
+        echo "The second argument set to \"fix\"."
+        exit 1
+    fi
+    
     echo -e "\e[32mUser profile is up to date.\e[0m"
     echo "User version:   $user_vars_version"
     echo
