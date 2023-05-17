@@ -85,7 +85,7 @@ then
 fi
 
 # Check if the config already contains the printcfg config
-if grep -q "[include printcfg/print_config.cfg]" "$printer"
+if grep -qFx "[include printcfg/print_config.cfg]" "$printer"
 then
     echo "printcfg config already included."
 else
@@ -93,6 +93,9 @@ else
     # Add printcfg config to beginning of file
     sed -i '1s/^/[include printcfg\/print_config.cfg]\n/' "$printer"
 fi
+
+# Check if include line exists in printer.cfg
+
 
 # Check if link already exists
 if [ ! -L ~/printer_data/config/printcfg ]
@@ -119,7 +122,7 @@ then
 fi
 
 # Check if the moonraker config already contains printcfg config
-if grep -q "[include printcfg/moonraker-printcfg.conf]" "$moonraker"
+if grep -qFx "[include printcfg/moonraker-printcfg.conf]" "$moonraker"
 then
     echo "printcfg moonraker already included."
 else
@@ -154,14 +157,14 @@ then
 fi
 
 # Check if printcfg is included in the printer.cfg file
-if ! grep -q "[include printcfg/*]" "$printer"
+if ! grep -qFx "[include printcfg/moonraker-printcfg.conf]" "$printer"
 then
     echo "Error: printcfg config not included in $printer"
     exit 1
 fi
 
 # Check if the moonraker config contains printcfg config
-if ! grep -q "[include printcfg/moonraker-printcfg.conf]" "$moonraker"
+if ! grep -qFx "[include printcfg/moonraker-printcfg.conf]" "$moonraker"
 then
     echo "Error: printcfg config not included in $moonraker"
     exit 1
