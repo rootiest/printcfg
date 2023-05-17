@@ -29,6 +29,9 @@
 owner="rootiest"
 repo="printcfg"
 
+# Define the klipper config file
+printer=~/printer_data/config/printer.cfg
+
 # Check if the repo exists
 if ! git ls-remote https://github.com/"$owner"/"$repo" >/dev/null; then
     echo "The repo does not exist."
@@ -38,11 +41,26 @@ fi
 # Change to the home directory
 cd ~
 
-# Clone the repo
-git clone https://github.com/"$owner"/"$repo"
+# Check if printcfg is already installed
+if [ -d ~/printcfg ]; 
+then
+    echo "printcfg is already installed."
+else
+    echo "Installing printcfg..."
+    # Clone the repo
+    git clone https://github.com/"$owner"/"$repo"
+    if [ -f requirements.txt ]; then
+        echo "printcfg installed successfully."
+    else
+        echo "Error: printcfg not installed."
+        exit 1
+    fi
+fi
 
 # Change to the repo directory
 cd "$repo"
+
+### Run any setup scripts ###
 
 # Install the dependencies
 if [ -f requirements.txt ]; then
@@ -54,8 +72,41 @@ if [ -f setup.py ]; then
     python setup.py install
 fi
 
+### Install into klippers config ###
+
+# Check if the file exists
+if [ ! -f "$printer" ]
+then
+    echo "Error: File '$printer' not found."
+    echo "Please make sure you have klipper installed and your config is located in $printer"
+    exit 1
+fi
+
+# Check if the config already contains the printcfg config
+if grep -q "[include printcfg/*]" "$printer"
+then
+    echo "printcfg config already included."
+else
+    echo "Adding printcfg config to $printer..."
+    # Add printcfg config to beginning of file
+    sed -i '1s/^/[include printcfg\/print_config.cfg]\n/' "$printer"
+fi
+
+# Check if link already exists
+if [ ! -L ~/printer_data/config/printcfg ]
+then
+    # Link printcfg to the printer config directory
+    echo "Linking printcfg to the printer config directory..."
+    ln -s ~/printcfg ~/printer_data/config/printcfg
+    # Check if the link was created
+    if [ ! -L ~/printer_data/config/printcfg ]
+    then
+        echo "Error: Link not created."
+        exit 1
+    fi
+else
+    echo "Link already exists."
+fi
+
 # Success!
-echo "The repo has been successfully downloaded and installed."
-
-
-
+echo "Printcfg has been successfully downloaded and installed."
