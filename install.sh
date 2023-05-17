@@ -23,7 +23,7 @@
 
 # This script will download and install the printcfg package from GitHub.
 # Run the following:
-# curl https://raw.githubusercontent.com/rootiest/printcfg/master/install.sh | bash
+# curl -H 'Cache-Control: no-cache, no-store' https://raw.githubusercontent.com/rootiest/printcfg/master/install.sh | bash
 
 # Set the owner and repo name
 owner="rootiest"
