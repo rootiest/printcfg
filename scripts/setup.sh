@@ -40,7 +40,7 @@ else
     fi
 fi
 
-echo "Checking user variables file..."
+echo "Checking user profile..."
 
 # Check that user variables file exists
 if [ ! -f $user_vars ]; then
@@ -56,14 +56,14 @@ src_vars_version=${src_vars_version#variable_version: }
 
 # Check if user variables file is up to date
 if [ "$user_vars_version" != "$src_vars_version" ]; then
-    echo -e "\e[31mUser variables file is not up to date.\e[0m"
+    echo -e "\e[31mUser profile is not up to date.\e[0m"
     echo "User version:   $user_vars_version"
     echo "Source version: $src_vars_version"
-    echo -e "\e[31mPlease update the user variables file.\e[0m"
+    echo -e "\e[31mPlease update the user profile.\e[0m"
     echo
     exit 1
 else
-    echo -e "\e[32mUser variables file is up to date.\e[0m"
+    echo -e "\e[32mUser profile is up to date.\e[0m"
     echo "User version:   $user_vars_version"
     echo
     exit 0

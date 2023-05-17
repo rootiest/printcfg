@@ -262,13 +262,16 @@ systemctl restart moonraker
 # Success!
 echo
 echo -e "\e[32mPrintcfg has been successfully downloaded and installed.\e[0m"
+echo
 
-# Finalize setup
-echo "Finalizing setup..."
+# Perform setup checks
+echo "Performing Setup Checks..."
 source ~/$repo/scripts/setup.sh $src.cfg
 
 # Check if setup.out exists
 if [ -f setup.out ]
 then
     cat setup.out
+else
+    echo -e "\e[32mSetup checks passed.\e[0m"
 fi
