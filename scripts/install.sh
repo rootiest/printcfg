@@ -18,7 +18,7 @@
 
 #####################################
 ##      Printcfg Install Script    ##
-##      Version 3.5.9 2023-5-17    ##
+##      Version 3.6.0 2023-5-17    ##
 #####################################
 
 # This script will download and install the printcfg package from GitHub.
