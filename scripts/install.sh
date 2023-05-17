@@ -135,12 +135,12 @@ then
     # Check if profile exists
     if [ ! -f ~/$repo/profiles/$src.cfg ]
     then
-        echo -e "\e[31mError: File '$src.cfg' not found.\e[0m"
-        echo "Using default: $default_src.cfg"
+        echo -e "\e[31mError: Profile '$src' not found.\e[0m"
+        echo "Using default profile: $default_src"
         src=$default_src
     fi
     # Copy printcfg variables to config directory
-    echo -e "\e[34mUsing profile: $src\e[0m"
+    echo -e "\e[36mUsing profile: $src\e[0m"
     echo "Copying user variables to config directory..."
     cp -r ~/$repo/profiles/$src.cfg ~/$repo/print_variables.cfg
 else
