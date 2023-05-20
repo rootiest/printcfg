@@ -54,11 +54,13 @@ user_vars=$config/$repo/user_profile.cfg
 if [ $# -eq 0 ]
 then
     src_vars=$config/$repo/profiles/$default_src/variables.cfg
+    src_path=$config/$repo/profiles/$default_src
 else
     # Set the src_vars file
     if [ -n "$1" ]
     then
         src_vars=$config/$repo/profiles/$1/variables.cfg
+        src_path=$config/$repo/profiles/$1
     fi
 fi
 
@@ -106,24 +108,31 @@ if [ "$user_vars_version" != "$src_vars_version" ]; then
         echo
         echo -e "\e[31mUser profile is not up to date.\e[0m"
         echo
+        echo -e "\033[1;31mVersion mismatch: [$user_vars]\e[0m"
         echo
-        echo "To force update, run setup.sh with the following arguments:"
-        echo "The first argument set to the profile you want to use."
-        echo "The second argument set to \"force\"."
-        echo "Example: ~/$repo/scripts/setup.sh default force"
+        echo "To force an update, run setup.sh with the profile you want to use and the word 'force' as arguments."
+        echo "For example, to force an update for the default profile, run the following command:"
+        echo " ~/$repo/scripts/setup.sh default force"
         echo
-        echo -e "\e[31mNOTE:\e[0m"
-        echo -e "\e[31mThis will overwrite any changes you have made to the user profile.\e[0m"
-        echo
-        echo -e "\e[33mOtherwise, please update the user profile manually following the changelog.\e[0m"
+        echo -e "\033[4;31mNOTE: Forcing the update will overwrite any changes you have made to the user profile.\e[0m"
+        echo -e "\e[33mTo avoid this: please update the user profile manually following the patch notes.\e[0m"
         echo
         echo -e "\e[31mUser profile is not up to date.\e[0m"
         echo "User version:   $user_vars_version"
         echo "Source version: $src_vars_version"
+        echo 
+        echo -e "\e[31mPlease update the user profile.\e[0m"
+        
+        if [ -f $src_path/patch_notes.txt ]; then
+            echo -e "\e[31mPatch notes:"
+            cat $src_path/patch_notes.txt
+            echo -e "\e[0m"
+        fi
+        echo -e "\033[2;101mSetup checks failed.\e[0m"
+        echo
         exit 1
     fi
-    
+else
     echo -e "\e[32mUser profile is up to date.\e[0m"
     echo "User version:   $user_vars_version"
-    echo
 fi
