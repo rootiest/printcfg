@@ -17,6 +17,12 @@
  along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<!--
+#####################################
+##      Printcfg Documentation     ##
+##      Version 3.8.0 2023-5-20    ##
+#####################################
+-->
 
 # PrintCFG Klipper Suite
 

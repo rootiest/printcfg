@@ -18,20 +18,24 @@
 
 #####################################
 ##      Printcfg Install Script    ##
-##      Version 3.7.5 2023-5-18    ##
+##      Version 3.8.0 2023-5-20    ##
 #####################################
 
 # This script will download and install the printcfg package from GitHub.
+# Arguments:
+#   $1: <profile name>  (optional) (default: default)
 
 ####################################################################################################
 
-# To run this script, open a terminal and run the following:
+# To install with the default profile open a terminal and run the following:
 
 # curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash 
 
-# or:
+# or to specify a profile:
 
 # curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash -s -- default
+
+# Substitute "default" with the name of the profile you want to install.
 
 ####################################################################################################
 
@@ -63,6 +67,29 @@ echo "Welcome to the printcfg install script."
 echo "This script will download and install the printcfg package from GitHub."
 
 echo
+echo "Checking dependencies..."
+if ! which git > /dev/null; then
+    need_git=true
+    echo "Missing git."
+fi
+if ! which pip > /dev/null; then
+    need_pip=true
+    echo "Missing pip."
+    sudo apt-get install python3-pip
+fi
+if ! which bc > /dev/null; then
+    need_bc=true
+    echo "Missing bc."
+    sudo apt-get install bc
+fi
+## Install missing dependencies
+if [ -n "$need_git" ] || [ -n "$need_pip" ] || [ -n "$need_bc" ]; then
+    echo "Installing missing dependencies..."
+    sudo apt update
+    sudo apt-get install git python3-pip bc
+else
+    echo -e "\e[32mAll dependencies are installed.\e[0m"
+fi
 echo "Installing printcfg..."
 
 # Check if the repo exists

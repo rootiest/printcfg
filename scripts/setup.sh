@@ -16,6 +16,28 @@
 # You should have received a copy of the GNU General Public License
 # along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 
+#####################################
+##      Printcfg Setup Script    ##
+##      Version 3.8.0 2023-5-20    ##
+#####################################
+
+# This script will check the user profile and update it if necessary.
+# Arguments:
+#   $1: <profile name>  (optional) (default: default)
+#   $2: force           (optional) (default: [unused])
+
+####################################################################################################
+
+# Example:
+#   ./setup.sh default force
+# This will force the user profile to be updated to the latest version.
+
+# Example:
+#   ./setup.sh default
+# This will check the user profile and notify you if it is out of date.
+
+####################################################################################################
+
 # Set the dev and repo name
 dev="rootiest"
 repo="printcfg"
@@ -53,6 +75,7 @@ user_vars_version=$(grep -oP '(variable_version: ).*' $user_vars)
 user_vars_version=${user_vars_version#variable_version: }
 src_vars_version=$(grep -oP '(variable_version: ).*' $src_vars)
 src_vars_version=${src_vars_version#variable_version: }
+src_vars_version=${src_vars_version | bc}
 
 # Check if user profile is up to date
 if [ "$user_vars_version" != "$src_vars_version" ]; then
@@ -70,6 +93,7 @@ if [ "$user_vars_version" != "$src_vars_version" ]; then
             # update user_vars_version variable
             user_vars_version=$(grep -oP '(variable_version: ).*' $user_vars)
             user_vars_version=${user_vars_version#variable_version: }
+            user_vars_version=${user_vars_version | bc}
             echo "User profile updated."
             echo
         else

@@ -1,0 +1,4 @@
+3.8.0:
+    - Moved z_hopped variable as it's only used by the backend. (non-critical)
+    Remove: 
+        variable_z_hopped
