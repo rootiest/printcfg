@@ -67,32 +67,81 @@ else
     fi
 fi
 
-echo "Checking user profile..."
-
-# Check that user profile exists
-if [ ! -f $user_vars ]; then
-    # Check if old user profile exists
-    if [ -f $old_user_vars ]; then
-        echo -e "\e[31mUser profile location is out of date.\e[0m"
-        echo "User profile will be moved to $config/user_profile.cfg"
-        mv $old_user_vars $user_vars
-    else
-        echo -e "\e[31mUser profile does not exist.\e[0m"
-        exit 1
-    fi
-fi
-
 echo "Checking user config..."
 
 # Check that user config exists
-if [ ! -f $user_cfg ]; then
+if [ ! -f $user_cfg ]
+then
     # Check if old user config exists
-    if [ -f $old_user_cfg ]; then
+    if [ -f $old_user_cfg ]
+    then
         echo -e "\e[31mUser config location is out of date.\e[0m"
-        echo "User config will be moved to $config/user_config.cfg"
         mv $old_user_cfg $user_cfg
+        # Verify move was successful
+        if [ -f $user_cfg ]
+        then
+            echo "User config moved to $config/user_config.cfg"
+        else
+            echo -e "\e[31mUser config move failed.\e[0m"
+            exit 1
+        fi
+        # Check if old include line exists in printer.cfg
+        echo "Checking printer.cfg include line..."
+        if grep -qFx "[include printcfg/user_config.cfg]" "$printer"
+        then
+            echo -e "\e[31mInclude line is out of date.\e[0m"
+            # Remove old include line
+            sed -i '/\[include printcfg\/user_config.cfg\]/d' "$printer"
+            # Add new include line
+            sed -i '1s/^/[include user_config.cfg]\n/' "$printer"
+            # Verify include line was added
+            if grep -qFx "[include user_config.cfg]" "$printer"
+            then
+                echo "Include line updated."
+                # User config is up to date
+                echo -e "\e[32mUser config is now up to date.\e[0m"
+            else
+                echo -e "\e[31mInclude line update failed.\e[0m"
+                exit 1
+            fi
+        else
+            if grep -qFx "[include user_config.cfg]" "$printer"
+            then
+                echo -e "\e[32mUser config is up to date.\e[0m"
+            else
+                echo -e "\e[31mInclude line does not exist.\e[0m"
+                exit 1
+            fi
+        fi
     else
         echo -e "\e[31mUser config does not exist.\e[0m"
+        exit 1
+    fi
+else
+    # User config is up to date
+    echo -e "\e[32mUser config is up to date.\e[0m"
+fi
+
+echo "Checking user profile..."
+
+# Check that user profile exists
+if [ ! -f $user_vars ]
+then
+    # Check if old user profile exists
+    if [ -f $old_user_vars ]
+    then
+        echo -e "\e[31mUser profile location is out of date.\e[0m"
+        mv $old_user_vars $user_vars
+        # Verify move was successful
+        if [ -f $user_vars ]
+        then
+            echo "User profile moved to $config/user_profile.cfg"
+        else
+            echo -e "\e[31mUser profile move failed.\e[0m"
+            exit 1
+        fi
+    else
+        echo -e "\e[31mUser profile does not exist.\e[0m"
         exit 1
     fi
 fi
