@@ -39,6 +39,8 @@
 
 ####################################################################################################
 
+# List required packages
+PKGLIST="git python3-pip bc"
 # Set the dev and repo name
 dev="rootiest"
 repo="printcfg"
