@@ -1,3 +1,4 @@
 # These are supported funding model platforms
 
-github: rootiest
+github: [rootiest]
+custom: ['https://paypal.me/rootiest']
