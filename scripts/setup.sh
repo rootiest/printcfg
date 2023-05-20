@@ -75,7 +75,6 @@ user_vars_version=$(grep -oP '(variable_version: ).*' $user_vars)
 user_vars_version=${user_vars_version#variable_version: }
 src_vars_version=$(grep -oP '(variable_version: ).*' $src_vars)
 src_vars_version=${src_vars_version#variable_version: }
-src_vars_version=${src_vars_version | bc}
 
 # Check if user profile is up to date
 if [ "$user_vars_version" != "$src_vars_version" ]; then
@@ -93,7 +92,6 @@ if [ "$user_vars_version" != "$src_vars_version" ]; then
             # update user_vars_version variable
             user_vars_version=$(grep -oP '(variable_version: ).*' $user_vars)
             user_vars_version=${user_vars_version#variable_version: }
-            user_vars_version=${user_vars_version | bc}
             echo "User profile updated."
             echo
         else
