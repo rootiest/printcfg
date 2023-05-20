@@ -157,7 +157,7 @@ then
 fi
 
 # Check if user_config file exists
-if [ ! -f ~/$repo/user_config.cfg ]
+if [ ! -f $config/user_config.cfg ]
 then
     # Check if profile config exists
     if [ ! -f ~/$repo/profiles/$src/config.cfg ]
@@ -169,13 +169,13 @@ then
     # Copy user profile to config directory
     echo -e "\e[36mUsing config profile: $src\e[0m"
     echo "Creating user_config in config directory..."
-    cp -r ~/$repo/profiles/$src/config.cfg ~/$repo/user_config.cfg
+    cp -r ~/$repo/profiles/$src/config.cfg $config/user_config.cfg
 else
     echo -e "\e[32mUser config already exists.\e[0m"
 fi
 
 # Check if user profile file exists
-if [ ! -f ~/$repo/user_profile.cfg ]
+if [ ! -f $config/user_profile.cfg ]
 then
     # Check if profile exists
     if [ ! -f ~/$repo/profiles/$src/variables.cfg ]
@@ -187,7 +187,7 @@ then
     # Copy user profile to config directory
     echo -e "\e[36mUsing variables profile: $src\e[0m"
     echo "Creating user profile in config directory..."
-    cp -r ~/$repo/profiles/$src/variables.cfg ~/$repo/user_profile.cfg
+    cp -r ~/$repo/profiles/$src/variables.cfg $config/user_profile.cfg
 else
     echo -e "\e[32mUser profile already exists.\e[0m"
 fi
@@ -209,13 +209,13 @@ else
 fi
 
 # Check if include line exists in printer.cfg
-if grep -qFx "[include printcfg/user_config.cfg]" "$printer"
+if grep -qFx "[include user_config.cfg]" "$printer"
 then
     echo -e "\e[33mprintcfg config already included.\e[0m"
 else
     echo "Adding printcfg config to $printer..."
     # Add printcfg config to beginning of file
-    sed -i '1s/^/[include printcfg\/user_config.cfg]\n/' "$printer"
+    sed -i '1s/^/[include user_config.cfg]\n/' "$printer"
 fi
 
 # Check if include line exists in moonraker.conf

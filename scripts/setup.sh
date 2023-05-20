@@ -48,7 +48,10 @@ printer=~/printer_data/config/printer.cfg
 moonraker=~/printer_data/config/moonraker.conf
 # Set the default profile
 default_src=default
-user_vars=$config/$repo/user_profile.cfg
+user_vars=$config/user_profile.cfg
+old_user_vars=$config/$repo/user_profile.cfg
+user_cfg=$config/user_config.cfg
+old_user_cfg=$config/$repo/user_config.cfg
 
 # Check if any parameters were provided
 if [ $# -eq 0 ]
@@ -68,8 +71,30 @@ echo "Checking user profile..."
 
 # Check that user profile exists
 if [ ! -f $user_vars ]; then
-    echo -e "\e[31mUser profile does not exist.\e[0m"
-    exit 1
+    # Check if old user profile exists
+    if [ -f $old_user_vars ]; then
+        echo -e "\e[31mUser profile location is out of date.\e[0m"
+        echo "User profile will be moved to $config/user_profile.cfg"
+        mv $old_user_vars $user_vars
+    else
+        echo -e "\e[31mUser profile does not exist.\e[0m"
+        exit 1
+    fi
+fi
+
+echo "Checking user config..."
+
+# Check that user config exists
+if [ ! -f $user_cfg ]; then
+    # Check if old user config exists
+    if [ -f $old_user_cfg ]; then
+        echo -e "\e[31mUser config location is out of date.\e[0m"
+        echo "User config will be moved to $config/user_config.cfg"
+        mv $old_user_cfg $user_cfg
+    else
+        echo -e "\e[31mUser config does not exist.\e[0m"
+        exit 1
+    fi
 fi
 
 # Find version of user profile
