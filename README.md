@@ -266,7 +266,7 @@ The bulk of profile configuration occurs in the `user_profile.cfg` file. There a
 ### Idle Action Variables
 
 - `variable_idle_extruder`
-- Determines whether the extruder is disabled during idle_timeout.
+  - Determines whether the extruder is disabled during idle_timeout.
 - `variable_idle_bed`
   - Determines whether the heater_bed is disabled during idle_timeout.
 - `variable_idle_chamber`
