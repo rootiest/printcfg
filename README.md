@@ -65,6 +65,7 @@
     - [Telegram Status Variables](#telegram-status-variables)
     - [DO NOT EDIT BELOW](#do-not-edit-below)
   - [Client Macro Variables](#client-macro-variables)
+  - [Submitting A Profile](#submitting-a-profile)
 
 ## !!! WARNING: THIS IS STILL A WORK IN PROGRESS !!!
 
@@ -88,15 +89,27 @@ To install the suite using the default presets, run the following command:
 
 You can also specify a preset profile for a more printer-specific default config:
 
-    curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash -s -- hephaestus
+    curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash -s -- default
 
 ### What the install script does
 
-The install script will clone the repo into your home directory in a folder named `printcfg`.
+The install script will begin by checking for dependencies and installing them if they are missing.
+
+It will then clone the repo into your home directory in a folder named `printcfg`. 
+
+Please do not modify the contents of this folder.
+
+The files for the profile you specified will be copied into your main config folder alongside `printer.cfg`.
+
+This will consist of two files: `user_profile.cfg` and `user_config.cfg`.
+
+> NOTE: You are free to modify these files as you see fit, but please only modify files that begin with `user_` so that the update system can successfully merge changes. 
+> 
+> These files will be placed in your main config folder, so they will not be overwritten by future updates.
 
 The following line will be added to your `printer.cfg` file:
 
-    [include printcfg/print_config.cfg]
+    [include print_config.cfg]
 
 This tells Klipper to include the printcfg config file. The other files will be included from there.
 
@@ -106,11 +119,35 @@ The following line will be added to your `moonraker.conf` file:
 
 This adds some moonraker configuration, specifically the `update_manager` for printcfg updates.
 
+After all of these changes are made and verified, the script will restart Klipper and Moonraker.
+
+Future updates will be performed by the `update_manager` service and will typically require a restart of only Klipper.
+
+Most updates will be performed automatically, but some may require manual intervention. The installer will notify you if this is the case.
+
+When the update requires manual intervention, you will be notified of the changes that need to be made to your user_profile.cfg file and the installer will exit. Run the setup.sh script again to verify the changes were made and continue the update.
+
+In most cases this will only require you to add new variables or remove obsolete variables from your user_profile.cfg file.
+
+Best efforts will be made to avoid this as much as possible, but future features may require new variables to be added and the process has been made as simple as possible.
+
+It's important to keep the user_profile.cfg file untouched by the automated update process so that your customizations are not overwritten.
+
+When new features are added, you will likely prefer to customize them to your liking, so it's best not to automatically append potentially unwanted new variables to your profile config.
+
+I'm also open to suggestions for improving this process or PRs that add an interactive update process for profile changes from a patch file.
+
 ## Configuration
 
 The vast majority of the configuration is done via the `_printcfg` macro in `user_profile.cfg`.
 
-Additional configuration may be required via the `user_config.cfg` file.
+This is the "master" macro that hosts the configuration variables for the entire suite. 
+
+It is here that we configure the behavior of the suite.
+
+Additional configuration may also be required via the `user_config.cfg` file.
+
+This file is used for non-macro configuration sections that the suite requires. It also manages the inclusion of the other config files.
 
 Please only modify files that begin with `user_` so that the update system can successfully merge changes.
 
@@ -118,9 +155,13 @@ You will be notified if/when an update requires new variables to be added to `us
 
 The `_CLIENT_VARIABLE` macro in the `user_profile.cfg` file is used to customize the UI macros supplied by mainsail/fluidd.
 
-printcfg is designed to work alongside those macros to enhance the experience.
+printcfg is designed to work alongside those macros to enhance the experience and provide a more seamless integration with typical klipper workflows.
 
 Preset profiles are [available](./profiles/) for various common configurations.
+
+If you would like to submit a profile, please see the [Submitting A Profile](#submitting-a-profile) section below.
+
+ I'd love to have a wide variety of community profiles available for everyone to choose from!
 
 Custom configuration can be achieved by editing the `user_profile.cfg` file on your local installation.
 
@@ -624,3 +665,45 @@ The rest of the variables in this macro are used internally and should not be ed
 ## Client Macro Variables
 
 These variables configure the mainsail/fluidd macros. See your preferred client documentation for more information.
+
+## Submitting A Profile
+
+- Spent a lot of time dialing in your profile and want to show it off?
+
+- Have a profile for a popular printer that you think others would benefit from?
+
+- Have a unique profile that you think others would enjoy?
+
+If you would like to submit a profile, please create a pull request with your profile directory added to the `profiles` folder.
+
+The profile name should be short and not contain any spaces or special characters. It should also be unique and not conflict with any existing profiles. The profile name should be all lowercase. Please also refrain from using any offensive or discriminatory language in your profile name or description.
+
+Each profile must consist of the following files:
+
+- **variables.cfg**
+
+  This file contains the profile variables. It should be created from your `user_profile.cfg` file.
+
+- **config.cfg**
+
+  This file contains the profile configuration. It should be created from your `user_config.cfg` file.
+
+- **patch_notes.txt**
+
+  This file contains the patch notes for the profile. It should list the version of the profile and "initial release" if it is the first release.
+
+- **README.md**
+  
+  This file contains the profile description. It should have one header with the profile name with By: Your Name underneath. It should also have a description of the profile and any special instructions for using it. You should also briefly list the printer and components the profile was designed for.
+
+  If your README file requires any images, please place them in an `images` folder within your profile folder and reference them in your README file.
+
+  Feel free to get creative with your README file, as long as it meets then requirements above and does so in a clear and concise manner at the top of the file.
+
+  The main goal is to make it easy for users to quickly find the information they need to use your profile.
+
+  Keep in mind that large files will increase the size of the install on every machine whether they use your profile or not. All profiles are synced alongside the rest of the repo. But only the selected profile is added to the user's config.
+  
+  Please be reasonable with the size of your images to keep the repository size small and the sync time low.
+
+  When your profile is installed on a user's printer, only the variables.cfg and config.cfg files are used. The README.md and patch_notes.txt files are only used for display purposes in the repository. Similarly, any additional files you include in your profile will not be added to the user's config.
