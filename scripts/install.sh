@@ -88,7 +88,7 @@ fi
 if [ -n "$need_git" ] || [ -n "$need_pip" ] || [ -n "$need_bc" ]; then
     echo "Installing missing dependencies..."
     sudo apt update
-    sudo apt-get install git python3-pip bc
+    sudo apt-get install -y git python3-pip bc
 else
     echo -e "\e[32mAll dependencies are installed.\e[0m"
 fi
