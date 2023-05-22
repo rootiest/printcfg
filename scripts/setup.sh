@@ -18,7 +18,7 @@
 
 #####################################
 ##      Printcfg Setup Script    ##
-##      Version 3.8.1 2023-5-21    ##
+##      Version 3.9.0 2023-5-22    ##
 #####################################
 
 # This script will check the user profile and update it if necessary.

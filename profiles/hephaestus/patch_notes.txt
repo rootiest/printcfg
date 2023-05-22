@@ -2,3 +2,9 @@
     - Moved z_hopped variable as it's only used by the backend. (non-critical)
     Remove: 
         variable_z_hopped
+3.9.0:
+    - Moved SET_MATERIAL and SET_NOZZLE to user_config.cfg
+    Add:
+        USER_CONFIG:
+            SET_MATERIAL
+            SET_NOZZLE
