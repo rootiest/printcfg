@@ -288,14 +288,14 @@ then
 fi
 
 # Check if user config exists
-if [ ! -f ~/$repo/user_config.cfg ]
+if [ ! -f $config/user_config.cfg ]
 then
     echo -e "\e[31mError: printcfg user config not found.\e[0m"
     exit 1
 fi
 
 # Check if user profile exists
-if [ ! -f ~/$repo/user_profile.cfg ]
+if [ ! -f $config/user_profile.cfg ]
 then
     echo -e "\e[31mError: printcfg user profile not found.\e[0m"
     exit 1
