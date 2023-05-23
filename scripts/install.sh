@@ -180,11 +180,17 @@ fi
 ### Run any setup scripts ###
 
 # Install the dependencies
+echo "Installing dependencies..."
 if [ -f requirements.txt ]; then
     pip3 install -r requirements.txt
+    echo -e "\e[32mDependencies installed successfully.\e[0m"
+else
+    echo -e "\e[33mNo dependencies to install.\e[0m"
+fi
 fi
 
 # Check if the service is enabled
+echo "Checking if the ${repo} service is enabled..."
 if systemctl is-enabled "${repo}" >/dev/null 2>&1; then
     echo "The ${repo} service is enabled."
 else
@@ -192,6 +198,7 @@ else
     # Install the python package
     if [ -f $home/$repo/src/setup.py ]; then
         python3 $home/$repo/src/setup.py --install
+        echo -e "\e[32m${repo} service installed successfully.\e[0m"
     fi
 fi
 
