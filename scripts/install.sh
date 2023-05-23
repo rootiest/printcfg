@@ -49,8 +49,9 @@ repo="printcfg"
 branch="master"
 # Get home directory
 home=$(eval echo ~$USER)
-# Define the klipper config file
-config=$home/printer_data/config
+# Define the klipper config paths
+printer_data=$home/printer_data
+config=$printer_data/config
 # Define the printer.cfg and moonraker.conf files
 printer=$config/printer.cfg
 moonraker=$config/moonraker.conf
@@ -326,7 +327,7 @@ fi
 # Add printcfg to moonraker.asvc
 echo "Adding printcfg service to moonraker allowlist..."
 # Define allowlist file
-allowlist="$config/moonraker.asvc"
+allowlist="$printer_data/moonraker.asvc"
 # Verify printcfg is in allowlist
 if grep -qFx "$repo" "$allowlist"
 then
