@@ -58,7 +58,7 @@ old_user_cfg=$config/$repo/user_config.cfg
 # Patterns to identify profile name and version
 profile_pattern="# Profile:(.*)"
 patch_pattern="# Patch:(.*)"
-uconfig_pattern_old="[include printcfg/user_config.cfg]"
+uconfig_pattern_old="[include $repo/user_config.cfg]"
 uconfig_pattern_new="[include user_config.cfg]"
 ver_patch="# Patch:"
 

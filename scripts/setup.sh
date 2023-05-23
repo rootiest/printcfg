@@ -91,11 +91,11 @@ then
         fi
         # Check if old include line exists in printer.cfg
         echo "Checking printer.cfg include line..."
-        if grep -qFx "[include printcfg/user_config.cfg]" "$printer"
+        if grep -qFx "[include $repo/user_config.cfg]" "$printer"
         then
             echo -e "\e[31mInclude line is out of date.\e[0m"
             # Remove old include line
-            sed -i '/\[include printcfg\/user_config.cfg\]/d' "$printer"
+            sed -i '/\[include $repo\/user_config.cfg\]/d' "$printer"
             # Add new include line
             sed -i '1s/^/[include user_config.cfg]\n/' "$printer"
             # Verify include line was added
