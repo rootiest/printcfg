@@ -203,7 +203,7 @@ else
 fi
 
 # Make all scripts in printcfg executable
-chmod +x $home/$repo/scripts/*.sh
+#chmod +x $home/$repo/scripts/*.sh
 
 ### Install into klippers config ###
 
