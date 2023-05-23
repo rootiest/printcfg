@@ -189,7 +189,7 @@ echo "Checking patch notes..."
 patch_notes="$home/$repo/profiles/$vars_profile/patch_notes.txt"
 
 # Read version from patch notes
-highest_version=$(python3 read_patch_notes.py "$patch_notes")
+highest_version=$(python3 $home/$repo/scripts/read_patch_notes.py "$patch_notes")
 
 # Print the highest version number
 echo "Latest patch is: $highest_version"
