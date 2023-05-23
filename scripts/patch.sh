@@ -254,13 +254,13 @@ else
     
     if [ "$update_profile" = "True" ]; then
         # Check if the patch file exists
-        if [ -f $profile_patch ]; then
+        if [ -f $vars_patch ]; then
             echo "Patch file found."
             # Append the contents of the patch file to the user config
             echo "Applying profile patch file..."
-            echo "Patch file: $profile_patch"
+            echo "Patch file: $vars_patch"
             echo "User vars: $user_vars"
-            cat $profile_patch >> $user_vars
+            cat $vars_patch >> $user_vars
             echo "Profile patch file applied."
             # Update version number in user profile
             echo "Updating version number..."
@@ -276,7 +276,7 @@ else
             fi
         else
             echo -e "\e[31mProfile patch file not found.\e[0m"
-            echo "Patch file: $profile_patch"
+            echo "Patch file: $vars_patch"
             exit 1
         fi
     fi
