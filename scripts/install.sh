@@ -292,7 +292,7 @@ echo "Setting branch in moonraker config..."
 # Define search pattern
 branch_pattern="primary_branch:"
 # Set branch to current branch
-python3 $home/$repo/scripts/search_replace.py $branch_pattern "$branch_pattern $branch" $config/moonraker-printcfg.conf
+python3 $home/$repo/scripts/search_replace.py "$branch_pattern" "$branch_pattern $branch" "$config/moonraker-printcfg.conf"
 
 # Check if the moonraker config already contains the old printcfg config
 moon_pattern="[include printcfg/moonraker-printcfg.conf]"
@@ -304,7 +304,7 @@ then
 else
     echo "Adding printcfg config to $moonraker..."
     # Add printcfg config to moonraker
-    python3 $home/$repo/scripts/search_replace.py $moon_pattern $new_moon $moonraker
+    python3 $home/$repo/scripts/search_replace.py "$moon_pattern" "$new_moon" "$moonraker"
 fi
 
 echo -e "\e[32mInstall complete.\e[0m"
