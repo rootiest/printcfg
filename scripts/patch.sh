@@ -53,7 +53,7 @@ user_cfg=$config/user_config.cfg
 old_user_cfg=$config/$repo/user_config.cfg
 # Patterns to identify profile name and version
 profile_pattern="# Profile:(.*)" # Example: # Profile: default
-patch_pattern="# Patch ([0-9]+\.[0-9]+\.[0-9]+) #" # Example: # Patch 3.9.0
+patch_pattern="# Patch: ([0-9]+\.[0-9]+\.[0-9]+) #" # Example: # Patch 3.9.0
 
 # Check if any parameters were provided
 if [ $# -eq 0 ]
