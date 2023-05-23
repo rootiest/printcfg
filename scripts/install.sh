@@ -190,7 +190,7 @@ fi
 
 # Check if the service is enabled
 echo "Checking if the ${repo} service is enabled..."
-if systemctl is-enabled "${repo}" >/dev/null 2>&1; then
+if systemctl --user is-enabled "${repo}" >/dev/null 2>&1; then
     echo "The ${repo} service is enabled."
 else
     echo "Installing the ${repo} service..."
