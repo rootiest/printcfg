@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # Copyright (C) 2023 Chris Laprade (chris@rootiest.com)
 #
 # This file is part of Hephaestus.
@@ -180,12 +181,12 @@ fi
 
 # Install the dependencies
 if [ -f requirements.txt ]; then
-    pip install -r requirements.txt
+    pip3 install -r requirements.txt
 fi
 
-# Run the setup script
-if [ -f setup.py ]; then
-    python setup.py install
+# Install the python package
+if [ -f $home/$repo/src/setup.py ]; then
+    python3 $home/$repo/src/setup.py --install
 fi
 
 # Make all scripts in printcfg executable

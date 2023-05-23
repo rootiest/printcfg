@@ -19,27 +19,19 @@
 
 #!/usr/bin/env python3
 
+import subprocess
 import os
-import sys
-import re
 
-def find_highest_version(file_name):
-    highest_version = None
+# Path to the shell script
+SHELL_SCRIPT = "/home/pi/printcfg/scripts/setup.sh"
 
-    with open(file_name, 'r') as file:
-        content = file.read()
+# Run the shell script at startup
+subprocess.Popen(["/bin/bash", SHELL_SCRIPT])
 
-    pattern = r'(\d+\.\d+\.\d+):'
-    versions = re.findall(pattern, content)
-
-    for version in versions:
-        if highest_version is None or version > highest_version:
-            highest_version = version
-
-    return highest_version
-
-
-# Test the function
-file_name = sys.argv[1]
-highest_version = find_highest_version(file_name)
-print(highest_version)
+# Continuously run in the background
+while True:
+    # Do any other tasks or operations here
+    # You can add your code logic within this loop
+    
+    # Sleep for a certain duration (e.g., 1 second)
+    os.system("sleep 1")

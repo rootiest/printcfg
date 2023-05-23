@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Copyright (C) 2023 Chris Laprade (chris@rootiest.com)
 # 
 # This file is part of printcfg.
@@ -14,6 +16,8 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
+
+#!/usr/bin/env python3
 
 import os
 import sys
