@@ -1,18 +1,18 @@
 #!/bin/bash
 # Copyright (C) 2023 Chris Laprade (chris@rootiest.com)
-# 
+#
 # This file is part of printcfg.
-# 
+#
 # printcfg is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # printcfg is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -187,26 +187,29 @@ if [ "$user_vars_version" != "$src_vars_version" ]; then
         echo
         echo -e "\033[1;31mVersion mismatch: [$user_vars]\e[0m"
         echo
-        echo "To force an update, run setup.sh with the profile you want to use and the word 'force' as arguments."
-        echo "For example, to force an update for the default profile, run the following command:"
-        echo " $home/$repo/scripts/setup.sh default force"
+        echo "Attempting to patch user profile..."
         echo
-        echo -e "\033[4;31mNOTE: Forcing the update will overwrite any changes you have made to the user profile.\e[0m"
-        echo -e "\e[33mTo avoid this: please update the user profile manually following the patch notes.\e[0m"
-        echo
-        echo -e "\e[31mUser profile is not up to date.\e[0m"
-        echo "User version:   $user_vars_version"
-        echo "Source version: $src_vars_version"
-        echo 
-        echo -e "\e[31mPlease update the user profile.\e[0m"
-        
         if [ -f $src_path/patch_notes.txt ]; then
             echo -e "\e[31mPatch notes:"
             cat $src_path/patch_notes.txt
             echo -e "\e[0m"
         fi
-        echo -e "\033[2;101mSetup checks failed.\e[0m"
         echo
+        sh $home/$repo/scripts/patch.sh
+        #echo
+        #echo "If patching fails:"
+        #echo "To force an update, run setup.sh with the profile you want to use and the word 'force' as arguments."
+        #echo "For example, to force an update for the default profile, run the following command:"
+        #echo " $home/$repo/scripts/setup.sh default force"
+        #echo
+        #echo -e "\033[4;31mNOTE: Forcing the update will overwrite any changes you have made to the user profile.\e[0m"
+        #echo -e "\e[33mTo avoid this: please update the user profile manually following the patch notes.\e[0m"
+        #echo
+        #echo -e "\e[31mUser profile is not up to date.\e[0m"
+        #echo "User version:   $user_vars_version"
+        #echo "Source version: $src_vars_version"
+        #echo
+        #echo -e "\e[31mPlease update the user profile.\e[0m"
         exit 1
     fi
 else

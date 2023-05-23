@@ -218,8 +218,7 @@ if [ "$update_config" = "False" ] && [ "$update_profile" = "False" ]; then
     echo -e "\e[32mNo action required.\e[0m"
     exit 0
 else
-    echo -e "\e[31mUser config and profile are out of date.\e[0m"
-    # Search for patch files matching the user profile version
+    z    # Search for patch files matching the user profile version
     echo "Searching for patch files..."
     vars_patch=$home/$repo/profiles/$vars_profile/patches/$highest_version/vars.patch
     config_patch=$home/$repo/profiles/$config_profile/patches/$highest_version/config.patch
