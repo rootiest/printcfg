@@ -168,7 +168,7 @@ fi
 echo "Checking user profile: version..."
 
 # Search for the patch pattern in the user_vars
-vars_ver==$(grep -oP "$patch_pattern" "$user_vars" | cut -d':' -f2)
+vars_ver=$(grep -oP "$patch_pattern" "$user_vars" | cut -d':' -f2)
 
 if [ -n "$vars_ver" ]; then
     # Extract the version number using sed
