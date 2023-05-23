@@ -1,5 +1,0 @@
-
-[delayed_gcode _DEBUG_TEST]
-initial_duration: 1
-gcode:
-    { action_respond_info("_DEBUG_TEST") }
