@@ -53,7 +53,7 @@ user_cfg=$config/user_config.cfg
 old_user_cfg=$config/$repo/user_config.cfg
 # Patterns to identify profile name and version
 profile_pattern="# Profile:(.*)"
-patch_pattern="# Patch:(.*)"
+patch_pattern="# Patch:([0-9]+\.[0-9]+\.[0-9]+"
 
 # Check if any parameters were provided
 if [ $# -eq 0 ]
@@ -143,7 +143,7 @@ echo "Checking user config: version..."
 # Search for the patch pattern in the user_cfg
 config_ver==$(grep -oP "$patch_pattern" "$user_cfg" | cut -d':' -f2)
 
-if [ -n "$config_patch" ]; then
+if [ -n "$config_ver" ]; then
     # Extract the version number using sed
     #config_ver=$(echo "$config_patch" | sed -E "s/$patch_pattern/\1/")
     echo "Version: $config_ver"
