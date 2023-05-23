@@ -323,6 +323,27 @@ else
     python3 $home/$repo/scripts/search_replace.py "$moon_pattern" "$new_moon" "$moonraker"
 fi
 
+# Add printcfg to moonraker.asvc
+echo "Adding printcfg service to moonraker allowlist..."
+# Define allowlist file
+allowlist="$config/moonraker.asvc"
+# Verify printcfg is in allowlist
+if grep -qFx "$repo" "$allowlist"
+then
+    echo -e "\e[33mprintcfg service already in allowlist.\e[0m"
+else
+    echo "Adding printcfg service to moonraker allowlist..."
+    # Add printcfg service to moonraker allowlist
+    echo "$repo" >> $allowlist
+    if grep -qFx "$repo" "$allowlist"
+    then
+        echo -e "\e[32mprintcfg service added to allowlist successfully.\e[0m"
+    else
+        echo -e "\e[31mError: printcfg service not added to allowlist.\e[0m"
+        exit 1
+    fi
+fi
+
 echo -e "\e[32mInstall complete.\e[0m"
 echo
 
