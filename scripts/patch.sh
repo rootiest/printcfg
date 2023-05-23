@@ -40,6 +40,7 @@
 # Set the dev and repo name
 dev="rootiest"
 repo="printcfg"
+branch="master"
 # Get home directory
 home=$(eval echo ~$USER)
 # Define the klipper config file
@@ -201,7 +202,8 @@ while read line; do
 
             # Set the current highest version number to the new version number
             highest_version=$version
-
+            # Replace the line with the new highest version number
+            highest_version_line=$line
         fi
     fi
 

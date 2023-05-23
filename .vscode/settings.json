@@ -1,3 +1,4 @@
 {
-    "licenser.projectName": "printcfg"
+  "licenser.projectName": "printcfg",
+  "python.analysis.typeCheckingMode": "basic"
 }

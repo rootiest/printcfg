@@ -41,11 +41,14 @@
 # Set the dev and repo name
 dev="rootiest"
 repo="printcfg"
+branch="master"
+# Get home directory
+home=$(eval echo ~$USER)
 # Define the klipper config file
-config=~/printer_data/config
+config=$home/printer_data/config
 # Define the printer.cfg and moonraker.conf files
-printer=~/printer_data/config/printer.cfg
-moonraker=~/printer_data/config/moonraker.conf
+printer=$home/printer_data/config/printer.cfg
+moonraker=$home/printer_data/config/moonraker.conf
 # Set the default profile
 default_src=default
 user_vars=$config/user_profile.cfg
@@ -186,7 +189,7 @@ if [ "$user_vars_version" != "$src_vars_version" ]; then
         echo
         echo "To force an update, run setup.sh with the profile you want to use and the word 'force' as arguments."
         echo "For example, to force an update for the default profile, run the following command:"
-        echo " ~/$repo/scripts/setup.sh default force"
+        echo " $home/$repo/scripts/setup.sh default force"
         echo
         echo -e "\033[4;31mNOTE: Forcing the update will overwrite any changes you have made to the user profile.\e[0m"
         echo -e "\e[33mTo avoid this: please update the user profile manually following the patch notes.\e[0m"
