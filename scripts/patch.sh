@@ -134,7 +134,7 @@ echo "Checking user config: profile..."
 # Search for the profile_pattern in the user_cfg using grep
 config_profile=$(grep -oP "$profile_pattern" "$user_cfg" | cut -d':' -f2)
 
-if [ -n "$config_profile" ]; then
+if [ "$config_profile" ]; then
     echo "Profile: $config_profile"
 else
     echo -e "\e[31mUser config profile marker not found.\e[0m"
