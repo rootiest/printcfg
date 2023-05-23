@@ -182,7 +182,7 @@ fi
 echo "Checking patch notes..."
 
 # Search for the patch pattern in the patch_notes
-patch_notes=$config/$repo/profiles/$profile/patch_notes.txt
+patch_notes=$config/$repo/profiles/$vars_profile/patch_notes.txt
 
 # Read the file line by line
 while read line; do
@@ -208,7 +208,7 @@ done < "$patch_notes"
 echo "Latest patch is: $highest_version"
 
 # Check if the user config version is the same as the highest version
-if [ "$config_ver" == "$highest_version" ]; then
+if [ "$config_ver" = "$highest_version" ]; then
     echo -e "\e[32mUser config is up to date.\e[0m"
     update_config=False
 else
@@ -218,7 +218,7 @@ fi
 
 # Check if the user profile version is the same as the highest version
 
-if [ "$vars_ver" == "$highest_version" ]; then
+if [ "$vars_ver" = "$highest_version" ]; then
     echo -e "\e[32mUser profile is up to date.\e[0m"
     update_profile=False
 else
@@ -226,7 +226,7 @@ else
     update_profile=True
 fi
 
-if [ "$update_config" == "False" ] && [ "$update_profile" == "False" ]; then
+if [ "$update_config" = "False" ] && [ "$update_profile" = "False" ]; then
     echo -e "\e[32mUser config and profile are up to date.\e[0m"
     echo -e "\e[32mNo action required.\e[0m"
     exit 0
@@ -234,10 +234,10 @@ else
     echo -e "\e[31mUser config and profile are out of date.\e[0m"
     # Search for patch files matching the user profile version
     echo "Searching for patch files..."
-    vars_patch=~/$repo/profiles/$profile/patches/$highest_version/vars.cfg
-    config_patch=~/$repo/profiles/$profile/patches/$highest_version/config.cfg
+    vars_patch=~/$repo/profiles/$vars_profile/patches/$highest_version/vars.cfg
+    config_patch=~/$repo/profiles/$config_profile/patches/$highest_version/config.cfg
 
-    if [ "$update_config" == "True" ]; then
+    if [ "$update_config" = "True" ]; then
         # Check if the patch file exists
         if [ -f $config_patch ]; then
             echo "Patch file found."
@@ -264,7 +264,7 @@ else
         fi
     fi
 
-    if [ "$update_profile" == "True" ]; then
+    if [ "$update_profile" = "True" ]; then
         # Check if the patch file exists
         if [ -f $profile_patch ]; then
             echo "Patch file found."
@@ -293,14 +293,14 @@ else
     # Summarize results
     echo
     echo "Summary:"
-    if [ "$update_config" == "True" ]; then
+    if [ "$update_config" = "True" ]; then
         echo -e "\e[32mUser config was successfully patched.\e[0m"
         echo -e "Version: $highest_version"
     else
         echo -e "\e[32mUser config patch was not needed.\e[0m"
         echo -e "Version: $config_ver"
     fi
-    if [ "$update_profile" == "True" ]; then
+    if [ "$update_profile" = "True" ]; then
         echo -e "\e[32mUser profile was successfully patched.\e[0m"
         echo -e "Version: $highest_version"
     else
