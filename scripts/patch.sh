@@ -182,7 +182,7 @@ fi
 echo "Checking patch notes..."
 
 # Search for the patch pattern in the patch_notes
-patch_notes=~/$repo/profiles/$vars_profile/patch_notes.txt
+patch_notes="~/$repo/profiles/$vars_profile/patch_notes.txt"
 
 # Read the file line by line
 while read line; do
