@@ -38,4 +38,4 @@ def find_highest_version(file_name):
 # Test the function
 file_name = sys.argv[1]
 highest_version = find_highest_version(file_name)
-print("Highest version number:", highest_version)
+print(highest_version)
