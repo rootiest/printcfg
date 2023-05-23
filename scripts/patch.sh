@@ -99,7 +99,7 @@ then
         then
             echo -e "\e[31mInclude line is out of date.\e[0m"
             # Replace old include line with new include line
-            python3 search_replace.py "$uconfig_pattern_old" "$uconfig_pattern_new" "$printer"
+            python3 $home/$repo/scripts/search_replace.py "$uconfig_pattern_old" "$uconfig_pattern_new" "$printer"
             # Verify include line was added
             if grep -qFx "$uconfig_pattern_new" "$printer"
             then
@@ -235,7 +235,7 @@ else
             # Update version number in user config
             echo "Updating version number..."
             # Replace the version number using sed
-            python3 search_replace.py "$ver_patch" "$ver_patch$highest_version" "$user_cfg"
+            python3 $home/$repo/scripts/search_replace.py "$ver_patch" "$ver_patch$highest_version" "$user_cfg"
             # Verify that the version number has been updated
             if grep -qFx "$ver_patch$highest_version" "$user_cfg"
             then
@@ -263,7 +263,7 @@ else
             # Update version number in user profile
             echo "Updating version number..."
             # Replace the version number using sed
-            python3 search_replace.py "$ver_patch" "$ver_patch$highest_version" "$user_vars"
+            python3 $home/$repo/scripts/search_replace.py "$ver_patch" "$ver_patch$highest_version" "$user_vars"
             # Verify that the version number has been updated
             if grep -qFx "$ver_patch$highest_version" "$user_vars"
             then

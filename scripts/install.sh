@@ -269,7 +269,7 @@ then
 else
     echo "Adding printcfg config to $printer..."
     # Add printcfg config to beginning of file
-    python3 search_replace.py "$uconfig_pattern" "$uconfig_pattern" "$printer"
+    python3 $home/$repo/scripts/search_replace.py "$uconfig_pattern" "$uconfig_pattern" "$printer"
 fi
 
 # Verify moonraker is installed
