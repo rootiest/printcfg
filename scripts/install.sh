@@ -184,9 +184,15 @@ if [ -f requirements.txt ]; then
     pip3 install -r requirements.txt
 fi
 
-# Install the python package
-if [ -f $home/$repo/src/setup.py ]; then
-    python3 $home/$repo/src/setup.py --install
+# Check if the service is enabled
+if systemctl is-enabled "${repo}" >/dev/null 2>&1; then
+    echo "The ${repo} service is enabled."
+else
+    echo "Installing the ${repo} service..."
+    # Install the python package
+    if [ -f $home/$repo/src/setup.py ]; then
+        python3 $home/$repo/src/setup.py --install
+    fi
 fi
 
 # Make all scripts in printcfg executable
