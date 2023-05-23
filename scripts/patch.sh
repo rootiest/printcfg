@@ -188,27 +188,39 @@ echo "Checking patch notes..."
 # Search for the patch pattern in the patch_notes
 patch_notes="$home/$repo/profiles/$vars_profile/patch_notes.txt"
 
+# Read the contents of the file
+file_content=$(cat $patch_notes)
 
-# Read the file line by line
-while read line; do
-    
-    # Check if the line contains a version number
-    if [[ $line =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-        
-        # Extract the version number
-        version=${line%:*}
-        
-        # Compare the version number to the current highest version number
-        if [[ $version -gt $highest_version ]]; then
-            
-            # Set the current highest version number to the new version number
-            highest_version=$version
-            # Replace the line with the new highest version number
-            highest_version_line=$line
+# Initialize variables
+highest_version=""
+highest_major=""
+highest_minor=""
+highest_patch=""
+
+# Split the file content by version sections
+IFS=$'\n' read -d '' -ra versions <<< "$file_content"
+
+# Iterate over each version section
+for version in "${versions[@]}"; do
+    # Extract the version number from the section
+    if [[ $version =~ ^([0-9]+\.[0-9]+\.[0-9]+): ]]; then
+        current_version="${BASH_REMATCH[1]}"
+
+        # Extract the major, minor, and patch numbers
+        IFS='.' read -ra version_parts <<< "$current_version"
+        major="${version_parts[0]}"
+        minor="${version_parts[1]}"
+        patch="${version_parts[2]}"
+
+        # Check if the current version is higher
+        if [[ -z $highest_version || $major -gt $highest_major || ($major -eq $highest_major && $minor -gt $highest_minor) || ($major -eq $highest_major && $minor -eq $highest_minor && $patch -gt $highest_patch) ]]; then
+            highest_version="$current_version"
+            highest_major="$major"
+            highest_minor="$minor"
+            highest_patch="$patch"
         fi
     fi
-    
-done < "$patch_notes"
+done
 
 # Print the highest version number
 echo "Latest patch is: $highest_version"
@@ -242,7 +254,7 @@ else
     echo "Searching for patch files..."
     vars_patch=$home/$repo/profiles/$vars_profile/patches/$highest_version/vars.cfg
     config_patch=$home/$repo/profiles/$config_profile/patches/$highest_version/config.cfg
-    
+
     if [ "$update_config" = "True" ]; then
         # Check if the patch file exists
         if [ -f $config_patch ]; then
@@ -269,7 +281,7 @@ else
             exit 1
         fi
     fi
-    
+
     if [ "$update_profile" = "True" ]; then
         # Check if the patch file exists
         if [ -f $profile_patch ]; then
@@ -295,7 +307,7 @@ else
             exit 1
         fi
     fi
-    
+
     # Summarize results
     echo
     echo "Summary:"
@@ -313,10 +325,10 @@ else
         echo -e "\e[32mUser profile patch was not needed.\e[0m"
         echo -e "Version: $vars_ver"
     fi
-    
+
     echo
     echo -e "\e[32mPatching completed successfully.\e[0m"
     exit 0
-    
+
 fi
 
