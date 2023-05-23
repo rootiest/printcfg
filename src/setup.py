@@ -42,7 +42,7 @@ if sys.argv[1] == "--install":
 
     [Service]
     ExecStart={PYTHON_EXECUTABLE} {PYTHON_SCRIPT}
-    WorkingDirectory={os.path.dirname(PYTHON_SCRIPT)}
+    WorkingDirectory={os.path.dirname(SERVICE_PATH)}
 
     [Install]
     WantedBy=default.target
