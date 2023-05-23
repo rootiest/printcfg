@@ -155,7 +155,7 @@ fi
 echo "Checking user profile: profile..."
 
 # Search for the profile_pattern in the user_vars using grep
-profile=$(grep -oP "$profile_pattern" "$user_vars" | cut -d':' -f2)
+vars_profile=$(grep -oP "$profile_pattern" "$user_vars" | cut -d':' -f2)
 
 if [ -n "$vars_profile" ]; then
     echo "Profile: $vars_profile"
