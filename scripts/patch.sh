@@ -141,11 +141,10 @@ fi
 echo "Checking user config: version..."
 
 # Search for the patch pattern in the user_cfg
-config_ver==$(grep -oP "$patch_pattern" "$user_cfg" | cut -d':' -f2)
+config_ver=$(grep -oP "$patch_pattern" "$user_cfg" | cut -d':' -f2)
 
 if [ -n "$config_ver" ]; then
     # Extract the version number using sed
-    #config_ver=$(echo "$config_patch" | sed -E "s/$patch_pattern/\1/")
     echo "Version: $config_ver"
 else
     echo -e "\e[31mUser config version marker not found.\e[0m"
@@ -171,9 +170,8 @@ echo "Checking user profile: version..."
 # Search for the patch pattern in the user_vars
 vars_ver==$(grep -oP "$patch_pattern" "$user_vars" | cut -d':' -f2)
 
-if [ -n "$line" ]; then
+if [ -n "$vars_ver" ]; then
     # Extract the version number using sed
-    #vars_ver=$(echo "$line" | sed -E "s/$patch_pattern/\1/")
     echo "Version: $vars_ver"
 else
     echo -e "\e[31mUser profile version marker not found.\e[0m"
