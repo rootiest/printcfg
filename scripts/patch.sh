@@ -40,11 +40,13 @@
 # Set the dev and repo name
 dev="rootiest"
 repo="printcfg"
+# Get home directory
+home=$(eval echo ~$USER)
 # Define the klipper config file
-config=~/printer_data/config
+config=$home/printer_data/config
 # Define the printer.cfg and moonraker.conf files
-printer=~/printer_data/config/printer.cfg
-moonraker=~/printer_data/config/moonraker.conf
+printer=$home/printer_data/config/printer.cfg
+moonraker=$home/printer_data/config/moonraker.conf
 # Set the default profile
 default_src=default
 user_vars=$config/user_profile.cfg
@@ -182,7 +184,8 @@ fi
 echo "Checking patch notes..."
 
 # Search for the patch pattern in the patch_notes
-patch_notes="~/$repo/profiles/$vars_profile/patch_notes.txt"
+patch_notes="$home/$repo/profiles/$vars_profile/patch_notes.txt"
+
 
 # Read the file line by line
 while read line; do
@@ -234,8 +237,8 @@ else
     echo -e "\e[31mUser config and profile are out of date.\e[0m"
     # Search for patch files matching the user profile version
     echo "Searching for patch files..."
-    vars_patch=~/$repo/profiles/$vars_profile/patches/$highest_version/vars.cfg
-    config_patch=~/$repo/profiles/$config_profile/patches/$highest_version/config.cfg
+    vars_patch=$home/$repo/profiles/$vars_profile/patches/$highest_version/vars.cfg
+    config_patch=$home/$repo/profiles/$config_profile/patches/$highest_version/config.cfg
 
     if [ "$update_config" = "True" ]; then
         # Check if the patch file exists
