@@ -382,15 +382,10 @@ echo
 # Perform setup checks
 echo "Performing Setup Checks..."
 echo
-source $home/$repo/scripts/setup.sh $src
 
-# Check if setup.out exists
-if [ -f setup.out ]
-then
-    cat setup.out
-else
-    echo -e "\e[32mSetup checks passed.\e[0m"
-fi
+$home/$repo/scripts/setup.sh $src
+
+echo -e "\e[32mSetup checks passed.\e[0m"
 
 echo
 
