@@ -52,8 +52,8 @@ old_user_vars=$config/$repo/user_profile.cfg
 user_cfg=$config/user_config.cfg
 old_user_cfg=$config/$repo/user_config.cfg
 # Patterns to identify profile name and version
-profile_pattern="# Profile:(.*)" # Example: # Profile: default
-patch_pattern="# Patch: (.*)" # Example: # Patch 3.9.0
+profile_pattern="# Profile:(.*)"
+patch_pattern="# Patch:(.*)"
 
 # Check if any parameters were provided
 if [ $# -eq 0 ]
