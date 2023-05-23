@@ -188,6 +188,9 @@ if [ -f setup.py ]; then
     python setup.py install
 fi
 
+# Make all scripts in printcfg executable
+chmod +x $home/$repo/scripts/*.sh
+
 ### Install into klippers config ###
 
 # Check if config directory exists
