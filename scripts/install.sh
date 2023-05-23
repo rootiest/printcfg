@@ -187,7 +187,6 @@ if [ -f requirements.txt ]; then
 else
     echo -e "\e[33mNo dependencies to install.\e[0m"
 fi
-fi
 
 # Check if the service is enabled
 echo "Checking if the ${repo} service is enabled..."

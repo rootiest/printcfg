@@ -27,7 +27,7 @@ SERVICE_FILE = f"{os.path.expanduser('~')}/.config/systemd/user/{SERVICE_NAME}.s
 SERVICE_PATH = f"{os.path.expanduser('~')}/{SERVICE_NAME}/src"
 
 # Path to the Python script
-PYTHON_SCRIPT = "{SERVICE_PATH}/{SERVICE_NAME}.py"
+PYTHON_SCRIPT = f"{SERVICE_PATH}/{SERVICE_NAME}.py"
 PYTHON_EXECUTABLE = sys.executable
 
 if sys.argv[1] == "--install":
