@@ -1,18 +1,18 @@
 #!/bin/bash
 # Copyright (C) 2023 Chris Laprade (chris@rootiest.com)
-# 
+#
 # This file is part of printcfg.
-# 
+#
 # printcfg is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # printcfg is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -57,6 +57,9 @@ old_user_cfg=$config/$repo/user_config.cfg
 # Patterns to identify profile name and version
 profile_pattern="# Profile:(.*)"
 patch_pattern="# Patch:(.*)"
+uconfig_pattern_old="[include printcfg/user_config.cfg]"
+uconfig_pattern_new="[include user_config.cfg]"
+ver_patch="# Patch: "
 
 # Check if any parameters were provided
 if [ $# -eq 0 ]
@@ -92,15 +95,13 @@ then
         fi
         # Check if old include line exists in printer.cfg
         echo "Checking printer.cfg include line..."
-        if grep -qFx "[include printcfg/user_config.cfg]" "$printer"
+        if grep -qFx "$uconfig_pattern_old" "$printer"
         then
             echo -e "\e[31mInclude line is out of date.\e[0m"
-            # Remove old include line
-            sed -i '/\[include printcfg\/user_config.cfg\]/d' "$printer"
-            # Add new include line
-            sed -i '1s/^/[include user_config.cfg]\n/' "$printer"
+            # Replace old include line with new include line
+            python3 search_replace.py "$uconfig_pattern_old" "$uconfig_pattern_new" "$printer"
             # Verify include line was added
-            if grep -qFx "[include user_config.cfg]" "$printer"
+            if grep -qFx "$uconfig_pattern_new" "$printer"
             then
                 echo "Include line updated."
                 # User config is up to date
@@ -110,7 +111,7 @@ then
                 exit 1
             fi
         else
-            if grep -qFx "[include user_config.cfg]" "$printer"
+            if grep -qFx "$uconfig_pattern_new" "$printer"
             then
                 echo -e "\e[32mUser config is up to date.\e[0m"
             else
@@ -190,23 +191,23 @@ patch_notes="$home/$repo/profiles/$vars_profile/patch_notes.txt"
 
 # Read the file line by line
 while read line; do
-
+    
     # Check if the line contains a version number
     if [[ $line =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-
+        
         # Extract the version number
         version=${line%:*}
-
+        
         # Compare the version number to the current highest version number
         if [[ $version -gt $highest_version ]]; then
-
+            
             # Set the current highest version number to the new version number
             highest_version=$version
             # Replace the line with the new highest version number
             highest_version_line=$line
         fi
     fi
-
+    
 done < "$patch_notes"
 
 # Print the highest version number
@@ -241,7 +242,7 @@ else
     echo "Searching for patch files..."
     vars_patch=$home/$repo/profiles/$vars_profile/patches/$highest_version/vars.cfg
     config_patch=$home/$repo/profiles/$config_profile/patches/$highest_version/config.cfg
-
+    
     if [ "$update_config" = "True" ]; then
         # Check if the patch file exists
         if [ -f $config_patch ]; then
@@ -253,9 +254,9 @@ else
             # Update version number in user config
             echo "Updating version number..."
             # Replace the version number using sed
-            sed -i -E "s/$patch_pattern/$highest_version/" "$user_cfg"
+            python3 search_replace.py "$ver_patch" "$ver_patch$highest_version" "$user_cfg"
             # Verify that the version number has been updated
-            if grep -qFx "# Patch: $highest_version" "$user_cfg"
+            if grep -qFx "$ver_patch$highest_version" "$user_cfg"
             then
                 echo -e "\e[32mVersion number updated.\e[0m"
             else
@@ -268,7 +269,7 @@ else
             exit 1
         fi
     fi
-
+    
     if [ "$update_profile" = "True" ]; then
         # Check if the patch file exists
         if [ -f $profile_patch ]; then
@@ -280,9 +281,9 @@ else
             # Update version number in user profile
             echo "Updating version number..."
             # Replace the version number using sed
-            sed -i -E "s/$patch_pattern/$highest_version/" "$user_vars"
+            python3 search_replace.py "$ver_patch" "$ver_patch$highest_version" "$user_vars"
             # Verify that the version number has been updated
-            if grep -qFx "# Patch: $highest_version" "$user_vars"
+            if grep -qFx "$ver_patch$highest_version" "$user_vars"
             then
                 echo -e "\e[32mVersion number updated.\e[0m"
             else
@@ -312,10 +313,10 @@ else
         echo -e "\e[32mUser profile patch was not needed.\e[0m"
         echo -e "Version: $vars_ver"
     fi
-
+    
     echo
     echo -e "\e[32mPatching completed successfully.\e[0m"
     exit 0
-
+    
 fi
 
