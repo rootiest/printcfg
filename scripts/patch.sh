@@ -258,6 +258,8 @@ else
             echo "Patch file found."
             # Append the contents of the patch file to the user config
             echo "Applying profile patch file..."
+            echo "Patch file: $profile_patch"
+            echo "User vars: $user_vars"
             cat $profile_patch >> $user_vars
             echo "Profile patch file applied."
             # Update version number in user profile
