@@ -247,6 +247,7 @@ else
             echo "Version number updated."
         else
             echo -e "\e[31mConfig patch file not found.\e[0m"
+            echo "Patch file: $config_patch"
             exit 1
         fi
     fi
@@ -273,6 +274,7 @@ else
             fi
         else
             echo -e "\e[31mProfile patch file not found.\e[0m"
+            echo "Patch file: $profile_patch"
             exit 1
         fi
     fi
