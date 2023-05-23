@@ -267,7 +267,7 @@ then
 fi
 
 # Check if printcfg is included in the printer.cfg file
-if grep -qFx "[include user_config.cfg]" "$printer"
+if ! grep -qFx "[include user_config.cfg]" "$printer"
 then
     echo -e "\e[31mError: printcfg config not included in $printer\e[0m"
     exit 1
