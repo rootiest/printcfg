@@ -1,0 +1,3 @@
+python-apt==2.2.1
+python-dateutil==2.8.2
+requests==2.30.0
