@@ -221,8 +221,8 @@ else
     echo -e "\e[31mUser config and profile are out of date.\e[0m"
     # Search for patch files matching the user profile version
     echo "Searching for patch files..."
-    vars_patch=$home/$repo/profiles/$vars_profile/patches/$highest_version/vars.cfg
-    config_patch=$home/$repo/profiles/$config_profile/patches/$highest_version/config.cfg
+    vars_patch=$home/$repo/profiles/$vars_profile/patches/$highest_version/vars.patch
+    config_patch=$home/$repo/profiles/$config_profile/patches/$highest_version/config.patch
     
     if [ "$update_config" = "True" ]; then
         # Check if the patch file exists
