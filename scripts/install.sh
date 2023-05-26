@@ -210,6 +210,8 @@ if [ ! -f /usr/local/bin/printcfg ]; then
     echo "Creating printcfg bin..."
     sudo ln -s $home/$repo/src/printcfg.py /usr/local/bin/printcfg
     sudo chmod +x /usr/local/bin/printcfg
+    echo -e "\e[32mprintcfg bin created successfully.\e[0m"
+fi
 
 # Make all scripts in printcfg executable
 #chmod +x $home/$repo/scripts/*.sh
