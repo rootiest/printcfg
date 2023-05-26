@@ -45,9 +45,9 @@ PYTHON_EXECUTABLE = sys.executable
 if len(sys.argv) < 2 and len(sys.argv) > 0:
     MODE = sys.argv[1]
 elif len(sys.argv) < 0:
-    print("Please provide the --install argument to install the service.")
+    print("Please provide the 'install' argument to install the service.")
 else:
-    if sys.argv[3] == "--install":
+    if sys.argv[3] == "install":
         if not PYTHON_SCRIPT:
             print("Please provide the path to the Python script as an argument.")
             sys.exit(1)
@@ -100,5 +100,5 @@ else:
         os.chmod(f"/usr/local/bin/{SERVICE_NAME}", 0o755)
         
     else:
-        print("Please provide the --install argument to install the service.")
+        print("Please provide the 'install' argument to install the service.")
         sys.exit(1)
