@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 
+# This script generates a service file for printcfg.
+
 #!/usr/bin/env python3
 import os
 import sys
@@ -39,14 +41,6 @@ SERVICE_PATH = f"{HOME}/{SERVICE_NAME}"
 # Path to the Python script
 PYTHON_SCRIPT = f"{SERVICE_PATH}/src/{SERVICE_NAME}.py"
 PYTHON_EXECUTABLE = sys.executable
-
-# Prompt for sudo password
-#def prompt_sudo():
-#    ret = 0
-#    if os.geteuid() != 0:
-#        msg = "[sudo] password for %u:"
-#        ret = subprocess.check_call("sudo -v -p '%s'" % msg, shell=True)
-#    return ret
 
 if len(sys.argv) < 2 and len(sys.argv) > 0:
     MODE = sys.argv[1]

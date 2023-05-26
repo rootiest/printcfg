@@ -19,6 +19,8 @@
 
 #!/usr/bin/env python3
 
+# This script searches for a line containing a specific text and replaces the whole line with a new text.
+
 import os
 import sys
 

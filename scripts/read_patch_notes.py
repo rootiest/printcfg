@@ -19,6 +19,8 @@
 
 #!/usr/bin/env python3
 
+# This script reads the patch notes file and returns the highest version number.
+
 import os
 import sys
 import re

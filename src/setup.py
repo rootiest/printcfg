@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 
+# This script collects some data and then triggers the service generator.
+
 import os
 import sys
 import getpass
