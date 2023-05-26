@@ -20,6 +20,9 @@
 #!/usr/bin/env python3
 
 # This script searches for a line containing a specific text and replaces the whole line with a new text.
+# If the text is not found, the new text is added to the beginning of the file.
+
+# Usage: python3 search_replace.py <search_text> <replace_text> <file_name>
 
 import os
 import sys
