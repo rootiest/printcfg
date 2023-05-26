@@ -191,10 +191,13 @@ fi
 
 # Check if the service is enabled
 echo "Checking if the ${repo} service is enabled..."
-if systemctl --user is-enabled "${repo}" >/dev/null 2>&1; then
+if systemctl is-enabled "${repo}" >/dev/null 2>&1; then
     echo "The ${repo} service is enabled."
 else
     echo "Installing the ${repo} service..."
+    echo "Acquiring root privileges..."
+    # Acquire root privileges
+    sudo -v </dev/tty
     # Install the python package
     if [ -f $home/$repo/src/setup.py ]; then
         python3 $home/$repo/src/setup.py --install
@@ -421,7 +424,7 @@ echo
 echo "Performing Setup Checks..."
 echo
 
-$home/$repo/scripts/setup.sh $src
+sh "$home/$repo/scripts/setup.sh --$src"
 
 echo -e "\e[32mSetup checks passed.\e[0m"
 

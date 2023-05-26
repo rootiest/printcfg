@@ -126,6 +126,7 @@ else
     echo -e "\e[32mUser config is up to date.\e[0m"
 fi
 
+echo
 echo "Checking user profile..."
 
 # Check that user profile exists
@@ -185,6 +186,8 @@ if [ "$user_vars_version" != "$src_vars_version" ]; then
     else
         echo
         echo -e "\e[31mUser profile is not up to date.\e[0m"
+        echo "User version:   $user_vars_version"
+        echo "Source version: $src_vars_version"
         echo
         echo -e "\033[1;31mVersion mismatch: [$user_vars]\e[0m"
         echo
@@ -196,24 +199,31 @@ if [ "$user_vars_version" != "$src_vars_version" ]; then
             echo -e "\e[0m"
         fi
         echo
-        sh $home/$repo/scripts/patch.sh
-        #echo
-        #echo "If patching fails:"
-        #echo "To force an update, run setup.sh with the profile you want to use and the word 'force' as arguments."
-        #echo "For example, to force an update for the default profile, run the following command:"
-        #echo " $home/$repo/scripts/setup.sh default force"
-        #echo
-        #echo -e "\033[4;31mNOTE: Forcing the update will overwrite any changes you have made to the user profile.\e[0m"
-        #echo -e "\e[33mTo avoid this: please update the user profile manually following the patch notes.\e[0m"
-        #echo
-        #echo -e "\e[31mUser profile is not up to date.\e[0m"
-        #echo "User version:   $user_vars_version"
-        #echo "Source version: $src_vars_version"
-        #echo
-        #echo -e "\e[31mPlease update the user profile.\e[0m"
+        bash $home/$repo/scripts/patch.sh
         exit 1
     fi
 else
     echo -e "\e[32mUser profile is up to date.\e[0m"
     echo "User version:   $user_vars_version"
 fi
+
+# Check that printcfg service is enabled
+echo
+echo "Checking $repo service..."
+if systemctl is-enabled $repo.service | grep -q "enabled"
+then
+    # Check if printcfg service is running
+    if systemctl is-active $repo.service | grep -q "active"
+    then
+        echo -e "\e[32m$repo service is active.\e[0m"
+    else
+        echo -e "\e[31m$repo service is not running.\e[0m"
+        exit 1
+    fi
+else
+    echo -e "\e[31m$repo service is not enabled.\e[0m"
+    exit 1
+fi
+
+echo
+exit 0
