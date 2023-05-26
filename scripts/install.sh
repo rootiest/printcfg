@@ -199,11 +199,17 @@ else
     # Acquire root privileges
     sudo -v </dev/tty
     # Install the python package
-    if [ -f $home/$repo/src/setup.py ]; then
-        python3 $home/$repo/src/setup.py --install
+    if [ -f $home/$repo/src/$repo.py ]; then
+        python3 $home/$repo/src/$repo.py --install
         echo -e "\e[32m${repo} service installed successfully.\e[0m"
     fi
 fi
+
+# Create printcfg bin
+if [ ! -f /usr/local/bin/printcfg ]; then
+    echo "Creating printcfg bin..."
+    sudo ln -s $home/$repo/src/printcfg.py /usr/local/bin/printcfg
+    sudo chmod +x /usr/local/bin/printcfg
 
 # Make all scripts in printcfg executable
 #chmod +x $home/$repo/scripts/*.sh

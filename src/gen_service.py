@@ -83,9 +83,6 @@ else:
 
         # Set the appropriate permissions for the service configuration file
         os.chmod(SERVICE_FILE, 0o644)
-            
-        # Switch to the root user
-        
 
         # Reload systemd to recognize the new service
         os.system("systemctl daemon-reload")
@@ -96,6 +93,12 @@ else:
 
         # Check the status of the service
         os.system(f"systemctl status {SERVICE_NAME}")
+        
+        # Symbolic link to the executable
+        os.symlink(PYTHON_SCRIPT, f"/usr/local/bin/{SERVICE_NAME}")
+        # Set the appropriate permissions for the executable
+        os.chmod(f"/usr/local/bin/{SERVICE_NAME}", 0o755)
+        
     else:
         print("Please provide the --install argument to install the service.")
         sys.exit(1)

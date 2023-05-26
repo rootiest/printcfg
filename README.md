@@ -31,6 +31,8 @@
   - [Overview](#overview)
   - [Installation](#installation)
     - [What the install script does](#what-the-install-script-does)
+  - [Updating](#updating)
+  - [Changing Profiles](#changing-profiles)
   - [Configuration](#configuration)
   - [Using the suite](#using-the-suite)
   - [Profile Configuration](#profile-configuration)
@@ -91,6 +93,10 @@ You can also specify a preset profile for a more printer-specific default config
 
     curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash -s -- default
 
+Additionally, you can specify a different branch to install from:
+
+    curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash -s -- default dev
+
 ### What the install script does
 
 The install script will begin by checking for dependencies and installing them if they are missing.
@@ -109,7 +115,7 @@ This will consist of two files: `user_profile.cfg` and `user_config.cfg`.
 
 The following line will be added to your `printer.cfg` file:
 
-    [include print_config.cfg]
+    [include user_config.cfg]
 
 This tells Klipper to include the printcfg config file. The other files will be included from there.
 
@@ -121,21 +127,21 @@ This adds some moonraker configuration, specifically the `update_manager` for pr
 
 After all of these changes are made and verified, the script will restart Klipper and Moonraker.
 
-Future updates will be performed by the `update_manager` service and will typically require a restart of only Klipper.
+## Updating
 
-Most updates will be performed automatically, but some may require manual intervention. The installer will notify you if this is the case.
+Updates are handled by moonraker's `update_manager` service.
 
-When the update requires manual intervention, you will be notified of the changes that need to be made to your user_profile.cfg file and the installer will exit. Run the setup.sh script again to verify the changes were made and continue the update.
+They will appear in the UI alongside updates for Klipper and Moonraker.
 
-In most cases this will only require you to add new variables or remove obsolete variables from your user_profile.cfg file.
+The installer can now patch your config files to add new variables or configuration sections. This allows user profiles to be updated without overwriting your existing configuration.
 
-Best efforts will be made to avoid this as much as possible, but future features may require new variables to be added and the process has been made as simple as possible.
+Most updates will happen completely automatically, but some may require manual intervention.If an update requires manual intervention, it will be marked as `MANUAL` in the changelog.
 
-It's important to keep the user_profile.cfg file untouched by the automated update process so that your customizations are not overwritten.
+## Changing Profiles
 
-When new features are added, you will likely prefer to customize them to your liking, so it's best not to automatically append potentially unwanted new variables to your profile config.
+To change profiles, run the following command:
 
-I'm also open to suggestions for improving this process or PRs that add an interactive update process for profile changes from a patch file.
+    
 
 ## Configuration
 
