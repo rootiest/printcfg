@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # Copyright (C) 2023 Chris Laprade (chris@rootiest.com)
 # 
 # This file is part of printcfg.
@@ -17,50 +15,30 @@
 # You should have received a copy of the GNU General Public License
 # along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 
-#!/usr/bin/env python3
 import os
 import sys
+import getpass
+import subprocess
 
-# Service name and configuration file
-SERVICE_NAME = "printcfg"
-SERVICE_FILE = f"{os.path.expanduser('~')}/.config/systemd/user/{SERVICE_NAME}.service"
-SERVICE_PATH = f"{os.path.expanduser('~')}/{SERVICE_NAME}/src"
+def start_script_as_root():
+    # Get the current user name
+    current_user = getpass.getuser()
+    user_home = os.path.expanduser('~')
+    my_path = os.path.dirname(os.path.realpath(__file__))
+    script_dir = os.path.dirname(my_path)
+    mode = sys.argv[1]
 
-# Path to the Python script
-PYTHON_SCRIPT = f"{SERVICE_PATH}/{SERVICE_NAME}.py"
-PYTHON_EXECUTABLE = sys.executable
+    # Define the path to the second script
+    script_path = f'{script_dir}/src/gen_service.py'
 
-if sys.argv[1] == "--install":
-    if not PYTHON_SCRIPT:
-        print("Please provide the path to the Python script as an argument.")
-        sys.exit(1)
+    # Check if the second script exists
+    if not os.path.isfile(script_path):
+        print(f"Error: The script '{script_path}' does not exist.")
+        return
 
-    # Create the service file
-    service_content = f"""\
-    [Unit]
-    Description=Print Configuration Service
+    # Start the second script as root with the current user name as the first argument
+    command = ['sudo', 'python3', script_path, current_user, user_home, mode]
+    subprocess.run(command)
 
-    [Service]
-    ExecStart={PYTHON_EXECUTABLE} {PYTHON_SCRIPT}
-    WorkingDirectory={os.path.dirname(SERVICE_PATH)}
-
-    [Install]
-    WantedBy=default.target
-    """
-
-    os.makedirs(os.path.dirname(SERVICE_FILE), exist_ok=True)
-    with open(SERVICE_FILE, "w") as service:
-        service.write(service_content)
-
-    # Reload user systemd to recognize the new service
-    os.system("systemctl --user daemon-reload")
-
-    # Enable and start the service
-    os.system(f"systemctl --user enable {SERVICE_NAME}")
-    os.system(f"systemctl --user start {SERVICE_NAME}")
-
-    # Check the status of the service
-    os.system(f"systemctl --user status {SERVICE_NAME}")
-else:
-    print("Please provide the --install argument to install the service.")
-
+if __name__ == '__main__':
+    start_script_as_root()
