@@ -200,7 +200,7 @@ else
     sudo -v </dev/tty
     # Install the python package
     if [ -f $home/$repo/src/$repo.py ]; then
-        python3 $home/$repo/src/$repo.py --install
+        python3 $home/$repo/src/$repo.py install
         echo -e "\e[32m${repo} service installed successfully.\e[0m"
     fi
 fi
