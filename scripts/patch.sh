@@ -269,6 +269,7 @@ else
                 echo
                 echo "Using 'gcode:' instead."
                 vars_end=$(grep -n 'gcode:' $user_vars | cut -d':' -f1)
+            fi
             # Add the patch before the line
             sed -i "$vars_end r $vars_patch" $user_vars
             # Add a newline after the patch
