@@ -60,6 +60,7 @@ else:
             After=klipper.service
 
             [Service]
+            Mode=oneshot
             User={USER}
             Group={GROUP}
             RemainAfterExit=yes

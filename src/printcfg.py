@@ -53,11 +53,6 @@ def find_profile(path):
 def normal_ops():
     # Run the shell script at startup
     subprocess.Popen(["/bin/bash", setup_script])
-    print (f"Running in the background as {current_user}")
-    # Continuously run in the background
-    while True:
-        # Sleep for a minute
-        os.system("sleep 60")
 
 def generate_service():
     # Define the path to the second script
