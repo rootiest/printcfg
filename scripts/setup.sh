@@ -71,6 +71,26 @@ else
     fi
 fi
 
+echo "Checking $repo executable..."
+# Check if bin exists
+if [ ! -f /usr/local/bin/$repo ]
+then
+    echo "Creating $repo bin..."
+    sudo ln -s $home/$repo/src/$repo.py /usr/local/bin/$repo
+    sudo chmod +x /usr/local/bin/$repo
+    echo -e "\e[32m$repo bin created successfully.\e[0m"
+else
+    # Check if bin is executable
+    if [ ! -x /usr/local/bin/$repo ]
+    then
+        echo "Making $repo bin executable..."
+        sudo chmod +x /usr/local/bin/$repo
+        echo -e "\e[32m$repo bin made executable.\e[0m"
+    else
+        echo -e "\e[32m$repo bin is up to date.\e[0m"
+    fi
+fi
+
 echo "Checking user config..."
 
 # Check that user config exists

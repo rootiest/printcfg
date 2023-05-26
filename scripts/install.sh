@@ -206,15 +206,12 @@ else
 fi
 
 # Create printcfg bin
-if [ ! -f /usr/local/bin/printcfg ]; then
-    echo "Creating printcfg bin..."
-    sudo ln -s $home/$repo/src/printcfg.py /usr/local/bin/printcfg
-    sudo chmod +x /usr/local/bin/printcfg
-    echo -e "\e[32mprintcfg bin created successfully.\e[0m"
+if [ ! -f /usr/local/bin/$repo ]; then
+    echo "Creating $repo bin..."
+    sudo ln -s $home/$repo/src/$repo.py /usr/local/bin/$repo
+    sudo chmod +x /usr/local/bin/$repo
+    echo -e "\e[32m$repo bin created successfully.\e[0m"
 fi
-
-# Make all scripts in printcfg executable
-#chmod +x $home/$repo/scripts/*.sh
 
 ### Install into klippers config ###
 
