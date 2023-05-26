@@ -19,7 +19,7 @@
 
 #####################################
 ##       Printcfg Patch Script     ##
-##      Version 3.9.0 2023-5-22    ##
+##      Version 4.0.0 2023-5-26    ##
 #####################################
 
 # This script will apply version patches to the user profile and user config.
@@ -29,7 +29,7 @@
 ####################################################################################################
 
 # Example:
-#   ./patch.sh 3.9.0
+#   ./patch.sh 4.0.0
 # This will force the user profile to be patched for the specified version.
 
 # Example:
@@ -219,11 +219,12 @@ if [ "$update_config" = "False" ] && [ "$update_profile" = "False" ]; then
     echo -e "\e[32mNo action required.\e[0m"
     exit 0
 else
-    z    # Search for patch files matching the user profile version
+    # Search for patch files matching the user profile version
     echo "Searching for patch files..."
     vars_patch=$home/$repo/profiles/$vars_profile/patches/$highest_version/vars.patch
     config_patch=$home/$repo/profiles/$config_profile/patches/$highest_version/config.patch
     
+    # Check if the config needs to be updated
     if [ "$update_config" = "True" ]; then
         # Check if the patch file exists
         if [ -f $config_patch ]; then
@@ -252,13 +253,26 @@ else
         fi
     fi
     
+    # Check if the profile needs to be updated
     if [ "$update_profile" = "True" ]; then
         # Check if the patch file exists
         if [ -f $vars_patch ]; then
             echo "Patch file found."
             # Append the contents of the patch file to the user config
             echo "Applying profile patch file..."
-            cat $vars_patch >> $user_vars
+            # Find the line containing '# End Custom Variables #'
+            vars_end=$(grep -n '# End Custom Variables #' $user_vars | cut -d':' -f1)
+            # Make sure the line number is not empty
+            if [ -z "$vars_end" ]; then
+                echo -e "\e[31mEnd of custom variables marker not found.\e[0m"
+                echo "Marker: # End Custom Variables #"
+                echo
+                echo "Using 'gcode:' instead."
+                vars_end=$(grep -n 'gcode:' $user_vars | cut -d':' -f1)
+            # Add the patch before the line
+            sed -i "$vars_end r $vars_patch" $user_vars
+            # Add a newline after the patch
+            sed -i "$vars_end a \ " $user_vars
             echo "Profile patch file applied."
             # Update version number in user profile
             echo "Updating version number..."
