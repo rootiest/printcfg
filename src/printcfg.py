@@ -53,6 +53,8 @@ def find_profile(path):
 def normal_ops():
     # Run the shell script at startup
     subprocess.Popen(["/bin/bash", setup_script])
+    # Exit successfully
+    exit(0)
 
 def generate_service():
     # Define the path to the second script
@@ -67,6 +69,8 @@ def generate_service():
     # Start the second script as root with the current user name as the first argument
     command = ['sudo', 'python3', script_path, current_user, user_home, mode]
     subprocess.run(command)
+    # Exit successfully
+    exit(0)
 
 def change_profile(profile):
     # Define the path to the second script
@@ -78,6 +82,8 @@ def change_profile(profile):
     # Start the change profile script
     command = ['bash', script_path, profile]
     subprocess.run(command)
+    # Exit successfully
+    exit(0)
     
 def update_printcfg():
     # Define the path to the second script
@@ -90,6 +96,9 @@ def update_printcfg():
     profile = find_profile(profile_path)
     # Start the update script
     command = ['bash', script_path, profile]
+    subprocess.run(command)
+    # Exit successfully
+    exit(0)
     
 def remove_printcfg():
     # Define the path to the second script
@@ -101,6 +110,8 @@ def remove_printcfg():
     # Start the second script as root with the current user name as the first argument
     command = ['bash', script_path]
     subprocess.run(command)
+    # Exit successfully
+    exit(0)
 
 if __name__ == '__main__':
     # Check if there are any arguments
