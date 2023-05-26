@@ -424,7 +424,7 @@ echo
 echo "Performing Setup Checks..."
 echo
 
-sh "$home/$repo/scripts/setup.sh --$src"
+bash $home/$repo/scripts/setup.sh $src
 
 echo -e "\e[32mSetup checks passed.\e[0m"
 
