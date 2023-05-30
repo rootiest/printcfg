@@ -24,8 +24,8 @@
 
 # Usage: python3 search_replace.py <search_text> <replace_text> <file_name>
 
-import os
 import sys
+import re
 
 def search_and_replace(search_text, replace_text, file_name):
     """Searches for the line containing the search_text and replaces the whole line with the replace_text and saves the updated file over the original.
@@ -44,7 +44,7 @@ def search_and_replace(search_text, replace_text, file_name):
 
     found = False
     for i, line in enumerate(lines):
-        if search_text in line:
+        if re.search(search_text, line):
             lines[i] = replace_text + '\n'
             found = True
             break
