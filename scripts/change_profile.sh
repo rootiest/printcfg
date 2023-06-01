@@ -19,7 +19,7 @@
 
 #####################################
 ##      Printcfg Profile Change    ##
-##      Version 4.0.0 2023-5-26    ##
+##      Version 4.0.0 2023-6-1     ##
 #####################################
 
 # This script will change the user profile to the specified profile.

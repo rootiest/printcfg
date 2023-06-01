@@ -1,18 +1,18 @@
 <!--
  Copyright (C) 2023 Chris Laprade (chris@rootiest.com)
- 
+
  This file is part of printcfg.
- 
+
  printcfg is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
- 
+
  printcfg is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
- 
+
  You should have received a copy of the GNU General Public License
  along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 -->
@@ -20,7 +20,7 @@
 <!--
 #####################################
 ##      Printcfg Documentation     ##
-##      Version 4.0.0 2023-5-26    ##
+##      Version 4.0.0 2023-6-1     ##
 #####################################
 -->
 
@@ -71,7 +71,7 @@
 
 ## !!! WARNING: THIS IS STILL A WORK IN PROGRESS !!!
 
- > I am currently running this suite on my personal machine so I consider it to be ready for brave testers to play around with. Expect to encounter issues! But please tell me about them so I can fix them in a later revision!
+> I am currently running this suite on my personal machine so I consider it to be ready for brave testers to play around with. Expect to encounter issues! But please tell me about them so I can fix them in a later revision!
 
 ## Overview
 
@@ -101,7 +101,7 @@ Additionally, you can specify a different branch to install from:
 
 The install script will begin by checking for dependencies and installing them if they are missing.
 
-It will then clone the repo into your home directory in a folder named `printcfg`. 
+It will then clone the repo into your home directory in a folder named `printcfg`.
 
 Please do not modify the contents of this folder.
 
@@ -109,8 +109,8 @@ The files for the profile you specified will be copied into your main config fol
 
 This will consist of two files: `user_profile.cfg` and `user_config.cfg`.
 
-> NOTE: You are free to modify these files as you see fit, but please only modify files that begin with `user_` so that the update system can successfully merge changes. 
-> 
+> NOTE: You are free to modify these files as you see fit, but please only modify files that begin with `user_` so that the update system can successfully merge changes.
+>
 > These files will be placed in your main config folder, so they will not be overwritten by future updates.
 
 The following line will be added to your `printer.cfg` file:
@@ -141,13 +141,11 @@ Most updates will happen completely automatically, but some may require manual i
 
 To change profiles, run the following command:
 
-    
-
 ## Configuration
 
 The vast majority of the configuration is done via the `_printcfg` macro in `user_profile.cfg`.
 
-This is the "master" macro that hosts the configuration variables for the entire suite. 
+This is the "master" macro that hosts the configuration variables for the entire suite.
 
 It is here that we configure the behavior of the suite.
 
@@ -167,7 +165,7 @@ Preset profiles are [available](./profiles/) for various common configurations.
 
 If you would like to submit a profile, please see the [Submitting A Profile](#submitting-a-profile) section below.
 
- I'd love to have a wide variety of community profiles available for everyone to choose from!
+I'd love to have a wide variety of community profiles available for everyone to choose from!
 
 Custom configuration can be achieved by editing the `user_profile.cfg` file on your local installation.
 
@@ -237,7 +235,7 @@ This allows all the macros in the suite to be kept apprised of any slicer values
 
 It's completely ok if you don't use these settings in your klipper install or even in your slicer!
 
-This suite is built to support ***everything*** so that the user can simply set the configuration values (either manually in the config file or via `SET_GCODE_VARIABLE` commands)
+This suite is built to support **_everything_** so that the user can simply set the configuration values (either manually in the config file or via `SET_GCODE_VARIABLE` commands)
 
 The idea is that you don't need to worry about the correct way to configure the slicer for your needs or even finding (or creating!) the right macros for your needs.
 
@@ -251,7 +249,7 @@ The bulk of profile configuration occurs in the `user_profile.cfg` file. There a
 
 ### Versioning
 
-- `variable_version` 
+- `variable_version`
   - Determines when updates require new variables to be added to the profile. It is used by the install script to determine when profiles need updating.
 
 ### Default temperatures
@@ -271,7 +269,7 @@ The bulk of profile configuration occurs in the `user_profile.cfg` file. There a
 ## Chamber Variables
 
 - `variable_chamber_type`
-    - Defines the chamber sensor type. This could be 'temperature_sensor', 'temperature_fan', 'heater', or 'none'
+  - Defines the chamber sensor type. This could be 'temperature_sensor', 'temperature_fan', 'heater', or 'none'
 - `variable_chamber_name`
   - Defines the name of the chamber sensor. Typically this will be 'chamber'.
 - `variable_chamber_temp`
@@ -340,7 +338,7 @@ The bulk of profile configuration occurs in the `user_profile.cfg` file. There a
 - `variable_park_extrude`
   - Sets the default extrusion amount for parking moves.
 - `variable_park_base`
-  - Sets the "native" command for parking. This is typically something like '_TOOLHEAD_PAUSE_PARK_CANCEL'
+  - Sets the "native" command for parking. This is typically something like '\_TOOLHEAD_PAUSE_PARK_CANCEL'
 
 ### Preheat Parking Variables
 
@@ -386,6 +384,7 @@ Setting any of these values to -1 will park at the center of all 3 axes.
   - Sets the stepper current to be used during homing.
 
 ### Homing Macros
+
 - `variable_home_x_macro`
   - Sets the macro to be used for x-homing.
 - `variable_home_y_macro`
@@ -394,12 +393,14 @@ Setting any of these values to -1 will park at the center of all 3 axes.
   - Sets the macro to be used for z-homing.
 
 ### Pause Macros
+
 - `variable_pause_macro`
   - Sets the macro to be used for pausing.
 - `variable_pause_no_park`
   - Sets the macro to be used for pausing without parking.
 
 ### Speed Variables
+
 - `variable_default_speed_factor`
   - Sets the default speed factor for all moves.
 - `variable_start_offset`
@@ -552,6 +553,7 @@ Setting any of these values to -1 will park at the center of all 3 axes.
   - Enables debug logging for purging.
 
 ### End Gcode Variables
+
 - `variable_end_print`
   - Determines whether to run the end print macro.
 - `variable_end_retract`
@@ -570,7 +572,7 @@ Setting any of these values to -1 will park at the center of all 3 axes.
 ### Filament Change Variables
 
 - `variable_m600`
-  - Sets the command to be used for filament change. 
+  - Sets the command to be used for filament change.
 - `variable_auto_filament_sensor`
   - Determines whether to automatically toggle the filament sensor.
 - `variable_auto_filament_delay`
@@ -699,7 +701,7 @@ Each profile must consist of the following files:
   This file contains the patch notes for the profile. It should list the version of the profile and "initial release" if it is the first release.
 
 - **README.md**
-  
+
   This file contains the profile description. It should have one header with the profile name with By: Your Name underneath. It should also have a description of the profile and any special instructions for using it. You should also briefly list the printer and components the profile was designed for.
 
   If your README file requires any images, please place them in an `images` folder within your profile folder and reference them in your README file.
@@ -709,7 +711,7 @@ Each profile must consist of the following files:
   The main goal is to make it easy for users to quickly find the information they need to use your profile.
 
   Keep in mind that large files will increase the size of the install on every machine whether they use your profile or not. All profiles are synced alongside the rest of the repo. But only the selected profile is added to the user's config.
-  
+
   Please be reasonable with the size of your images to keep the repository size small and the sync time low.
 
   When your profile is installed on a user's printer, only the variables.cfg and config.cfg files are used. The README.md and patch_notes.txt files are only used for display purposes in the repository. Similarly, any additional files you include in your profile will not be added to the user's config.
