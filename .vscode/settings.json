@@ -1,4 +1,5 @@
 {
   "licenser.projectName": "printcfg",
-  "python.analysis.typeCheckingMode": "basic"
+  "python.analysis.typeCheckingMode": "basic",
+  "cSpell.words": ["printcfg"]
 }

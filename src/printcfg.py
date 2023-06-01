@@ -36,12 +36,6 @@ import logging
 
 logger: logging.Logger = logging.getLogger(__name__)
 
-# Set the logging level
-logger.setLevel(logging.DEBUG)
-formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-handler = logging.StreamHandler(sys.stdout)
-handler.setFormatter(formatter)
-logger.addHandler(handler)
 # Set the repo name
 REPO = "printcfg"
 
@@ -50,6 +44,24 @@ current_user = getpass.getuser()
 user_home = os.path.expanduser("~")
 profile_path = f"{user_home}/printer_data/user_profile.cfg"
 setup_script = f"{user_home}/printcfg/scripts/setup.sh"
+
+# Set the logfile
+logfile = f"{user_home}/printcfg/logs/printcfg.log"
+
+# Check if the logfile exists
+if not os.path.exists(f"{user_home}/printcfg/logs/"):
+    # Create the log directory
+    os.mkdir(f"{user_home}/printcfg/logs/")
+    # Create the logfile
+    with open(logfile, "w") as file:
+        pass
+
+# Set the logging level
+logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+handler = logging.FileHandler(logfile)
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 
 def find_profile(path):
@@ -105,7 +117,10 @@ def generate_service():
     try:
         result = subprocess.run(command, capture_output=True)
     except subprocess.CalledProcessError as e:
-        
+        print(f"Error: The subprocess returned an error.")
+        print(e.stderr)
+        logger.error("Error: The subprocess returned an error: {}".format(e.stderr))
+        return
     logger.debug("Command output: {}".format(result.stdout.decode("utf-8")))
     if result.returncode != 0:
         print(f"Error: The command '{command}' failed with code {result.returncode}.")
@@ -179,14 +194,18 @@ def remove_printcfg():
     try:
         subprocess.run(command)
     except subprocess.CalledProcessError as e:
-        pr
+        print("Error: The subprocess returned an error.")
+        print(e.stderr)
+        logger.error("Error: The subprocess returned an error: {}".format(e.stderr))
     # Exit successfully
+    logger.info("Printcfg removed successfully.")
     exit(0)
 
 
 if __name__ == "__main__":
     # Check if there are any arguments
     if len(sys.argv) < 2:
+        logger.info("No arguments provided, running normal operations.")
         normal_ops()
         sys.exit(1)
     # Check the argument
@@ -194,36 +213,47 @@ if __name__ == "__main__":
         print(
             "Error: The argument must be either install, change, remove, update, or default."
         )
+        logger.error("Error: The argument must be either install, change, remove, update, or default.")
         sys.exit(1)
     # If the argument is 'install' start the script as root
     if sys.argv[1] == "install":
+        logger.info("Running install operations.")
         generate_service()
     # If the argument is 'change' check for a second argument
     elif sys.argv[1] == "change":
         if len(sys.argv) != 3:
             print("Error: The change script requires two arguments.")
             print(f"Usage: python3 {REPO}.py change <profile>")
+            logger.error("Error: The change script requires two arguments.")
             sys.exit(1)
         else:
             # Check if the profile exists
             profile = sys.argv[2]
+            logger.info("Running change operations.")
             profile_path = f"{user_home}/{REPO}/profiles/{profile}"
+            logger.debug("Profile path: {}".format(profile_path))
             print(f"Changing to profile '{profile}'")
             # If the profile is 'backup' then skip the check
             if profile == "backup":
+                logger.info("Changing to backup profile.")
                 change_profile(profile)
             else:
                 # If the profile path does not exist, exit
                 if not os.path.isdir(profile_path):
                     print(f"Error: The profile '{profile}' does not exist.")
+                    logger.error("Error: The profile '{}' does not exist.".format(profile))
                     sys.exit(1)
                 else:
+                    logger.info("Changing to profile '{}'.".format(profile))
                     change_profile(profile)
     # If the argument is 'remove'
     elif sys.argv[1] == "remove":
+        logger.info("Running remove operations.")
         remove_printcfg()
     elif sys.argv[1] == "update":
+        logger.info("Running update operations.")
         update_printcfg()
 
     else:
+        logger.info("Running normal operations.")
         normal_ops()

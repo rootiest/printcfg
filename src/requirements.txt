@@ -1,4 +1,4 @@
-python-apt==2.2.1
+python-apt==0.7.8
 python-dateutil==2.8.2
 requests==2.30.0
-watchdog=3.3.0
+watchdog==3.0.0
