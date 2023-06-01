@@ -1,0 +1,24 @@
+
+## Door Switch Variables
+variable_doors: 1                           ; Number of doors (0, 1 or 2)
+variable_door1: 'doors'                     ; Name of first door switch
+variable_door2: 'right_door'                ; Name of second door switch
+## Note: Additional door switches can be added here (e.g. variable_door3, variable_door4, etc.)
+variable_door_debounce: 250                 ; Debounce time for door switch (ms)
+variable_status_door_open: '_STATUS_BRIGHT' ; Status to show when door is open
+variable_door_open_gcode:     'M116'        ; Custom macro for open doors   (set to 'M116' to disable)
+variable_door_closed_gcode:   'M116'        ; Custom macro for closed doors (set to 'M116' to disable)
+
+## Z Calibration Variables
+variable_z_calibrate: False
+
+## Default Offset
+variable_offset_store: False   ; If True, the z-offset will be saved to the config at the end of a print
+
+## Debugging Variables
+## NOTE: These variables configure debugging
+##       behavior. They are used to enable
+##       or disable debugging output and
+##       to define the debug output level.
+variable_debugging: True
+variable_debug_level: 0

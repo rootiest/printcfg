@@ -1,24 +1,25 @@
 #!/bin/bash
+
 # Copyright (C) 2023 Chris Laprade (chris@rootiest.com)
-# 
+#
 # This file is part of printcfg.
-# 
+#
 # printcfg is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # printcfg is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 
 #####################################
 ##      Printcfg Setup Script    ##
-##      Version 3.8.1 2023-5-21    ##
+##      Version 4.0.0 2023-6-1     ##
 #####################################
 
 # This script will check the user profile and update it if necessary.
@@ -41,11 +42,14 @@
 # Set the dev and repo name
 dev="rootiest"
 repo="printcfg"
+branch="master"
+# Get home directory
+home=$(eval echo ~$USER)
 # Define the klipper config file
-config=~/printer_data/config
+config=$home/printer_data/config
 # Define the printer.cfg and moonraker.conf files
-printer=~/printer_data/config/printer.cfg
-moonraker=~/printer_data/config/moonraker.conf
+printer=$home/printer_data/config/printer.cfg
+moonraker=$home/printer_data/config/moonraker.conf
 # Set the default profile
 default_src=default
 user_vars=$config/user_profile.cfg
@@ -64,6 +68,26 @@ else
     then
         src_vars=$config/$repo/profiles/$1/variables.cfg
         src_path=$config/$repo/profiles/$1
+    fi
+fi
+
+echo "Checking $repo executable..."
+# Check if bin exists
+if [ ! -f /usr/local/bin/$repo ]
+then
+    echo "Creating $repo bin..."
+    sudo ln -s $home/$repo/src/$repo.py /usr/local/bin/$repo
+    sudo chmod +x /usr/local/bin/$repo
+    echo -e "\e[32m$repo bin created successfully.\e[0m"
+else
+    # Check if bin is executable
+    if [ ! -x /usr/local/bin/$repo ]
+    then
+        echo "Making $repo bin executable..."
+        sudo chmod +x /usr/local/bin/$repo
+        echo -e "\e[32m$repo bin made executable.\e[0m"
+    else
+        echo -e "\e[32m$repo bin is up to date.\e[0m"
     fi
 fi
 
@@ -87,11 +111,11 @@ then
         fi
         # Check if old include line exists in printer.cfg
         echo "Checking printer.cfg include line..."
-        if grep -qFx "[include printcfg/user_config.cfg]" "$printer"
+        if grep -qFx "[include $repo/user_config.cfg]" "$printer"
         then
             echo -e "\e[31mInclude line is out of date.\e[0m"
             # Remove old include line
-            sed -i '/\[include printcfg\/user_config.cfg\]/d' "$printer"
+            sed -i '/\[include $repo\/user_config.cfg\]/d' "$printer"
             # Add new include line
             sed -i '1s/^/[include user_config.cfg]\n/' "$printer"
             # Verify include line was added
@@ -122,6 +146,7 @@ else
     echo -e "\e[32mUser config is up to date.\e[0m"
 fi
 
+echo
 echo "Checking user profile..."
 
 # Check that user profile exists
@@ -181,32 +206,44 @@ if [ "$user_vars_version" != "$src_vars_version" ]; then
     else
         echo
         echo -e "\e[31mUser profile is not up to date.\e[0m"
+        echo "User version:   $user_vars_version"
+        echo "Source version: $src_vars_version"
         echo
         echo -e "\033[1;31mVersion mismatch: [$user_vars]\e[0m"
         echo
-        echo "To force an update, run setup.sh with the profile you want to use and the word 'force' as arguments."
-        echo "For example, to force an update for the default profile, run the following command:"
-        echo " ~/$repo/scripts/setup.sh default force"
+        echo "Attempting to patch user profile..."
         echo
-        echo -e "\033[4;31mNOTE: Forcing the update will overwrite any changes you have made to the user profile.\e[0m"
-        echo -e "\e[33mTo avoid this: please update the user profile manually following the patch notes.\e[0m"
-        echo
-        echo -e "\e[31mUser profile is not up to date.\e[0m"
-        echo "User version:   $user_vars_version"
-        echo "Source version: $src_vars_version"
-        echo 
-        echo -e "\e[31mPlease update the user profile.\e[0m"
-        
         if [ -f $src_path/patch_notes.txt ]; then
             echo -e "\e[31mPatch notes:"
             cat $src_path/patch_notes.txt
             echo -e "\e[0m"
         fi
-        echo -e "\033[2;101mSetup checks failed.\e[0m"
         echo
+        bash $home/$repo/scripts/patch.sh
         exit 1
     fi
 else
     echo -e "\e[32mUser profile is up to date.\e[0m"
     echo "User version:   $user_vars_version"
 fi
+
+# Check that printcfg service is enabled
+echo
+echo "Checking $repo service..."
+if systemctl is-enabled $repo.service | grep -q "enabled"
+then
+    # Check if printcfg service is running
+    if systemctl is-active $repo.service | grep -q "active"
+    then
+        echo -e "\e[32m$repo service is active.\e[0m"
+    else
+        echo -e "\e[31m$repo service is not running.\e[0m"
+        exit 1
+    fi
+else
+    echo -e "\e[31m$repo service is not enabled.\e[0m"
+    exit 1
+fi
+
+echo
+exit 0
