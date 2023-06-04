@@ -48,10 +48,17 @@ setup_script = f"{user_home}/printcfg/scripts/setup.sh"
 # Set the logfile
 logfile = f"{user_home}/printcfg/logs/printcfg.log"
 
-# Clear the logfile
+# Check the date of the first log entry
+# If it is older than 30 days, delete the logfile
 if os.path.exists(logfile):
-    with open(logfile, "w") as file:
-        pass
+    with open(logfile, "r") as file:
+        first_line = file.readline()
+        if first_line:
+            first_line = first_line.split(" - ")[0]
+            first_line = datetime.datetime.strptime(first_line, "%Y-%m-%d %H:%M:%S,%f")
+            thirty_days_ago = datetime.datetime.now() - datetime.timedelta(days=30)
+            if first_line < thirty_days_ago:
+                os.remove(logfile)
 
 # Check if the logfile exists
 if not os.path.exists(f"{user_home}/printcfg/logs/"):
