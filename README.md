@@ -32,7 +32,7 @@ This set of macros is a full suite of features for Klipper.
 
 It is designed to be fully customizable to fit any printer or configuration. All without having to edit or understand the macros themselves. All configuration for the macros is done in the [user_profile.cfg](profiles/default/variables.cfg) file.
 
-[Documentation is available in the Wiki](docs/wiki.md)
+[Documentation is available in the Wiki](https://github.com/rootiest/printcfg/wiki)
 
 ## Features
 
