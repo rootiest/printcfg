@@ -40,15 +40,23 @@
 #   python3 search_replace.py "version" "version: 1.0.0" "patch_notes.txt"
 
 import sys
+import os
+import getpass
 import re
 import logging
 
 logger: logging.Logger = logging.getLogger(__name__)
 
+# Get the current user name
+current_user = getpass.getuser()
+user_home = os.path.expanduser("~")
+# Set the logfile
+logfile = f"{user_home}/printcfg/logs/search_replace.log"
+
 # Set the logging level
 logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-handler = logging.StreamHandler(sys.stdout)
+handler = logging.FileHandler(logfile)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
