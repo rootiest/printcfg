@@ -93,21 +93,86 @@ else
     fi
 fi
 
-echo "Checking user config..."
-
-# Check if second argument was provided
-if [ -n "$2" ]
+# Check for force parameter
+if [ "$2" == "force" ]
 then
-    # If second argument is "force"
-    if [ "$2" == "force" ]
+    echo -e "\e[31mChanging user profile to $default_src.\e[0m"
+    echo
+    echo "Updating user config..."
+    # Check if src_cfg exists
+    if [ -f $src_cfg ]
     then
-        echo "Updating user config..."
-        cp $src_cfg $user_cfg
-        # update user_vars_version variable
-        echo "User config updated."
-        echo
+        # Check if user config exists
+        if [ -f $user_cfg ]
+        then
+            # Remove old user config
+            rm $user_cfg
+            # Verify removal was successful
+            if [ ! -f $user_cfg ]
+            then
+                echo "Old user config removed."
+                # Copy new user config
+                cp $src_cfg $user_cfg
+                # Verify copy was successful
+                if [ -f $user_cfg ]
+                then
+                    echo "New user config copied."
+                    # User config is up to date
+                    echo -e "\e[32mUser config is now up to date.\e[0m"
+                else
+                    echo -e "\e[31mUser config copy failed.\e[0m"
+                    exit 1
+                fi
+            else
+                echo -e "\e[31mOld user config removal failed.\e[0m"
+                exit 1
+            fi
+        else
+            echo -e "\e[31mUser config does not exist.\e[0m"
+            exit 1
+        fi
+    else
+        echo -e "\e[31mSource config does not exist.\e[0m"
+        exit 1
+    fi
+    # Check if src_vars exists
+    if [ -f $src_vars ]
+    then
+        # Check if user vars exists
+        if [ -f $user_vars ]
+        then
+            # Remove old user vars
+            rm $user_vars
+            # Verify removal was successful
+            if [ ! -f $user_vars ]
+            then
+                echo "Old user vars removed."
+                # Copy new user vars
+                cp $src_vars $user_vars
+                # Verify copy was successful
+                if [ -f $user_vars ]
+                then
+                    echo "New user vars copied."
+                    # User vars is up to date
+                    echo -e "\e[32mUser vars is now up to date.\e[0m"
+                else
+                    echo -e "\e[31mUser vars copy failed.\e[0m"
+                    exit 1
+                fi
+            else
+                echo -e "\e[31mOld user vars removal failed.\e[0m"
+                exit 1
+            fi
+        else
+            echo -e "\e[31mUser vars does not exist.\e[0m"
+            exit 1
+        fi
+    else
+        echo -e "\e[31mSource vars does not exist.\e[0m"
+        exit 1
     fi
 else
+    echo "Checking user config..."
     # Check that user config exists
     if [ ! -f $user_cfg ]
     then
@@ -160,68 +225,41 @@ else
         # User config is up to date
         echo -e "\e[32mUser config is up to date.\e[0m"
     fi
-fi
-
-echo
-echo "Checking user profile..."
-
-# Check that user profile exists
-if [ ! -f $user_vars ]
-then
-    # Check if old user profile exists
-    if [ -f $old_user_vars ]
+    
+    echo
+    echo "Checking user profile..."
+    
+    # Check that user profile exists
+    if [ ! -f $user_vars ]
     then
-        echo -e "\e[31mUser profile location is out of date.\e[0m"
-        mv $old_user_vars $user_vars
-        # Verify move was successful
-        if [ -f $user_vars ]
+        # Check if old user profile exists
+        if [ -f $old_user_vars ]
         then
-            echo "User profile moved to $config/user_profile.cfg"
+            echo -e "\e[31mUser profile location is out of date.\e[0m"
+            mv $old_user_vars $user_vars
+            # Verify move was successful
+            if [ -f $user_vars ]
+            then
+                echo "User profile moved to $config/user_profile.cfg"
+            else
+                echo -e "\e[31mUser profile move failed.\e[0m"
+                exit 1
+            fi
         else
-            echo -e "\e[31mUser profile move failed.\e[0m"
+            echo -e "\e[31mUser profile does not exist.\e[0m"
             exit 1
         fi
-    else
-        echo -e "\e[31mUser profile does not exist.\e[0m"
-        exit 1
     fi
-fi
-
-# Find version of user profile
-user_vars_version=$(grep -oP '(variable_version: ).*' $user_vars)
-user_vars_version=${user_vars_version#variable_version: }
-src_vars_version=$(grep -oP '(variable_version: ).*' $src_vars)
-src_vars_version=${src_vars_version#variable_version: }
-
-# Check if second argument was provided
-if [ -n "$2" ]
-then
-    # If second argument is "force"
-    if [ "$2" == "force" ]
-    then
-        echo "Updating user profile..."
-        cp $src_vars $user_vars
-        # update user_vars_version variable
-        user_vars_version=$(grep -oP '(variable_version: ).*' $user_vars)
-        user_vars_version=${user_vars_version#variable_version: }
-        echo "User profile updated."
-        echo
-    fi
-else
+    
+    # Find version of user profile
+    user_vars_version=$(grep -oP '(variable_version: ).*' $user_vars)
+    user_vars_version=${user_vars_version#variable_version: }
+    src_vars_version=$(grep -oP '(variable_version: ).*' $src_vars)
+    src_vars_version=${src_vars_version#variable_version: }
+    
     # Check if user profile is up to date
+    
     if [ "$user_vars_version" != "$src_vars_version" ]; then
-        echo -e "\e[31mUser profile is not up to date.\e[0m"
-        echo "User version:   $user_vars_version"
-        echo "Source version: $src_vars_version"
-        # Fix the user profile
-        echo "Updating user profile..."
-        cp $src_vars $user_vars
-        # update user_vars_version variable
-        user_vars_version=$(grep -oP '(variable_version: ).*' $user_vars)
-        user_vars_version=${user_vars_version#variable_version: }
-        echo "User profile updated."
-        echo
-    else
         echo
         echo -e "\e[31mUser profile is not up to date.\e[0m"
         echo "User version:   $user_vars_version"
@@ -239,8 +277,12 @@ else
         echo
         bash $home/$repo/scripts/patch.sh
         exit 1
+    else
+        echo -e "\e[32mUser profile is up to date.\e[0m"
+        echo "User version:   $user_vars_version"
     fi
 fi
+
 
 # Check that printcfg service is enabled
 echo
