@@ -53,6 +53,11 @@ user_home = os.path.expanduser("~")
 # Set the logfile
 logfile = f"{user_home}/printcfg/logs/search_replace.log"
 
+# Clear the logfile
+if os.path.exists(logfile):
+    with open(logfile, "w") as file:
+        pass
+
 # Set the logging level
 logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")

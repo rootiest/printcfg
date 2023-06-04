@@ -48,6 +48,11 @@ setup_script = f"{user_home}/printcfg/scripts/setup.sh"
 # Set the logfile
 logfile = f"{user_home}/printcfg/logs/printcfg.log"
 
+# Clear the logfile
+if os.path.exists(logfile):
+    with open(logfile, "w") as file:
+        pass
+
 # Check if the logfile exists
 if not os.path.exists(f"{user_home}/printcfg/logs/"):
     # Create the log directory
