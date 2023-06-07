@@ -1,9 +1,0 @@
-name: Lint MarkDown
-
-on: [push]
-
-jobs:
-    markdownlint:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: "articulate/actions-markdownlint@v1"
