@@ -8,5 +8,4 @@ jobs:
         steps:
             - uses: "articulate/actions-markdownlint@v1"
               with:
-                files: '*.md'
-                fix: true
+                  github_token: "${{ secrets.GITHUB_TOKEN }}"
