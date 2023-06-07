@@ -34,6 +34,6 @@ jobs:
           OCO_OPENAI_MAX_TOKENS: 500
           OCO_OPENAI_BASE_PATH: ''
           OCO_DESCRIPTION: false
-          OCO_EMOJI: :white_check_mark:
+          OCO_EMOJI: false
           OCO_MODEL: gpt-4
           OCO_LANGUAGE: en

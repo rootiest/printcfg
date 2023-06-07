@@ -1,6 +1,6 @@
 name: Greet New Contributors
 on:
-    issue:
+    issues:
         types: [opened]
     pull_request:
         types: [opened]
