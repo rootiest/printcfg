@@ -6,7 +6,7 @@ jobs:
     markdownlint:
         runs-on: ubuntu-latest
         steps:
-            - uses: "articulate/actions-markdownlint@latest"
+            - uses: "articulate/actions-markdownlint@v1"
               with:
                 files: '*.md'
                 fix: true
