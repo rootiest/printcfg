@@ -19,7 +19,7 @@
 
 #####################################
 ##      Printcfg Install Script    ##
-##      Version 4.0.0 2023-6-1     ##
+##      Version 4.0.0 2023-6-5     ##
 #####################################
 
 # This script will download and install the printcfg package from GitHub.
@@ -315,7 +315,7 @@ fi
 # Set branch in moonraker-printcfg.conf
 echo "Setting branch in moonraker config..."
 # Define search pattern
-branch_pattern="primary_branch:*"
+branch_pattern="primary_branch:"
 # Set branch to current branch
 python3 $home/$repo/scripts/search_replace.py "$branch_pattern" "$branch_pattern $branch" "$config/moonraker-$repo.conf"
 

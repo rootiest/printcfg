@@ -21,14 +21,14 @@
 
 # This script reads the patch notes file and returns the highest version number.
 
-import os
 import sys
 import re
 
 def find_highest_version(file_name):
+    """Finds highest version in patch notes."""
     highest_version = None
 
-    with open(file_name, 'r') as file:
+    with open(file_name, 'r', encoding="utf-8") as file:
         content = file.read()
 
     pattern = r'(\d+\.\d+\.\d+):'
@@ -42,6 +42,6 @@ def find_highest_version(file_name):
 
 
 # Test the function
-file_name = sys.argv[1]
-highest_version = find_highest_version(file_name)
-print(highest_version)
+f_name = sys.argv[1]
+h_version = find_highest_version(f_name)
+print(h_version)

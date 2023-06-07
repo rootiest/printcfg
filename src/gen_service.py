@@ -79,7 +79,7 @@ else:
         print(f"Working directory: {os.path.dirname(SERVICE_PATH)}")
 
         os.makedirs(os.path.dirname(SERVICE_FILE), exist_ok=True)
-        with open(SERVICE_FILE, "w") as service:
+        with open(SERVICE_FILE, "w", encoding="utf-8") as service:
             service.write(service_content)
 
         # Set the appropriate permissions for the service configuration file

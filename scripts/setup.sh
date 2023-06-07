@@ -19,7 +19,7 @@
 
 #####################################
 ##      Printcfg Setup Script    ##
-##      Version 4.0.0 2023-6-1     ##
+##      Version 4.0.0 2023-6-5     ##
 #####################################
 
 # This script will check the user profile and update it if necessary.
@@ -60,12 +60,14 @@ old_user_cfg=$config/$repo/user_config.cfg
 # Check if any parameters were provided
 if [ $# -eq 0 ]
 then
+    src_cfg=$config/$repo/profiles/$default_src/config.cfg
     src_vars=$config/$repo/profiles/$default_src/variables.cfg
     src_path=$config/$repo/profiles/$default_src
 else
     # Set the src_vars file
     if [ -n "$1" ]
     then
+        src_cfg=$config/$repo/profiles/$1/config.cfg
         src_vars=$config/$repo/profiles/$1/variables.cfg
         src_path=$config/$repo/profiles/$1
     fi
@@ -91,119 +93,173 @@ else
     fi
 fi
 
-echo "Checking user config..."
-
-# Check that user config exists
-if [ ! -f $user_cfg ]
+# Check for force parameter
+if [ "$2" == "force" ]
 then
-    # Check if old user config exists
-    if [ -f $old_user_cfg ]
+    echo -e "\e[31mChanging user profile to $default_src.\e[0m"
+    echo
+    echo "Updating user config..."
+    # Check if src_cfg exists
+    if [ -f $src_cfg ]
     then
-        echo -e "\e[31mUser config location is out of date.\e[0m"
-        mv $old_user_cfg $user_cfg
-        # Verify move was successful
+        # Check if user config exists
         if [ -f $user_cfg ]
         then
-            echo "User config moved to $config/user_config.cfg"
+            # Remove old user config
+            rm $user_cfg
+            # Verify removal was successful
+            if [ ! -f $user_cfg ]
+            then
+                echo "Old user config removed."
+                # Copy new user config
+                cp $src_cfg $user_cfg
+                # Verify copy was successful
+                if [ -f $user_cfg ]
+                then
+                    echo "New user config copied."
+                    # User config is up to date
+                    echo -e "\e[32mUser config is now up to date.\e[0m"
+                else
+                    echo -e "\e[31mUser config copy failed.\e[0m"
+                    exit 1
+                fi
+            else
+                echo -e "\e[31mOld user config removal failed.\e[0m"
+                exit 1
+            fi
         else
-            echo -e "\e[31mUser config move failed.\e[0m"
+            echo -e "\e[31mUser config does not exist.\e[0m"
             exit 1
         fi
-        # Check if old include line exists in printer.cfg
-        echo "Checking printer.cfg include line..."
-        if grep -qFx "[include $repo/user_config.cfg]" "$printer"
+    else
+        echo -e "\e[31mSource config does not exist.\e[0m"
+        exit 1
+    fi
+    # Check if src_vars exists
+    if [ -f $src_vars ]
+    then
+        # Check if user vars exists
+        if [ -f $user_vars ]
         then
-            echo -e "\e[31mInclude line is out of date.\e[0m"
-            # Remove old include line
-            sed -i '/\[include $repo\/user_config.cfg\]/d' "$printer"
-            # Add new include line
-            sed -i '1s/^/[include user_config.cfg]\n/' "$printer"
-            # Verify include line was added
-            if grep -qFx "[include user_config.cfg]" "$printer"
+            # Remove old user vars
+            rm $user_vars
+            # Verify removal was successful
+            if [ ! -f $user_vars ]
             then
-                echo "Include line updated."
-                # User config is up to date
-                echo -e "\e[32mUser config is now up to date.\e[0m"
+                echo "Old user vars removed."
+                # Copy new user vars
+                cp $src_vars $user_vars
+                # Verify copy was successful
+                if [ -f $user_vars ]
+                then
+                    echo "New user vars copied."
+                    # User vars is up to date
+                    echo -e "\e[32mUser vars is now up to date.\e[0m"
+                else
+                    echo -e "\e[31mUser vars copy failed.\e[0m"
+                    exit 1
+                fi
             else
-                echo -e "\e[31mInclude line update failed.\e[0m"
+                echo -e "\e[31mOld user vars removal failed.\e[0m"
                 exit 1
             fi
         else
-            if grep -qFx "[include user_config.cfg]" "$printer"
-            then
-                echo -e "\e[32mUser config is up to date.\e[0m"
-            else
-                echo -e "\e[31mInclude line does not exist.\e[0m"
-                exit 1
-            fi
+            echo -e "\e[31mUser vars does not exist.\e[0m"
+            exit 1
         fi
     else
-        echo -e "\e[31mUser config does not exist.\e[0m"
+        echo -e "\e[31mSource vars does not exist.\e[0m"
         exit 1
     fi
 else
-    # User config is up to date
-    echo -e "\e[32mUser config is up to date.\e[0m"
-fi
-
-echo
-echo "Checking user profile..."
-
-# Check that user profile exists
-if [ ! -f $user_vars ]
-then
-    # Check if old user profile exists
-    if [ -f $old_user_vars ]
+    echo "Checking user config..."
+    # Check that user config exists
+    if [ ! -f $user_cfg ]
     then
-        echo -e "\e[31mUser profile location is out of date.\e[0m"
-        mv $old_user_vars $user_vars
-        # Verify move was successful
-        if [ -f $user_vars ]
+        # Check if old user config exists
+        if [ -f $old_user_cfg ]
         then
-            echo "User profile moved to $config/user_profile.cfg"
+            echo -e "\e[31mUser config location is out of date.\e[0m"
+            mv $old_user_cfg $user_cfg
+            # Verify move was successful
+            if [ -f $user_cfg ]
+            then
+                echo "User config moved to $config/user_config.cfg"
+            else
+                echo -e "\e[31mUser config move failed.\e[0m"
+                exit 1
+            fi
+            # Check if old include line exists in printer.cfg
+            echo "Checking printer.cfg include line..."
+            if grep -qFx "[include $repo/user_config.cfg]" "$printer"
+            then
+                echo -e "\e[31mInclude line is out of date.\e[0m"
+                # Remove old include line
+                sed -i '/\[include $repo\/user_config.cfg\]/d' "$printer"
+                # Add new include line
+                sed -i '1s/^/[include user_config.cfg]\n/' "$printer"
+                # Verify include line was added
+                if grep -qFx "[include user_config.cfg]" "$printer"
+                then
+                    echo "Include line updated."
+                    # User config is up to date
+                    echo -e "\e[32mUser config is now up to date.\e[0m"
+                else
+                    echo -e "\e[31mInclude line update failed.\e[0m"
+                    exit 1
+                fi
+            else
+                if grep -qFx "[include user_config.cfg]" "$printer"
+                then
+                    echo -e "\e[32mUser config is up to date.\e[0m"
+                else
+                    echo -e "\e[31mInclude line does not exist.\e[0m"
+                    exit 1
+                fi
+            fi
         else
-            echo -e "\e[31mUser profile move failed.\e[0m"
+            echo -e "\e[31mUser config does not exist.\e[0m"
             exit 1
         fi
     else
-        echo -e "\e[31mUser profile does not exist.\e[0m"
-        exit 1
+        # User config is up to date
+        echo -e "\e[32mUser config is up to date.\e[0m"
     fi
-fi
-
-# Find version of user profile
-user_vars_version=$(grep -oP '(variable_version: ).*' $user_vars)
-user_vars_version=${user_vars_version#variable_version: }
-src_vars_version=$(grep -oP '(variable_version: ).*' $src_vars)
-src_vars_version=${src_vars_version#variable_version: }
-
-# Check if user profile is up to date
-if [ "$user_vars_version" != "$src_vars_version" ]; then
-    if [ -n "$2" ]
+    
+    echo
+    echo "Checking user profile..."
+    
+    # Check that user profile exists
+    if [ ! -f $user_vars ]
     then
-        # If second argument is "force"
-        if [ "$2" == "force" ]
+        # Check if old user profile exists
+        if [ -f $old_user_vars ]
         then
-            echo -e "\e[31mUser profile is not up to date.\e[0m"
-            echo "User version:   $user_vars_version"
-            echo "Source version: $src_vars_version"
-            # Fix the user profile
-            echo "Updating user profile..."
-            cp $src_vars $user_vars
-            # update user_vars_version variable
-            user_vars_version=$(grep -oP '(variable_version: ).*' $user_vars)
-            user_vars_version=${user_vars_version#variable_version: }
-            echo "User profile updated."
-            echo
+            echo -e "\e[31mUser profile location is out of date.\e[0m"
+            mv $old_user_vars $user_vars
+            # Verify move was successful
+            if [ -f $user_vars ]
+            then
+                echo "User profile moved to $config/user_profile.cfg"
+            else
+                echo -e "\e[31mUser profile move failed.\e[0m"
+                exit 1
+            fi
         else
-            echo -e "\e[31mUser profile is not up to date.\e[0m"
-            echo "User version:   $user_vars_version"
-            echo "Source version: $src_vars_version"
-            echo -e "\e[31mPlease update the user profile.\e[0m"
-            echo
-            echo -e "\e[31mSetup checks failed.\e[0m"
+            echo -e "\e[31mUser profile does not exist.\e[0m"
+            exit 1
         fi
-    else
+    fi
+    
+    # Find version of user profile
+    user_vars_version=$(grep -oP '(variable_version: ).*' $user_vars)
+    user_vars_version=${user_vars_version#variable_version: }
+    src_vars_version=$(grep -oP '(variable_version: ).*' $src_vars)
+    src_vars_version=${src_vars_version#variable_version: }
+    
+    # Check if user profile is up to date
+    
+    if [ "$user_vars_version" != "$src_vars_version" ]; then
         echo
         echo -e "\e[31mUser profile is not up to date.\e[0m"
         echo "User version:   $user_vars_version"
@@ -221,11 +277,12 @@ if [ "$user_vars_version" != "$src_vars_version" ]; then
         echo
         bash $home/$repo/scripts/patch.sh
         exit 1
+    else
+        echo -e "\e[32mUser profile is up to date.\e[0m"
+        echo "User version:   $user_vars_version"
     fi
-else
-    echo -e "\e[32mUser profile is up to date.\e[0m"
-    echo "User version:   $user_vars_version"
 fi
+
 
 # Check that printcfg service is enabled
 echo
