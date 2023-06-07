@@ -3,16 +3,14 @@ name: Publish Release
 
 on:
   push:
-    tags:
-      - "v*"
-
+    branches:
+      - "master"
 jobs:
   tagged-release:
     name: "Tagged Release"
     runs-on: "ubuntu-latest"
 
     steps:
-      # ...
       - name: ${{ github.event.head_commit.message }}
         run: |
           echo "done!"
