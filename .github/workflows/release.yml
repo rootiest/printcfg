@@ -13,4 +13,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
-        title: ${{ github.event.pull_request.title }}
+        title: ${{ github.event.head_commit.message }}
