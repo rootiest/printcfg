@@ -19,7 +19,8 @@
 
 #!/usr/bin/env python3
 
-# This code searches for a string in a file and replaces the whole line containing the string with a different string.
+# This code searches for a string in a file and replaces the whole line
+# containing the string with a different string.
 # The search is case sensitive.
 # It will add the line if it does not exist.
 # It will overwrite the file with the new contents.
@@ -57,7 +58,7 @@ logfile = f"{user_home}/printcfg/logs/search_replace.log"
 # Check the date of the first log entry
 # If it is older than 30 days, delete the logfile
 if os.path.exists(logfile):
-    with open(logfile, "r") as file:
+    with open(logfile, "r", encoding="utf-8") as file:
         first_line = file.readline()
         if first_line:
             first_line = first_line.split(" - ")[0]
@@ -104,7 +105,7 @@ def simple_search_and_replace(search_text, replace_text, file_name):
         return False
 
     logger.debug("search_and_replace() opened the file %s", file_name)
-    with open(file_name, "r") as f:
+    with open(file_name, "r", encoding="utf-8") as f:
         lines = f.readlines()
 
     found = False
@@ -120,7 +121,7 @@ def simple_search_and_replace(search_text, replace_text, file_name):
         lines.insert(0, replace_text + "\n")
         logger.debug("search_and_replace() inserted the replace_text %s", replace_text)
 
-    with open(file_name, "w") as f:
+    with open(file_name, "w", encoding="utf-8") as f:
         f.writelines(lines)
         logger.debug("search_and_replace() wrote the file %s", file_name)
 
@@ -159,7 +160,7 @@ def search_and_replace(search_text: str, replace_text: str, file_name: str) -> b
 
     # Open the file
     logger.debug("search_and_replace() opened the file %s", file_name)
-    with open(file_name, "r") as f:
+    with open(file_name, "r", encoding="utf-8") as f:
         lines = f.readlines()
 
     # Search the file for the search_text
@@ -176,10 +177,9 @@ def search_and_replace(search_text: str, replace_text: str, file_name: str) -> b
 
     # Write the file
     logger.debug("search_and_replace() wrote the file %s", file_name)
-    with open(file_name, "w") as f:
+    with open(file_name, "w", encoding="utf-8") as f:
         f.writelines(lines)
 
-    return True
     return found
 
 
@@ -192,11 +192,11 @@ if len(sys.argv) != 4:
     print('  python3 search_replace.py "version" "version: 1.0.0" "patch_notes.txt"')
     sys.exit(1)
 
-search_text = sys.argv[1]
-replace_text = sys.argv[2]
-file_name = sys.argv[3]
+s_text = sys.argv[1]
+r_text = sys.argv[2]
+f_name = sys.argv[3]
 
-status = simple_search_and_replace(search_text, replace_text, file_name)
+status = simple_search_and_replace(s_text, r_text, f_name)
 if status:
     print("The change was successful.")
 else:

@@ -52,7 +52,7 @@ logfile = f"{user_home}/printcfg/logs/printcfg.log"
 # Check the date of the first log entry
 # If it is older than 30 days, delete the logfile
 if os.path.exists(logfile):
-    with open(logfile, "r") as file:
+    with open(logfile, "r", encoding="utf-8") as file:
         first_line = file.readline()
         if first_line:
             first_line = first_line.split(" - ")[0]
@@ -66,7 +66,7 @@ if not os.path.exists(f"{user_home}/printcfg/logs/"):
     # Create the log directory
     os.mkdir(f"{user_home}/printcfg/logs/")
     # Create the logfile
-    with open(logfile, "w") as file:
+    with open(logfile, "w", encoding="utf-8") as file:
         pass
 
 # Set the logging level
@@ -80,7 +80,7 @@ logger.addHandler(handler)
 def find_profile(path):
     logger.debug("Searching for profile name in file: {}".format(path))
     # Find the profile name (Eg: '# Profile: default' = 'default')
-    with open(path, "r") as file:
+    with open(path, "r", encoding="utf-8") as file:
         for line in file:
             if line.startswith("# Profile: "):
                 logger.debug("Found profile name: {}".format(line[11:].strip()))
