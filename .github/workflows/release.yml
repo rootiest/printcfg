@@ -1,16 +1,23 @@
 name: Publish Release
+
+
 on:
   push:
     branches:
       - "master"
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  tagged-release:
+    name: "Tagged Release"
+    runs-on: "ubuntu-latest"
+
     steps:
-    - uses: actions/checkout@v3
-    - name: Create a Release
-      uses: elgohr/Github-Release-Action@v4
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        title: ${{ github.event.head_commit.message }}
+      - name: ${{ github.event.head_commit.message }}
+        run: |
+          echo "done!"
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: true
+          automatic_release_tag: "latest"
+          title: ${{ github.event.head_commit.message }}

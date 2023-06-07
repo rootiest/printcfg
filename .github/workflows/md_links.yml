@@ -1,4 +1,5 @@
-name: markdown-link-check
+
+name: Check Links
 
 on:
   push:
