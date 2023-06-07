@@ -3,21 +3,23 @@ name: Publish Release
 
 on:
   push:
-    branches:
-      - "master"
+    tags:
+      - "v*"
+
 jobs:
   tagged-release:
     name: "Tagged Release"
     runs-on: "ubuntu-latest"
 
     steps:
+      # ...
       - name: ${{ github.event.head_commit.message }}
         run: |
           echo "done!"
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: true
-          automatic_release_tag: "latest"
-          title: ${{ github.event.head_commit.message }}
+            repo_token: "${{ secrets.GITHUB_TOKEN }}"
+            prerelease: true
+            automatic_release_tag: "latest"
+            title: ${{ github.event.head_commit.message }}
