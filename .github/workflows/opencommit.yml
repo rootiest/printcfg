@@ -4,7 +4,7 @@ on:
   push:
     # this list of branches is often enough,
     # but you may still ignore other public branches
-    branches-ignore: [master]
+    branches-ignore: [dev, testing, staging]
 jobs:
   opencommit:
     timeout-minutes: 10
