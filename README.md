@@ -24,9 +24,9 @@
 #####################################
 -->
 
-![header](docs/pretty_header.png)
-
 # PrintCFG Klipper Suite
+
+![header](docs/pretty_header.png)
 
 This set of macros is a full suite of features for Klipper.
 
@@ -52,3 +52,15 @@ It is designed to be fully customizable to fit any printer or configuration. All
 - and more!
 
 All of this can be configured and used with absolutely no knowledge of creating macros. Simply set configuration values like you do for other klipper configurations and the macros will automatically adjust to your settings.
+
+## Contact
+
+Rootiest#5668 on Discord (Voron and Klipper servers)
+
+Join the [Rootiest Discord server](https://discord.gg/AYjVSvrVF2) for information and support for my projects.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/rootiest/zippy_guides/main/resources/github-snake-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/rootiest/zippy_guides/main/resources/github-snake.svg">
+  <img alt="Shows a snake consuming the squares from the rootiest contributions graph." src="https://raw.githubusercontent.com/rootiest/zippy_guides/main/resources/github-snake.svg">
+</picture>
