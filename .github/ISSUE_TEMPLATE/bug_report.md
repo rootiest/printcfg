@@ -10,11 +10,12 @@ assignees: ""
 A clear and concise description of what the bug is.
 
 **To Reproduce**
-Steps to reproduce the behavior:
+**Steps to Reproduce**
+Please provide detailed steps to reproduce the issue, including any relevant configuration settings or input files.
 
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
+1. 
+2. 
+3. 
 4. See error
 
 **Expected behavior**
