@@ -4,7 +4,20 @@ on:
   push:
     # this list of branches is often enough,
     # but you may still ignore other public branches
-    branches-ignore: [master]
+    branches-ignore: [master, main]
+    paths:
+      - "src/**"
+      - "scripts/**"
+      - "profiles/**"
+      - "docs/**"
+      - "./**.md"
+      - "**.cfg"
+      - "**.py"
+      - "**.sh"
+    tags:
+      - "v*"
+      - "gpt*"
+
 jobs:
   opencommit:
     timeout-minutes: 10
