@@ -25,7 +25,7 @@ jobs:
         id: ai_security_check
         uses: obetomuniz/ai-security-check-for-pull-requests-action@v1.0.0
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPOSITORY: ${{ github.repository }}
           GH_EVENT_PULL_REQUEST_NUMBER: ${{ github.event.number }}
           OPENAI_TOKEN: ${{ secrets.OCO_OPENAI_API_KEY }}
@@ -35,7 +35,7 @@ jobs:
         env:
           PR_COMMENT: ${{ steps.ai_security_check.outputs.pr_comment }}
         with:
-          github-token: ${{ secrets.GH_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const prComment = process.env.PR_COMMENT || "No security or privacy issues found.";
             const { data } = await github.rest.issues.createComment({
