@@ -24,9 +24,9 @@
 #####################################
 -->
 
-![header](docs/pretty_header.png)
-
 # PrintCFG Klipper Suite
+
+![header](docs/pretty_header.png)
 
 This set of macros is a full suite of features for Klipper.
 
