@@ -32,7 +32,7 @@ Please include the following files in your profile submission:
 - `variables.cfg`
 - `README.md`
 
-The `README.md` file should contain the same information as this issue template. You may use any GitHub MarkDown features you wish. Please include a note of it and attach any images you wish to use in the `README.md` file to this issue.
+The `README.md` file should contain the same information as this issue template. You may use any GitHub Markdown features you wish. Please include a note of it and attach any images you wish to use in the `README.md` file to this issue.
 
 - **Checklist**
 - [ ] I have included a unique profile name
