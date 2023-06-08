@@ -10,7 +10,6 @@ assignees: ""
 A clear and concise description of what the bug is.
 
 **To Reproduce**
-**To Reproduce**
 Please provide detailed steps to reproduce the issue, including any relevant configuration settings or input files.
 
 1. Go to '...'
