@@ -57,6 +57,10 @@ All of this can be configured and used with absolutely no knowledge of creating 
 
 Rootiest#5668 on Discord (Voron and Klipper servers)
 
+Donate to support my work:
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/rootiest)
+
 Join the [Rootiest Discord server](https://discord.gg/AYjVSvrVF2) for information and support for my projects.
 
 <picture>
