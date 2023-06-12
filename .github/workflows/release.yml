@@ -1,11 +1,10 @@
 name: Publish Release
 
-
 on:
   push:
-    tags:
-      - "v*"
-      - "Version*"
+    branches:
+      - master
+      - main
 
 jobs:
   tagged-release:
