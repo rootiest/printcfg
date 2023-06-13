@@ -57,6 +57,11 @@ old_user_vars=$config/$repo/user_profile.cfg
 user_cfg=$config/user_config.cfg
 old_user_cfg=$config/$repo/user_config.cfg
 
+LOGFILE="$home/$repo/logs/setup.log"
+exec 3>&1 1>"$LOGFILE" 2>&1
+trap "echo 'ERROR: An error occurred during execution, check log $LOGFILE for details.' >&3" ERR
+trap '{ set +x; } 2>/dev/null; echo -n "[$(date -Is)]  "; set -x' DEBUG
+
 # Check if any parameters were provided
 if [ $# -eq 0 ]
 then
@@ -79,28 +84,28 @@ echo "Checking $repo executable..."
 # Check if bin exists
 if [ ! -f /usr/local/bin/$repo ]
 then
-    echo "Creating $repo bin..."
+    echo "Creating $repo bin..." >&3
     sudo ln -s $home/$repo/src/$repo.py /usr/local/bin/$repo
     sudo chmod +x /usr/local/bin/$repo
-    echo -e "\e[32m$repo bin created successfully.\e[0m"
+    echo -e "\e[32m$repo bin created successfully.\e[0m" >&3
 else
     # Check if bin is executable
     if [ ! -x /usr/local/bin/$repo ]
     then
-        echo "Making $repo bin executable..."
+        echo "Making $repo bin executable..." >&3
         sudo chmod +x /usr/local/bin/$repo
-        echo -e "\e[32m$repo bin made executable.\e[0m"
+        echo -e "\e[32m$repo bin made executable.\e[0m" >&3
     else
-        echo -e "\e[32m$repo bin is up to date.\e[0m"
+        echo -e "\e[32m$repo bin is up to date.\e[0m" >&3
     fi
 fi
 
 # Check for force parameter
 if [ "$2" == "force" ]
 then
-    echo -e "\e[31mChanging user profile to $default_src.\e[0m"
+    echo -e "\e[31mChanging user profile to $default_src.\e[0m" >&3
     echo
-    echo "Updating user config..."
+    echo "Updating user config..." >&3
     # Check if src_cfg exists
     if [ -f $src_cfg ]
     then
@@ -112,7 +117,7 @@ then
             # Verify removal was successful
             if [ ! -f $user_cfg ]
             then
-                echo "Old user config removed."
+                echo "Old user config removed." >&3
                 # Copy new user config
                 cp $src_cfg $user_cfg
                 # Verify copy was successful
@@ -120,21 +125,21 @@ then
                 then
                     echo "New user config copied."
                     # User config is up to date
-                    echo -e "\e[32mUser config is now up to date.\e[0m"
+                    echo -e "\e[32mUser config is now up to date.\e[0m" >&3
                 else
-                    echo -e "\e[31mUser config copy failed.\e[0m"
+                    echo -e "\e[31mUser config copy failed.\e[0m" >&3
                     exit 1
                 fi
             else
-                echo -e "\e[31mOld user config removal failed.\e[0m"
+                echo -e "\e[31mOld user config removal failed.\e[0m" >&3
                 exit 1
             fi
         else
-            echo -e "\e[31mUser config does not exist.\e[0m"
+            echo -e "\e[31mUser config does not exist.\e[0m" >&3
             exit 1
         fi
     else
-        echo -e "\e[31mSource config does not exist.\e[0m"
+        echo -e "\e[31mSource config does not exist.\e[0m" >&3
         exit 1
     fi
     # Check if src_vars exists
@@ -156,46 +161,46 @@ then
                 then
                     echo "New user vars copied."
                     # User vars is up to date
-                    echo -e "\e[32mUser vars is now up to date.\e[0m"
+                    echo -e "\e[32mUser vars is now up to date.\e[0m" >&3
                 else
-                    echo -e "\e[31mUser vars copy failed.\e[0m"
+                    echo -e "\e[31mUser vars copy failed.\e[0m" >&3
                     exit 1
                 fi
             else
-                echo -e "\e[31mOld user vars removal failed.\e[0m"
+                echo -e "\e[31mOld user vars removal failed.\e[0m" >&3
                 exit 1
             fi
         else
-            echo -e "\e[31mUser vars does not exist.\e[0m"
+            echo -e "\e[31mUser vars does not exist.\e[0m" >&3
             exit 1
         fi
     else
-        echo -e "\e[31mSource vars does not exist.\e[0m"
+        echo -e "\e[31mSource vars does not exist.\e[0m" >&3
         exit 1
     fi
 else
-    echo "Checking user config..."
+    echo "Checking user config..." >&3
     # Check that user config exists
     if [ ! -f $user_cfg ]
     then
         # Check if old user config exists
         if [ -f $old_user_cfg ]
         then
-            echo -e "\e[31mUser config location is out of date.\e[0m"
+            echo -e "\e[31mUser config location is out of date.\e[0m" >&3
             mv $old_user_cfg $user_cfg
             # Verify move was successful
             if [ -f $user_cfg ]
             then
-                echo "User config moved to $config/user_config.cfg"
+                echo "User config moved to $config/user_config.cfg" >&3
             else
-                echo -e "\e[31mUser config move failed.\e[0m"
+                echo -e "\e[31mUser config move failed.\e[0m" >&3
                 exit 1
             fi
             # Check if old include line exists in printer.cfg
-            echo "Checking printer.cfg include line..."
+            echo "Checking printer.cfg include line..." >&3
             if grep -qFx "[include $repo/user_config.cfg]" "$printer"
             then
-                echo -e "\e[31mInclude line is out of date.\e[0m"
+                echo -e "\e[31mInclude line is out of date.\e[0m" >&3
                 # Remove old include line
                 sed -i '/\[include $repo\/user_config.cfg\]/d' "$printer"
                 # Add new include line
@@ -203,33 +208,33 @@ else
                 # Verify include line was added
                 if grep -qFx "[include user_config.cfg]" "$printer"
                 then
-                    echo "Include line updated."
+                    echo "Include line updated." >&3
                     # User config is up to date
-                    echo -e "\e[32mUser config is now up to date.\e[0m"
+                    echo -e "\e[32mUser config is now up to date.\e[0m" >&3
                 else
-                    echo -e "\e[31mInclude line update failed.\e[0m"
+                    echo -e "\e[31mInclude line update failed.\e[0m" >&3
                     exit 1
                 fi
             else
                 if grep -qFx "[include user_config.cfg]" "$printer"
                 then
-                    echo -e "\e[32mUser config is up to date.\e[0m"
+                    echo -e "\e[32mUser config is up to date.\e[0m" >&3
                 else
-                    echo -e "\e[31mInclude line does not exist.\e[0m"
+                    echo -e "\e[31mInclude line does not exist.\e[0m" >&3
                     exit 1
                 fi
             fi
         else
-            echo -e "\e[31mUser config does not exist.\e[0m"
+            echo -e "\e[31mUser config does not exist.\e[0m" >&3
             exit 1
         fi
     else
         # User config is up to date
-        echo -e "\e[32mUser config is up to date.\e[0m"
+        echo -e "\e[32mUser config is up to date.\e[0m" >&3
     fi
     
-    echo
-    echo "Checking user profile..."
+    echo >&3
+    echo "Checking user profile..." >&3
     
     # Check that user profile exists
     if [ ! -f $user_vars ]
@@ -237,18 +242,18 @@ else
         # Check if old user profile exists
         if [ -f $old_user_vars ]
         then
-            echo -e "\e[31mUser profile location is out of date.\e[0m"
+            echo -e "\e[31mUser profile location is out of date.\e[0m" >&3
             mv $old_user_vars $user_vars
             # Verify move was successful
             if [ -f $user_vars ]
             then
-                echo "User profile moved to $config/user_profile.cfg"
+                echo "User profile moved to $config/user_profile.cfg" >&3
             else
-                echo -e "\e[31mUser profile move failed.\e[0m"
+                echo -e "\e[31mUser profile move failed.\e[0m" >&3
                 exit 1
             fi
         else
-            echo -e "\e[31mUser profile does not exist.\e[0m"
+            echo -e "\e[31mUser profile does not exist.\e[0m" >&3
             exit 1
         fi
     fi
@@ -264,48 +269,48 @@ else
     # Check if user profile is up to date
     
     if [ "$user_vars_version" != "$src_vars_version" ]; then
-        echo
-        echo -e "\e[31mUser profile is not up to date.\e[0m"
-        echo "User profile:   $profile_used"
-        echo "User version:   $user_vars_version"
-        echo "Source version: $src_vars_version"
-        echo
-        echo -e "\033[1;31mVersion mismatch: [$user_vars]\e[0m"
-        echo
-        echo "Attempting to patch user profile..."
-        echo
+        echo >&3
+        echo -e "\e[31mUser profile is not up to date.\e[0m" >&3
+        echo "User profile:   $profile_used" >&3
+        echo "User version:   $user_vars_version" >&3
+        echo "Source version: $src_vars_version" >&3
+        echo >&3
+        echo -e "\033[1;31mVersion mismatch: [$user_vars]\e[0m" >&3
+        echo >&3
+        echo "Attempting to patch user profile..." >&3
+        echo >&3
         if [ -f $src_path/patch_notes.txt ]; then
-            echo -e "\e[31mPatch notes:"
+            echo -e "\e[31mPatch notes:" >&3
             cat $src_path/patch_notes.txt
-            echo -e "\e[0m"
+            echo -e "\e[0m" >&3
         fi
-        echo
+        echo >&3
         bash $home/$repo/scripts/patch.sh
         exit 1
     else
-        echo -e "\e[32mUser profile is up to date.\e[0m"
-        echo "User profile:   $profile_used"
-        echo "Profile version:   $user_vars_version"
+        echo -e "\e[32mUser profile is up to date.\e[0m" >&3
+        echo "User profile:   $profile_used" >&3
+        echo "Profile version:   $user_vars_version" >&3
     fi
 fi
 
 # Check that printcfg service is enabled
-echo
-echo "Checking $repo service..."
+echo >&3
+echo "Checking $repo service..." >&3
 if systemctl is-enabled $repo.service | grep -q "enabled"
 then
     # Check if printcfg service is running
     if systemctl is-active $repo.service | grep -q "active"
     then
-        echo -e "\e[32m$repo service is active.\e[0m"
+        echo -e "\e[32m$repo service is active.\e[0m" >&3
     else
-        echo -e "\e[31m$repo service is not running.\e[0m"
+        echo -e "\e[31m$repo service is not running.\e[0m" >&3
         exit 1
     fi
 else
-    echo -e "\e[31m$repo service is not enabled.\e[0m"
+    echo -e "\e[31m$repo service is not enabled.\e[0m" >&3
     exit 1
 fi
 
-echo
+echo >&3
 exit 0
