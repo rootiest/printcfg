@@ -107,7 +107,7 @@ if ! which wget > /dev/null; then
 fi
 
 ## Install missing dependencies
-if [ -n "$need_git" ] || [ -n "$need_pip" ] || [ -n "$need_bc" ] || [ -n "$need_wget"]; then
+if [ -n "$need_git" ] || [ -n "$need_pip" ] || [ -n "$need_bc" ] || [ -n "$need_wget" ]; then
     echo "Installing missing dependencies..." >&3
     sudo apt update
     sudo apt-get install -y git python3-pip bc wget

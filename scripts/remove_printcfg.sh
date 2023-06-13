@@ -81,7 +81,7 @@ replace_line="#[include printcfg-moonraker.conf]"
 python3 "$SCRIPT_DIR/search_replace.py" "$include_line" "$replace_line" "$moonraker" || { echo -e "\e[31mFailed to remove [include printcfg-moonraker.conf] from moonraker.conf.\e[0m"; exit 1; }
 
 # Remove the printcfg directory
-sudo rm -r $home/$repo
+sudo rm -rf $home/$repo
 
 # Verify that the printcfg directory was removed
 if [ -d $home/$repo ]; then
