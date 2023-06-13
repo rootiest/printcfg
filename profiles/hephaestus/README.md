@@ -25,7 +25,13 @@ This profile is for a Voron V2.4 300mm with TAP and a nozzle brush and a bunch o
 
 ## Usage
 
+To install printcfg with this profile, run:
+
     curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash -s -- hephaestus
+
+To change to this profile, run:
+
+    printcfg change hephaestus
 
 ## Features
 
