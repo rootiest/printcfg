@@ -80,6 +80,7 @@ logger.addHandler(handler)
 
 def show_help():
     """Show the help message."""
+    logger.info("Showing help message...")
     print(f"Usage: {sys.argv[0]} [install|change|remove|update|help]")
     print(f"  install: Install the {REPO} service")
     print(f"  restart: Restart the {REPO} service")
@@ -90,6 +91,7 @@ def show_help():
     print(f"  status: Show the status of the {REPO} service")
     print(f"  repair: Repair the {REPO} service")
     print("  help: Show this help message")
+    logger.info("Help message shown.")
     sys.exit(0)
 
 def find_profile(path: str):
@@ -132,7 +134,7 @@ def normal_ops():
 
 def generate_service():
     """Generate the printcfg service."""
-    logger.info("Generating service...")
+    logger.info("Generating %s service...", REPO)
     # Define the path to the second script
     script_dir = f"{user_home}/{REPO}/"
     logger.debug("Script directory: %s", script_dir)
@@ -165,7 +167,7 @@ def generate_service():
         print(f"Error from command: {result.stderr.decode('utf-8')}")
         return
     # Exit gracefully
-    logger.info("Service generated successfully.")
+    logger.info("%s service generated successfully.", REPO)
     sys.exit(0)
 
 def change_profile(profile_name: str):
@@ -188,7 +190,8 @@ def change_profile(profile_name: str):
         print(err.stderr)
         logger.error("Error: The subprocess returned an error: %s", err.stderr)
     # Exit gracefully
-    logger.info("Profile changed successfully.")
+    logger.info("Profile changed to %s successfully.", profile_name)
+    print(f"Profile changed to {profile_name} successfully.")
     sys.exit(0)
 
 def update_printcfg():
@@ -211,7 +214,8 @@ def update_printcfg():
         print(err.stderr)
         logger.error("Error: The subprocess returned an error: %s", err.stderr)
     # Exit gracefully
-    logger.info("Update complete.")
+    logger.info("%s updated successfully.", REPO)
+    print(f"{REPO} updated successfully.")
     sys.exit(0)
 
 def restart_service(service_name: str):
@@ -227,7 +231,7 @@ def restart_service(service_name: str):
     logger.debug("Executing command: %s", command)
     try:
         subprocess.check_call(command)
-        logger.info("Service restarted successfully.")
+        logger.info("Service '%s' restarted successfully.", service_name)
         print(f"Service '{service_name}' restarted successfully.")
         return True
     except subprocess.CalledProcessError as err:
@@ -240,7 +244,7 @@ def change_branch(branch_name: str):
     logger.info("Changing to branch '%s'.", branch_name)
     # Define the path to the second script
     script_path = f"{user_home}/{REPO}/scripts/install.sh"
-    logger.debug("Executing script: %s", script_path)
+    logger.debug("Script: %s", script_path)
     # Check if the second script exists
     if not os.path.isfile(script_path):
         print(f"Error: The script '{script_path}' does not exist.")
@@ -250,6 +254,8 @@ def change_branch(branch_name: str):
     # Start the change branch script
     command = ["bash", script_path, profile_name, branch_name]
     logger.debug("Executing command: %s", command)
+    logger.debug("Changing to branch '%s' with profile '%s'.", branch_name, profile_name)
+    print(f"Changing to branch '{branch_name}' with profile '{profile_name}'.")
     try:
         subprocess.run(command, check=False)
     except subprocess.CalledProcessError as err:
@@ -257,7 +263,8 @@ def change_branch(branch_name: str):
         print(err.stderr)
         logger.error("Error: The subprocess returned an error: %s", err.stderr)
     # Exit gracefully
-    logger.info("Branch changed successfully.")
+    logger.info("Succesfully changed to branch '%s'.", branch_name)
+    print(f"Succesfully changed to branch '{branch_name}'.")
     sys.exit(0)
 
 def repair_printcfg():
@@ -280,7 +287,8 @@ def repair_printcfg():
         print(err.stderr)
         logger.error("Error: The subprocess returned an error: %s", err.stderr)
     # Exit gracefully
-    logger.info("Repair complete.")
+    logger.info("Repairing %s completed successfully.", REPO)
+    print(f"Repairing {REPO} completed successfully.")
     sys.exit(0)
 
 
@@ -304,7 +312,8 @@ def remove_printcfg():
         print(err.stderr)
         logger.error("Error: The subprocess returned an error: %s", err.stderr)
     # Exit gracefully
-    logger.info("Printcfg removed successfully.")
+    logger.info("%s removed successfully.", REPO)
+    print(f"{REPO} removed successfully.")
     sys.exit(0)
 
 def show_status(service_name: str):
