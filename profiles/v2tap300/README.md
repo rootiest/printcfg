@@ -38,3 +38,5 @@ To change to this profile, run:
 - 300mm build volume
 - Voron TAP probe
 - StealthBurner LEDs
+- No Sensorless Homing
+- Adaptive Meshing
