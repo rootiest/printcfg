@@ -75,8 +75,8 @@ logger.addHandler(handler)
 
 def simple_search_and_replace(search_text, replace_text, file_name):
     """
-    Searches for the line containing the search_text 
-    and replaces the whole line with the replace_text 
+    Searches for the line containing the search_text
+    and replaces the whole line with the replace_text
     and saves the updated file over the original.
 
     Args:
@@ -135,8 +135,8 @@ def simple_search_and_replace(search_text, replace_text, file_name):
 
 def search_and_replace(search_text: str, replace_text: str, file_name: str) -> bool:
     """
-    Searches for the line containing the search_text 
-    and replaces the whole line with the replace_text 
+    Searches for the line containing the search_text
+    and replaces the whole line with the replace_text
     and saves the updated file over the original.
 
     Args:
