@@ -35,8 +35,9 @@ else:
 
 # Service name and configuration file
 SERVICE_NAME = "printcfg"
-SERVICE_FILE = f"/etc/systemd/system/{SERVICE_NAME}.service"
+SERVICE_LINK = f"/etc/systemd/system/{SERVICE_NAME}.service"
 SERVICE_PATH = f"{HOME}/{SERVICE_NAME}"
+SERVICE_FILE = f"{HOME}/{SERVICE_NAME}/src/{SERVICE_NAME}.service"
 
 # Path to the Python script
 PYTHON_SCRIPT = f"{SERVICE_PATH}/src/{SERVICE_NAME}.py"
@@ -48,10 +49,6 @@ elif len(sys.argv) < 0:
     print("Please provide the 'install' argument to install the service.")
 else:
     if sys.argv[3] == "install":
-        if not PYTHON_SCRIPT:
-            print("Please provide the path to the Python script as an argument.")
-            sys.exit(1)
-
         # Create the service file
         service_content = f"""\
             [Unit]
@@ -84,6 +81,9 @@ else:
 
         # Set the appropriate permissions for the service configuration file
         os.chmod(SERVICE_FILE, 0o644)
+        
+        # Symbolic link to the service file
+        os.symlink(SERVICE_FILE, SERVICE_LINK)
 
         # Reload systemd to recognize the new service
         os.system("systemctl daemon-reload")

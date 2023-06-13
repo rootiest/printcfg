@@ -94,26 +94,3 @@ fi
 
 # Success
 echo -e "\e[32mSuccessfully removed $repo.\e[0m"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Get the current script directory
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-# Remove the script directory
-rm -r "$SCRIPT_DIR"
-
-# Remove the script file
-rm "$0"
