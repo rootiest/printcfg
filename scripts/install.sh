@@ -291,7 +291,7 @@ then
 else
     echo "Adding $repo config to $printer..."
     # Add printcfg config to beginning of file
-    python3 $home/$repo/scripts/search_replace.py "$uconfig_pattern" "$uconfig_pattern" "$printer"
+    python3 $home/$repo/src/search_replace.py "$uconfig_pattern" "$uconfig_pattern" "$printer"
 fi
 
 # Verify moonraker is installed
@@ -317,7 +317,7 @@ echo "Setting branch in moonraker config..."
 # Define search pattern
 branch_pattern="primary_branch:"
 # Set branch to current branch
-python3 $home/$repo/scripts/search_replace.py "$branch_pattern" "$branch_pattern $branch" "$config/moonraker-$repo.conf"
+python3 $home/$repo/src/search_replace.py "$branch_pattern" "$branch_pattern $branch" "$config/moonraker-$repo.conf"
 
 # Check if the moonraker config already contains the old printcfg config
 moon_pattern="[include $repo/moonraker-$repo.conf]"
@@ -329,7 +329,353 @@ then
 else
     echo "Adding $repo config to $moonraker..."
     # Add printcfg config to moonraker
-    python3 $home/$repo/scripts/search_replace.py "$moon_pattern" "$new_moon" "$moonraker"
+    python3 $home/$repo/src/search_replace.py "$moon_pattern" "$new_moon" "$moonraker"
+fi
+
+# Add printcfg to moonraker.asvc
+echo "Checking for $repo service in moonraker allowlist..."
+# Define allowlist file
+allowlist="$printer_data/moonraker.asvc"
+# Verify printcfg is in allowlist
+if grep -qFx "$repo" "$allowlist"
+then
+    echo -e "\e[33m$repo service already in allowlist.\e[0m"
+else
+    echo "Adding $repo service to moonraker allowlist..."
+    # Add printcfg service to moonraker allowlist
+    echo "$repo" >> $allowlist
+    if grep -qFx "$repo" "$allowlist"
+    then
+        echo -e "\e[32m$repo service added to allowlist successfully.\e[0m"
+    else
+        echo -e "\e[31mError: $repo service not added to allowlist.\e[0m"
+        exit 1
+    fi
+fi
+
+echo -e "\e[32mInstall complete.\e[0m"
+echo
+
+# Perform all checks to make sure printcfg is installed correctly
+echo "Checking $repo installation..."
+
+# Check if the repo exists
+if [ ! -d $home/$repo ]; then
+    echo -e "\e[31mError: Repo not cloned.\e[0m"
+    exit 1
+fi
+
+# Check if the printer.cfg exists
+if [ ! -f "$printer" ]
+then
+    echo -e "\e[31mError: File '$printer' not found.\e[0m"
+    echo "Please make sure you have klipper installed and your config is located in $printer"
+    exit 1
+fi
+
+# Check if moonraker config exists
+if [ ! -f "$moonraker" ]
+then
+    echo -e "\e[31mError: File '$moonraker' not found.\e[0m"
+    echo "Please make sure you have moonraker installed and your config is located in $moonraker"
+    exit 1
+fi
+
+# Check if printcfg is included in the printer.cfg file
+if ! grep -qFx "$uconfig_pattern" "$printer"
+then
+    echo -e "\e[31mError: $repo config not included in $printer\e[0m"
+    exit 1
+fi
+
+# Check if the moonraker config contains printcfg config
+if ! grep -qFx "$new_moon" "$moonraker"
+then
+    echo -e "\e[31mError: $repo config not included in $moonraker\e[0m"
+    exit 1
+fi
+
+# Check if printcfg symlink exists
+if [ ! -L $config/$repo ]
+then
+    echo -e "\e[31mError: $repo symlink not created.\e[0m"
+    exit 1
+fi
+
+# Check if user config exists
+if [ ! -f $config/user_config.cfg ]
+then
+    echo -e "\e[31mError: $repo user config not found.\e[0m"
+    exit 1
+fi
+
+# Check if user profile exists
+if [ ! -f $config/user_profile.cfg ]
+then
+    echo -e "\e[31mError: $repo user profile not found.\e[0m"
+    exit 1
+fi
+
+# Acknowledge that the installation checks passed
+echo -e "\e[32m$repo installation checks passed.\e[0m"
+echo
+
+# Success!
+echo
+echo -e "\e[32mPrintcfg has been successfully downloaded and installed.\e[0m"
+echo
+
+# Perform setup checks
+echo "Performing Setup Checks..."
+echo
+
+bash $home/$repo/scripts/setup.sh $src
+
+echo -e "\e[32mSetup checks passed.\e[0m"
+
+echo
+
+# Restart klipper
+echo "Restarting klipper..."
+systemctl restart klipper
+
+# Restart moonraker
+echo "Restarting moonraker..."
+systemctl restart moonraker
+
+echo
+echo -e "\e[32mInstallation completed successfully.\e[0m"
+
+else
+    echo -e "\e[32mAll dependencies are installed.\e[0m"
+fi
+echo "Installing $repo..."
+
+# Check if the repo exists
+if ! git ls-remote https://github.com/"$dev"/"$repo" >/dev/null; then
+    echo "The repo does not exist."
+    exit 1
+fi
+
+# Change to the home directory
+cd $home
+
+# Check if printcfg is already installed
+if [ -d $home/$repo ];
+then
+    echo -e "\e[33m$repo repo is already installed.\e[0m"
+    echo "Updating $repo repo..."
+    # Change to the repo directory
+    cd $home/$repo
+    # Pull the latest changes
+    git pull
+else
+    echo "Installing $repo repo..."
+    # Clone the repo
+    git clone https://github.com/"$dev"/"$repo"
+    # Check if the repo was cloned
+    if [ ! -d $home/$repo ]; then
+        echo -e "\e[31mError: Repo not cloned.\e[0m"
+        exit 1
+    else
+        echo "Repo cloned successfully."
+    fi
+fi
+
+# Change to the repo directory
+cd $home/$repo
+
+# Find the current branch
+current_branch=$(git branch --show-current)
+
+# Check if the branch was provided
+if [ -n "$2" ]
+then
+    echo "Checking out branch $branch..."
+    # Check if the branch exists
+    if ! git ls-remote --heads
+    then
+        echo -e "\e[31mError: Branch $branch does not exist.\e[0m"
+        exit 1
+    fi
+else
+    echo "Staying on branch $current_branch..."
+    branch=$current_branch
+fi
+
+# Check if the branch is already checked out
+if [ "$current_branch" != "$branch" ]; then
+    git switch $branch
+    # Check if the branch was switched
+    if [ $? -ne 0 ]; then
+        echo -e "\e[31mError: Branch not switched.\e[0m"
+        exit 1
+    else
+        echo -e "\e[32mBranch switched successfully.\e[0m"
+        pull_branch=true
+    fi
+else
+    echo -e "\e[33mAlready on branch $branch.\e[0m"
+fi
+
+# Pull the latest changes
+if [ -n "$pull_branch" ]; then
+    echo "Pulling latest changes..."
+    git pull
+fi
+
+### Run any setup scripts ###
+
+# Install the dependencies
+echo "Installing dependencies..."
+if [ -f requirements.txt ]; then
+    pip3 install -r requirements.txt
+    echo -e "\e[32mDependencies installed successfully.\e[0m"
+else
+    echo -e "\e[33mNo dependencies to install.\e[0m"
+fi
+
+# Check if the service is enabled
+echo "Checking if the ${repo} service is enabled..."
+if systemctl is-enabled "${repo}" >/dev/null 2>&1; then
+    echo "The ${repo} service is enabled."
+else
+    echo "Installing the ${repo} service..."
+    echo "Acquiring root privileges..."
+    # Acquire root privileges
+    sudo -v </dev/tty
+    # Install the python package
+    if [ -f $home/$repo/src/$repo.py ]; then
+        python3 $home/$repo/src/$repo.py install
+        echo -e "\e[32m${repo} service installed successfully.\e[0m"
+    fi
+fi
+
+# Create printcfg bin
+if [ ! -f /usr/local/bin/$repo ]; then
+    echo "Creating $repo bin..."
+    sudo ln -s $home/$repo/src/$repo.py /usr/local/bin/$repo
+    sudo chmod +x /usr/local/bin/$repo
+    echo -e "\e[32m$repo bin created successfully.\e[0m"
+fi
+
+### Install into klippers config ###
+
+# Check if config directory exists
+if [ ! -d "$config" ]
+then
+    echo -e "\e[31mError: Directory '$config' not found.\e[0m"
+    echo "Please make sure you have klipper installed and your config is located in $config"
+    exit 1
+fi
+
+# Check if the file exists
+if [ ! -f "$printer" ]
+then
+    echo -e "\e[31mError: File '$printer' not found.\e[0m"
+    echo "Please make sure you have klipper installed and your config is located in $printer"
+    exit 1
+fi
+
+# Check if user_config file exists
+if [ ! -f $config/user_config.cfg ]
+then
+    # Check if profile config exists
+    if [ ! -f $home/$repo/profiles/$src/config.cfg ]
+    then
+        echo -e "\e[31mError: Config Profile '$src' not found.\e[0m"
+        echo "Using default config profile: $default_src"
+        src=$default_src
+    fi
+    # Copy user profile to config directory
+    echo -e "\e[36mUsing config profile: $src\e[0m"
+    echo "Creating user_config in config directory..."
+    cp -r $home/$repo/profiles/$src/config.cfg $config/user_config.cfg
+else
+    echo -e "\e[32mUser config already exists.\e[0m"
+fi
+
+# Check if user profile file exists
+if [ ! -f $config/user_profile.cfg ]
+then
+    # Check if profile exists
+    if [ ! -f $home/$repo/profiles/$src/variables.cfg ]
+    then
+        echo -e "\e[31mError: Profile '$src' not found.\e[0m"
+        echo "Using default variables profile: $default_src"
+        src=$default_src
+    fi
+    # Copy user profile to config directory
+    echo -e "\e[36mUsing variables profile: $src\e[0m"
+    echo "Creating user profile in config directory..."
+    cp -r $home/$repo/profiles/$src/variables.cfg $config/user_profile.cfg
+else
+    echo -e "\e[32mUser profile already exists.\e[0m"
+fi
+
+# Check if link already exists
+if [ ! -L $config/$repo ]
+then
+    # Link printcfg to the printer config directory
+    echo "Linking $repo to the printer config directory..."
+    ln -s $home/$repo $config/$repo
+    # Check if the link was created
+    if [ ! -L $config/$repo ]
+    then
+        echo -e "\e[31mError: Link not created.\e[0m"
+        exit 1
+    fi
+else
+    echo -e "\e[33m$repo symlink already exists.\e[0m"
+fi
+
+# Check if include line exists in printer.cfg
+uconfig_pattern="[include user_config.cfg]"
+if grep -qFx "$uconfig_pattern" "$printer"
+then
+    echo -e "\e[33m$repo config already included.\e[0m"
+else
+    echo "Adding $repo config to $printer..."
+    # Add printcfg config to beginning of file
+    python3 $home/$repo/src/search_replace.py "$uconfig_pattern" "$uconfig_pattern" "$printer"
+fi
+
+# Verify moonraker is installed
+if [ ! -f "$moonraker" ]
+then
+    echo -e "\e[31mError: File '$moonraker' not found.\e[0m"
+    echo "Please make sure you have moonraker installed and your config is located in $moonraker"
+    exit 1
+fi
+
+# Check if the moonraker-printcfg.conf file exists
+if [ ! -f $config/moonraker-$repo.conf ]
+then
+    # Copy moonraker config to config directory
+    echo "Creating moonraker config in config directory..."
+    cp -r $home/$repo/src/mooncfg.conf $config/moonraker-$repo.conf
+else
+    echo -e "\e[32mMoonraker config already exists.\e[0m"
+fi
+
+# Set branch in moonraker-printcfg.conf
+echo "Setting branch in moonraker config..."
+# Define search pattern
+branch_pattern="primary_branch:"
+# Set branch to current branch
+python3 $home/$repo/src/search_replace.py "$branch_pattern" "$branch_pattern $branch" "$config/moonraker-$repo.conf"
+
+# Check if the moonraker config already contains the old printcfg config
+moon_pattern="[include $repo/moonraker-$repo.conf]"
+new_moon="[include moonraker-$repo.conf]"
+
+if grep -qFx "$new_moon" "$moonraker"
+then
+    echo -e "\e[33m$repo moonraker already included.\e[0m"
+else
+    echo "Adding $repo config to $moonraker..."
+    # Add printcfg config to moonraker
+    python3 $home/$repo/src/search_replace.py "$moon_pattern" "$new_moon" "$moonraker"
 fi
 
 # Add printcfg to moonraker.asvc

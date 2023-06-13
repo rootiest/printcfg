@@ -258,8 +258,8 @@ else
     #user_vars_version=${user_vars_version#variable_version: }
     #src_vars_version=$(grep -oP '(variable_version: ).*' $src_vars)
     #src_vars_version=${src_vars_version#variable_version: }
-    user_vars_version=$(python3 $home/$repo/scripts/find_string.py "variable_version: " $user_vars)
-    src_vars_version=$(python3 $home/$repo/scripts/find_string.py "variable_version: " $src_vars)
+    user_vars_version=$(python3 $home/$repo/src/find_string.py "variable_version: " $user_vars)
+    src_vars_version=$(python3 $home/$repo/src/find_string.py "variable_version: " $src_vars)
     
     # Check if user profile is up to date
     
@@ -285,10 +285,9 @@ else
     else
         echo -e "\e[32mUser profile is up to date.\e[0m"
         echo "User profile:   $profile_used"
-        echo "User version:   $user_vars_version"
+        echo "Profile version:   $user_vars_version"
     fi
 fi
-
 
 # Check that printcfg service is enabled
 echo
