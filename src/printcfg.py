@@ -27,7 +27,7 @@
 #   update: Update printcfg
 
 #!/usr/bin/env python3
-    """ printcfg - A configuration manager for Klipper printers."""
+""" printcfg - A configuration manager for Klipper printers."""
 import os
 import sys
 import getpass
