@@ -49,10 +49,11 @@ if [ "$1" ]; then
             # Exit the script
             exit 1
         fi
+    fi
 fi
 
 # Stop the printcfg service
-sudo systemctl stop $repo.service
+systemctl stop $repo.service
 
 # Verify that the printcfg service was stopped
 if [ "$(systemctl is-active $repo.service)" = "active" ]; then
