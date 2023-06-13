@@ -400,7 +400,6 @@ if __name__ == "__main__":
         repair_printcfg()
     elif sys.argv[1] == "branch":
         logger.info("Running branch operations.")
-        branch_arg = sys.argv[2]
         # Make sure the branch was provided
         if len(sys.argv) != 3:
             print("Error: The branch script requires two arguments.")
@@ -408,6 +407,7 @@ if __name__ == "__main__":
             logger.error("Error: The branch script requires two arguments.")
             sys.exit(1)
         else:
+            branch_arg = sys.argv[2]
             change_branch(branch_arg)
     elif sys.argv[1] == "help":
         logger.info("Running help operations.")
