@@ -63,6 +63,7 @@ then
     src_cfg=$config/$repo/profiles/$default_src/config.cfg
     src_vars=$config/$repo/profiles/$default_src/variables.cfg
     src_path=$config/$repo/profiles/$default_src
+    profile_used=$default_src
 else
     # Set the src_vars file
     if [ -n "$1" ]
@@ -70,6 +71,7 @@ else
         src_cfg=$config/$repo/profiles/$1/config.cfg
         src_vars=$config/$repo/profiles/$1/variables.cfg
         src_path=$config/$repo/profiles/$1
+        profile_used=$1
     fi
 fi
 
@@ -264,6 +266,7 @@ else
     if [ "$user_vars_version" != "$src_vars_version" ]; then
         echo
         echo -e "\e[31mUser profile is not up to date.\e[0m"
+        echo "User profile:   $profile_used"
         echo "User version:   $user_vars_version"
         echo "Source version: $src_vars_version"
         echo
@@ -281,6 +284,7 @@ else
         exit 1
     else
         echo -e "\e[32mUser profile is up to date.\e[0m"
+        echo "User profile:   $profile_used"
         echo "User version:   $user_vars_version"
     fi
 fi
