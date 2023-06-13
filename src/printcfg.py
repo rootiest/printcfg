@@ -85,7 +85,7 @@ def find_profile(path):
             if line.startswith("# Profile:"):
                 logger.debug("Found profile name: %s",line[10:].strip())
                 # Return the profile name
-                return line[11:].strip()
+                return line[10:].strip()
 
     # If no profile was found, raise an error
     logger.error("Profile not found in file: %s", path)
