@@ -18,23 +18,15 @@
 
 # This script will remove printcfg from your system.
 
-# Set the dev and repo name
-dev="rootiest"
+# Set the repo name
 repo="printcfg"
-branch="master"
 # Get home directory
-home=$(eval echo ~$USER)
+home=$(eval echo ~"$USER")
 # Define the klipper config file
 config=$home/printer_data/config
 # Define the printer.cfg and moonraker.conf files
 printer=$home/printer_data/config/printer.cfg
 moonraker=$home/printer_data/config/moonraker.conf
-# Set the default profile
-default_src=default
-user_vars=$config/user_profile.cfg
-old_user_vars=$config/$repo/user_profile.cfg
-user_cfg=$config/user_config.cfg
-old_user_cfg=$config/$repo/user_config.cfg
 
 # Check if any parameters were provided
 if [ "$1" ]; then
@@ -75,19 +67,19 @@ replace_line="#[include printcfg-moonraker.conf]"
 python3 "$SCRIPT_DIR/search_replace.py" "$include_line" "$replace_line" "$moonraker" || { echo -e "\e[31mFailed to remove [include printcfg-moonraker.conf] from moonraker.conf.\e[0m"; exit 1; }
 
 # Remove the printcfg directory
-sudo rm -rf $home/$repo
+sudo rm -rf "$home"/$repo
 
 # Verify that the printcfg directory was removed
-if [ -d $home/$repo ]; then
+if [ -d "$home"/$repo ]; then
     echo -e "\e[31mFailed to remove the printcfg directory.\e[0m"
     exit 1
 fi
 
 # Remove the printcfg symlink from the klipper config directory
-sudo rm $config/$repo
+sudo rm "$config"/$repo
 
 # Verify that the printcfg symlink was removed
-if [ -L $config/$repo ]; then
+if [ -L "$config"/$repo ]; then
     echo -e "\e[31mFailed to remove the printcfg symlink.\e[0m"
     exit 1
 fi
