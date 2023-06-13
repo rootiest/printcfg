@@ -57,6 +57,11 @@ old_user_vars=$config/$repo/user_profile.cfg
 user_cfg=$config/user_config.cfg
 old_user_cfg=$config/$repo/user_config.cfg
 
+LOGFILE="$home/$repo/logs/setup.log"
+exec 3>&1 1>"$LOGFILE" 2>&1
+trap "echo 'ERROR: An error occurred during execution, check log $LOGFILE for details.' >&3" ERR
+trap '{ set +x; } 2>/dev/null; echo -n "[$(date -Is)]  "; set -x' DEBUG
+
 # Check if any parameters were provided
 if [ $# -eq 0 ]
 then

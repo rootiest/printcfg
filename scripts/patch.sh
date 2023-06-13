@@ -62,6 +62,11 @@ uconfig_pattern_old="[include $repo/user_config.cfg]"
 uconfig_pattern_new="[include user_config.cfg]"
 ver_patch="# Patch: *"
 
+LOGFILE="$home/$repo/logs/patch.log"
+exec 3>&1 1>"$LOGFILE" 2>&1
+trap "echo 'ERROR: An error occurred during execution, check log $LOGFILE for details.' >&3" ERR
+trap '{ set +x; } 2>/dev/null; echo -n "[$(date -Is)]  "; set -x' DEBUG
+
 # Check if any parameters were provided
 if [ $# -eq 0 ]
 then
