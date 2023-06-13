@@ -51,7 +51,6 @@ user_vars=$config/user_profile.cfg
 old_user_vars=$config/$repo/user_profile.cfg
 user_cfg=$config/user_config.cfg
 old_user_cfg=$config/$repo/user_config.cfg
-profile_pattern="# Profile:(.*)"
 
 LOGFILE="$home/$repo/logs/change_profile.log"
 exec 3>&1 1>"$LOGFILE" 2>&1
@@ -90,6 +89,13 @@ then
     echo "Usage: ./change_profile.sh <profile name>" >&3
     exit 1
 fi
+# Check if the profile directory is empty
+if [ ! "$(ls -A $src_path)" ]
+then
+    echo -e "\n\e[31mERROR: Profile $1 is empty.\e[0m" >&3
+    echo "Usage: ./change_profile.sh <profile name>" >&3
+    exit 1
+fi
 
 # Check if the profile is already active
 if [ -f "$user_vars" ]
@@ -100,6 +106,8 @@ then
     if [ -z "$vars_profile" ]
     then
         echo -e "\n\e[31mERROR: Profile marker not found in $user_vars.\e[0m" >&3
+        echo "The profile marker should be near the top of the file." >&3
+        echo "It should look like this: # Profile: <profile name>" >&3
         echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
@@ -109,6 +117,8 @@ then
     if [ -z "$src_profile" ]
     then
         echo -e "\n\e[31mERROR: Profile marker not found in $src_vars.\e[0m" >&3
+        echo "The profile marker should be near the top of the file." >&3
+        echo "It should look like this: # Profile: <profile name>" >&3
         echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi

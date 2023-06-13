@@ -73,12 +73,12 @@ fi
 # Remove the [include user_config.cfg] line from printer.cfg
 include_line="[include user_config.cfg]"
 replace_line="#[include user_config.cfg]"
-python3 $home/$repo/src/search_replace.py "$include_line" "$replace_line" "$printer"
+python3 "$SCRIPT_DIR/search_replace.py" "$include_line" "$replace_line" "$printer" || { echo -e "\e[31mFailed to remove [include user_config.cfg] from printer.cfg.\e[0m"; exit 1; }
 
 # Remove the [include printcfg-moonraker.conf] line from moonraker.conf
 include_line="[include printcfg-moonraker.conf]"
 replace_line="#[include printcfg-moonraker.conf]"
-python3 $home/$repo/src/search_replace.py "$include_line" "$replace_line" "$moonraker"
+python3 "$SCRIPT_DIR/search_replace.py" "$include_line" "$replace_line" "$moonraker" || { echo -e "\e[31mFailed to remove [include printcfg-moonraker.conf] from moonraker.conf.\e[0m"; exit 1; }
 
 # Remove the printcfg directory
 sudo rm -r $home/$repo

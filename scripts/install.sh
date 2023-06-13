@@ -100,14 +100,21 @@ if ! which bc > /dev/null; then
     echo "Missing bc." >&3
     sudo apt-get install bc
 fi
+if ! which wget > /dev/null; then
+    need_wget=true
+    echo "Missing wget." >&3
+    sudo apt-get install wget
+fi
+
 ## Install missing dependencies
-if [ -n "$need_git" ] || [ -n "$need_pip" ] || [ -n "$need_bc" ]; then
+if [ -n "$need_git" ] || [ -n "$need_pip" ] || [ -n "$need_bc" ] || [ -n "$need_wget"]; then
     echo "Installing missing dependencies..." >&3
     sudo apt update
-    sudo apt-get install -y git python3-pip bc
+    sudo apt-get install -y git python3-pip bc wget
 else
     echo -e "\e[32mAll dependencies are installed.\e[0m" >&3
 fi
+
 echo "Installing $repo..." >&3
 
 # Check if the repo exists
@@ -216,6 +223,13 @@ if [ ! -f /usr/local/bin/$repo ]; then
     sudo ln -s $home/$repo/src/$repo.py /usr/local/bin/$repo
     sudo chmod +x /usr/local/bin/$repo
     echo -e "\e[32m$repo bin created successfully.\e[0m" >&3
+fi
+
+# Check if log4bash is installed in local directory
+if [ ! -f log4bash.sh ]; then
+    echo "Installing log4bash." >&3
+    # Download log4bash library
+    wget https://raw.githubusercontent.com/fredpalmer/log4bash/master/log4bash.sh -O $home/$repo/src/log4bash.sh
 fi
 
 ### Install into klippers config ###

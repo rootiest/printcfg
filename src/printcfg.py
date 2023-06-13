@@ -27,7 +27,7 @@
 #   update: Update printcfg
 
 #!/usr/bin/env python3
-
+    """ printcfg - A configuration manager for Klipper printers."""
 import os
 import sys
 import getpass
@@ -70,15 +70,27 @@ if os.path.exists(logfile):
             first_line = datetime.datetime.strptime(first_line, "%Y-%m-%d %H:%M:%S,%f")
             thirty_days_ago = datetime.datetime.now() - datetime.timedelta(days=30)
             if first_line < thirty_days_ago:
-                os.remove(logfile)
+                try:
+                    os.remove(logfile)
+                    logging.info(f"Deleted log file: {logfile}")
+                except Exception as e:
+                    logging.error(f"Error deleting log file: {e}")
 
 # Check if the logfile exists
-if not os.path.exists(f"{user_home}/{REPO}/logs/"):
-    # Create the log directory
-    os.mkdir(f"{user_home}/{REPO}/logs/")
+log_dir = f"{user_home}/{REPO}/logs/"
+if not os.path.exists(log_dir):
+    try:
+        # Create the log directory
+        os.makedirs(log_dir)
+    except OSError as err:
+        print(f"Error creating log directory: {err}")
     # Create the logfile
-    with open(logfile, "w", encoding="utf-8") as file:
-        pass
+    try:
+        with open(logfile, "w", encoding="utf-8") as file:
+            pass
+        logging.info(f"Created log file: {logfile}")
+    except Exception as err:
+        logging.error(f"Error creating log file: {err}")
 
 # Set the logging level
 logger.setLevel(logging.DEBUG)

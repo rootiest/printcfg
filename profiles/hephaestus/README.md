@@ -35,8 +35,6 @@ To change to this profile, run:
 
 ## Features
 
-## Features
-
 - 300mm build volume: The printer has a build volume of 300mm.
 - Voron TAP probe: The printer uses a Voron TAP probe for bed leveling.
 - Nozzle brush: The printer has a nozzle brush attached to it.
