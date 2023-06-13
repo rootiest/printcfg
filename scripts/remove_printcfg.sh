@@ -53,10 +53,7 @@ if [ "$1" ]; then
 fi
 
 # Stop the printcfg service
-systemctl stop $repo.service
-
-# Verify that the printcfg service was stopped
-if [ "$(systemctl is-active $repo.service)" = "active" ]; then
+systemctl stop $repo.service || { echo -e "\e[31mFailed to stop $repo service.\e[0m"; exit 1; }
     echo -e "\e[31mFailed to stop the printcfg service.\e[0m"
     exit 1
 fi
