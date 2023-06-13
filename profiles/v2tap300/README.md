@@ -25,7 +25,13 @@ This profile is for a 300mm Voron V2.4 with TAP and StealthBurner LEDs.
 
 ## Usage
 
+To install printcfg with this profile, run:
+
     curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash -s -- v2tap300
+
+To change to this profile, run:
+
+    printcfg change v2tap300
 
 ## Features
 

@@ -27,7 +27,13 @@ Virtually all extra features are disabled in this profile to ensure compatibilit
 
 ## Usage
 
+To install printcfg with this profile, run:
+
     curl https://raw.githubusercontent.com/rootiest/printcfg/master/scripts/install.sh | bash -s -- default
+
+To change to this profile, run:
+
+    printcfg change default
 
 ## Features
 
