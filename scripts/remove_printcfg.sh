@@ -54,9 +54,6 @@ fi
 
 # Stop the printcfg service
 systemctl stop $repo.service || { echo -e "\e[31mFailed to stop $repo service.\e[0m"; exit 1; }
-    echo -e "\e[31mFailed to stop the printcfg service.\e[0m"
-    exit 1
-fi
 
 # Remove the printcfg service
 sudo rm /etc/systemd/system/$repo.service
