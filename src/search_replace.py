@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 
-#!/usr/bin/env python3
-
 # This code searches for a string in a file and replaces the whole line
 # containing the string with a different string.
 # The search is case sensitive.
@@ -40,12 +38,12 @@
 # Example:
 #   python3 search_replace.py "version" "version: 1.0.0" "patch_notes.txt"
 
-import sys
-import os
-import getpass
-import re
-import logging
 import datetime
+import getpass
+import logging
+import os
+import re
+import sys
 
 logger: logging.Logger = logging.getLogger(__name__)
 
@@ -62,9 +60,9 @@ if os.path.exists(logfile):
         first_line = file.readline()
         if first_line:
             first_line = first_line.split(" - ")[0]
-            first_line = datetime.datetime.strptime(first_line, "%Y-%m-%d %H:%M:%S,%f")
+            first_date = datetime.datetime.strptime(first_line, "%Y-%m-%d %H:%M:%S,%f")
             thirty_days_ago = datetime.datetime.now() - datetime.timedelta(days=30)
-            if first_line < thirty_days_ago:
+            if first_date < thirty_days_ago:
                 os.remove(logfile)
 
 # Set the logging level
@@ -76,7 +74,10 @@ logger.addHandler(handler)
 
 
 def simple_search_and_replace(search_text, replace_text, file_name):
-    """Searches for the line containing the search_text and replaces the whole line with the replace_text and saves the updated file over the original.
+    """
+    Searches for the line containing the search_text 
+    and replaces the whole line with the replace_text 
+    and saves the updated file over the original.
 
     Args:
         search_text: The text to search for.
@@ -133,7 +134,10 @@ def simple_search_and_replace(search_text, replace_text, file_name):
 
 
 def search_and_replace(search_text: str, replace_text: str, file_name: str) -> bool:
-    """Searches for the line containing the search_text and replaces the whole line with the replace_text and saves the updated file over the original.
+    """
+    Searches for the line containing the search_text 
+    and replaces the whole line with the replace_text 
+    and saves the updated file over the original.
 
     Args:
         search_text: The text to search for.
