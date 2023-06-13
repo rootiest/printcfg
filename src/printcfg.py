@@ -215,6 +215,31 @@ def remove_printcfg():
     logger.info("Printcfg removed successfully.")
     sys.exit(0)
 
+def show_status():
+    '''Show the status of the service.'''
+    # Get the systemctl status
+    command = ["systemctl", "status", f"{REPO}.service"]
+    logger.debug("Executing command: %s", command)
+    try:
+        result = subprocess.run(command, capture_output=True, check=False)
+    except subprocess.CalledProcessError as err:
+        print("Error: The subprocess returned an error.")
+        print(err.stderr)
+        logger.error("Error: The subprocess returned an error: %s", err.stderr)
+        return
+    logger.debug("Command output: %s", result.stdout.decode("utf-8"))
+    if result.returncode != 0:
+        print(f"Error: The command '{command}' failed with code {result.returncode}.")
+        logger.error("Error: The command '%s' failed with code %s.", command, result.returncode)
+        print(f"Output from command: {result.stdout.decode('utf-8')}")
+        print(f"Error from command: {result.stderr.decode('utf-8')}")
+        return
+    # Print the status
+    print(result.stdout.decode("utf-8"))
+    # Exit successfully
+    logger.info("Status shown successfully.")
+    sys.exit(0)
+
 def show_help():
     '''Show the help message.'''
     print(f"Usage: {sys.argv[0]} [install|change|remove|update|help]")
@@ -222,6 +247,7 @@ def show_help():
     print("  change: Change the current profile")
     print(f"  remove: Remove {REPO} service")
     print(f"  update: Update {REPO}")
+    print("  status: Show the status of the service")
     print("  help: Show this help message")
     sys.exit(0)
 
@@ -276,6 +302,9 @@ if __name__ == "__main__":
     elif sys.argv[1] == "update":
         logger.info("Running update operations.")
         update_printcfg()
+    elif sys.argv[1] == "status":
+        logger.info("Running status operations.")
+        show_status()
     elif sys.argv[1] == "help":
         logger.info("Running help operations.")
         show_help()
