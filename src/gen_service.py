@@ -22,7 +22,6 @@
 #!/usr/bin/env python3
 import os
 import sys
-import subprocess
 
 if len(sys.argv) < 3:
     USER = os.environ["USER"]
