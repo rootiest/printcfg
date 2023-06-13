@@ -391,10 +391,10 @@ if __name__ == "__main__":
         update_printcfg()
     elif sys.argv[1] == "status":
         logger.info("Running status operations.")
-        show_status(f"{REPO}.service")
+        show_status(REPO)
     elif sys.argv[1] == "restart":
         logger.info("Running restart operations.")
-        restart_service(f"{REPO}.service")
+        restart_service(REPO)
     elif sys.argv[1] == "repair":
         logger.info("Running repair operations.")
         repair_printcfg()
