@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 # Copyright (C) 2023 Chris Laprade (chris@rootiest.com)
-# 
+#
 # This file is part of printcfg.
-# 
+#
 # printcfg is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # printcfg is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -56,6 +56,23 @@ logger.addHandler(handler)
 # Log start of script
 logger.info("Starting script: %s", __file__)
 
+
+def check_file(file_name: str) -> bool:
+    # Check if the file exists
+    if not os.path.exists(file_name):
+        logger.error("File not found: %s", file_name)
+        return False
+    # Check if the file is readable
+    if not os.access(file_name, os.R_OK):
+        logger.error("File is not readable: %s", file_name)
+        return False
+    # Check if the file is writable
+    if not os.access(file_name, os.W_OK):
+        logger.error("File is not writable: %s", file_name)
+        return False
+    return True
+
+
 def find_string(search_text: str, file_name: str) -> str:
     """Search for a string in a file.
 
@@ -66,18 +83,9 @@ def find_string(search_text: str, file_name: str) -> str:
     Returns:
         The rest of the line containing the search_text.
     """
-    # Check if the file exists
-    if not os.path.exists(file_name):
-        logger.error("File not found: %s", file_name)
-        return "File not found."
-    # Check if the file is readable
-    if not os.access(file_name, os.R_OK):
-        logger.error("File is not readable: %s", file_name)
-        return "File is not readable."
-    # Check if the file is writable
-    if not os.access(file_name, os.W_OK):
-        logger.error("File is not writable: %s", file_name)
-        return "File is not writable."
+    # Check if the file is accessible
+    if not check_file(file_name):
+        return "File not accessible."
     # Open the file in read mode
     with open(file_name, "r", encoding="utf-8") as file:
         # Read each line
@@ -98,6 +106,7 @@ def find_string(search_text: str, file_name: str) -> str:
     logger.info("File name: %s", file_name)
     return "Search text not found."
 
+
 def string_exists(search_text: str, file_name: str) -> bool:
     """Search for a string in a file.
 
@@ -108,17 +117,8 @@ def string_exists(search_text: str, file_name: str) -> bool:
     Returns:
         The rest of the line containing the search_text.
     """
-    # Check if the file exists
-    if not os.path.exists(file_name):
-        logger.error("File not found: %s", file_name)
-        return False
-    # Check if the file is readable
-    if not os.access(file_name, os.R_OK):
-        logger.error("File is not readable: %s", file_name)
-        return False
-    # Check if the file is writable
-    if not os.access(file_name, os.W_OK):
-        logger.error("File is not writable: %s", file_name)
+    # Check if the file is accessible
+    if not check_file(file_name):
         return False
     # Open the file in read mode
     with open(file_name, "r", encoding="utf-8") as file:
@@ -138,6 +138,7 @@ def string_exists(search_text: str, file_name: str) -> bool:
     logger.error("Search text not found: %s", search_text)
     logger.info("File name: %s", file_name)
     return False
+
 
 # Check if the script was run from the command line
 if __name__ == "__main__":

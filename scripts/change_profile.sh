@@ -235,7 +235,6 @@ then
     if [ -z "$vars_profile" ]
     then
         echo -e "\n\e[31mERROR: Profile marker not found in $user_vars.\e[0m" >&3
-        echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
     # Search for the profile_pattern in the src_vars using grep
@@ -244,14 +243,12 @@ then
     if [ -z "$src_profile" ]
     then
         echo -e "\n\e[31mERROR: Profile marker not found in $src_vars.\e[0m" >&3
-        echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
     # Check if the profile is already active
     if [ "$vars_profile" != "$src_profile" ]
     then
         echo -e "\n\e[31mERROR: Failed to apply profile $1.\e[0m" >&3
-        echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
 fi

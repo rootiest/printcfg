@@ -238,10 +238,10 @@ def update_printcfg():
     logger.debug("Executing command: %s", command)
     try:
         subprocess.run(command, check=True)
-    except subprocess.CalledProcessError as err:
+    except subprocess.CalledProcessError as errr:
         print("Error: The subprocess returned an error.")
-        print(err.stderr)
-        logger.error("Error: The subprocess returned an error: %s", err.stderr)
+        print(errr.stderr)
+        logger.error("Error: The subprocess returned an error: %s", errr.stderr)
     # Exit gracefully
     logger.info("%s updated successfully.", REPO)
     print(f"{REPO} updated successfully.")
@@ -349,6 +349,7 @@ def remove_printcfg():
     logger.info("%s removed successfully.", REPO)
     print(f"{REPO} removed successfully.")
     sys.exit(0)
+
 
 def show_status(service_name: str):
     """Show the status of a systemctl service.

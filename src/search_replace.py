@@ -86,7 +86,7 @@ def simple_search_and_replace(search_text, replace_text, file_name):
     Returns:
         A status indicating whether the change was successful.
     """
-    
+
     # Log the input
     logger.debug(
         "search_and_replace() called with: search_text=%s, replace_text=%s, file_name=%s",
@@ -94,7 +94,7 @@ def simple_search_and_replace(search_text, replace_text, file_name):
         replace_text,
         file_name,
     )
-    
+
     if search_text is None or replace_text is None or file_name is None:
         logger.error(
             "search_and_replace() failed due to invalid input: search_text=%s, replace_text=%s, file_name=%s",
@@ -111,9 +111,11 @@ def simple_search_and_replace(search_text, replace_text, file_name):
     found = False
     for i, line in enumerate(lines):
         if search_text in line:
-            lines[i] = replace_text + '\n'
+            lines[i] = replace_text + "\n"
             found = True
-            logger.debug("search_and_replace() found the search_text %s", search_text)
+        logger.debug(
+            "search_and_replace() did not find the search_text %s", search_text
+        )
             break
 
     if not found:

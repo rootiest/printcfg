@@ -25,7 +25,7 @@ import sys
 if len(sys.argv) < 3:
     USER = os.environ["USER"]
     GROUP = os.environ["USER"]
-    HOME= os.path.expanduser('~')
+    HOME = os.path.expanduser("~")
 else:
     USER = sys.argv[1]
     GROUP = sys.argv[1]
