@@ -26,14 +26,13 @@
 #   remove: Remove the printcfg service
 #   update: Update printcfg
 
-#!/usr/bin/env python3
 """ printcfg - A configuration manager for Klipper printers."""
-import os
-import sys
-import getpass
-import subprocess
-import logging
 import datetime
+import getpass
+import logging
+import os
+import subprocess
+import sys
 
 logger: logging.Logger = logging.getLogger(__name__)
 
@@ -67,14 +66,10 @@ if os.path.exists(logfile):
         first_line = file.readline()
         if first_line:
             first_line = first_line.split(" - ")[0]
-            first_line = datetime.datetime.strptime(first_line, "%Y-%m-%d %H:%M:%S,%f")
+            first_date = datetime.datetime.strptime(first_line, "%Y-%m-%d %H:%M:%S,%f")
             thirty_days_ago = datetime.datetime.now() - datetime.timedelta(days=30)
-            if first_line < thirty_days_ago:
-                try:
-                    os.remove(logfile)
-                    logging.info(f"Deleted log file: {logfile}")
-                except Exception as e:
-                    logging.error(f"Error deleting log file: {e}")
+            if first_date < thirty_days_ago:
+                os.remove(logfile)
 
 # Check if the logfile exists
 log_dir = f"{user_home}/{REPO}/logs/"
@@ -88,9 +83,9 @@ if not os.path.exists(log_dir):
     try:
         with open(logfile, "w", encoding="utf-8") as file:
             pass
-        logging.info(f"Created log file: {logfile}")
-    except Exception as err:
-        logging.error(f"Error creating log file: {err}")
+        logging.info("Created log file: %s", logfile)
+    except OSError as err:
+        logging.error("Error creating log file: %s", err)
 
 # Set the logging level
 logger.setLevel(logging.DEBUG)
@@ -139,17 +134,17 @@ def normal_ops():
     logger.info("Starting normal operations...")
     try:
         profile_name = find_profile(profile_path)
-    except ValueError as err:
-        logger.error("Error: %s", str(err))
+    except ValueError as errnorm:
+        logger.error("Error: %s", str(errnorm))
         profile_name = "default"
         logger.info("Using default profile.")
     try:
         # Run the shell script at startup
         subprocess.Popen(["/bin/bash", setup_script, profile_name])
         logger.info("Startup script complete.")
-    except subprocess.CalledProcessError as err:
+    except subprocess.CalledProcessError as errsetscript:
         # Log the error
-        logger.error("Error running startup script: %s", str(err))
+        logger.error("Error running startup script: %s", str(errsetscript))
         # Exit with error
         sys.exit(1)
     # Exit gracefully
@@ -179,10 +174,10 @@ def generate_service():
     print(f"Executing command: {command}")
     try:
         result = subprocess.run(command, capture_output=True, check=False)
-    except subprocess.CalledProcessError as err:
+    except subprocess.CalledProcessError as errgen:
         print("Error: The subprocess returned an error.")
-        print(err.stderr)
-        logger.error("Error: The subprocess returned an error: %s", err.stderr)
+        print(errgen.stderr)
+        logger.error("Error: The subprocess returned an error: %s", errgen.stderr)
         return
     logger.debug("Command output: %s", result.stdout.decode("utf-8"))
     if result.returncode != 0:
@@ -213,10 +208,10 @@ def change_profile(profile_name: str):
     logger.debug("Executing command: %s", command)
     try:
         subprocess.run(command, check=True)
-    except subprocess.CalledProcessError as err:
+    except subprocess.CalledProcessError as errprofile:
         print("Error: The subprocess returned an error.")
-        print(err.stderr)
-        logger.error("Error: The subprocess returned an error: %s", err.stderr)
+        print(errprofile.stderr)
+        logger.error("Error: The subprocess returned an error: %s", errprofile.stderr)
     # Exit gracefully
     logger.info("Profile changed to %s successfully.", profile_name)
     print(f"Profile changed to {profile_name} successfully.")
@@ -264,9 +259,9 @@ def restart_service(service_name: str):
         logger.info("Service '%s' restarted successfully.", service_name)
         print(f"Service '{service_name}' restarted successfully.")
         return True
-    except subprocess.CalledProcessError as err:
-        logger.error("Error restarting %s service: %s", service_name, err)
-        print(f"Error restarting {service_name} service: {err}")
+    except subprocess.CalledProcessError as errserv:
+        logger.error("Error restarting %s service: %s", service_name, errserv)
+        print(f"Error restarting {service_name} service: {errserv}")
         return False
 
 
@@ -291,10 +286,10 @@ def change_branch(branch_name: str):
     print(f"Changing to branch '{branch_name}' with profile '{profile_name}'.")
     try:
         subprocess.run(command, check=False)
-    except subprocess.CalledProcessError as err:
+    except subprocess.CalledProcessError as errbranch:
         print("Error: The subprocess returned an error.")
-        print(err.stderr)
-        logger.error("Error: The subprocess returned an error: %s", err.stderr)
+        print(errbranch.stderr)
+        logger.error("Error: The subprocess returned an error: %s", errbranch.stderr)
     # Exit gracefully
     logger.info("Succesfully changed to branch '%s'.", branch_name)
     print(f"Succesfully changed to branch '{branch_name}'.")
@@ -316,10 +311,10 @@ def repair_printcfg():
     logger.debug("Executing command: %s", command)
     try:
         subprocess.run(command, check=True)
-    except subprocess.CalledProcessError as err:
+    except subprocess.CalledProcessError as errepair:
         print("Error: The subprocess returned an error.")
-        print(err.stderr)
-        logger.error("Error: The subprocess returned an error: %s", err.stderr)
+        print(errepair.stderr)
+        logger.error("Error: The subprocess returned an error: %s", errepair.stderr)
     # Exit gracefully
     logger.info("Repairing %s completed successfully.", REPO)
     print(f"Repairing {REPO} completed successfully.")
@@ -341,10 +336,10 @@ def remove_printcfg():
     logger.debug("Executing command: %s", command)
     try:
         subprocess.run(command, check=True)
-    except subprocess.CalledProcessError as err:
+    except subprocess.CalledProcessError as erremove:
         print("Error: The subprocess returned an error.")
-        print(err.stderr)
-        logger.error("Error: The subprocess returned an error: %s", err.stderr)
+        print(erremove.stderr)
+        logger.error("Error: The subprocess returned an error: %s", erremove.stderr)
     # Exit gracefully
     logger.info("%s removed successfully.", REPO)
     print(f"{REPO} removed successfully.")
@@ -365,10 +360,10 @@ def show_status(service_name: str):
     logger.debug("Executing command: %s", command)
     try:
         result = subprocess.run(command, capture_output=True, check=False)
-    except subprocess.CalledProcessError as err:
+    except subprocess.CalledProcessError as errstat:
         print("Error: The subprocess returned an error.")
-        print(err.stderr)
-        logger.error("Error: The subprocess returned an error: %s", err.stderr)
+        print(errstat.stderr)
+        logger.error("Error: The subprocess returned an error: %s", errstat.stderr)
         return False
     logger.debug("Command output: %s", result.stdout.decode("utf-8"))
     if result.returncode != 0:

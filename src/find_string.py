@@ -16,12 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 
-#!/usr/bin/env python3
-import sys
-import os
+import datetime
 import getpass
 import logging
-import datetime
+import os
+import sys
 
 S_TEXT = sys.argv[1]
 F_NAME = sys.argv[2]
@@ -37,13 +36,13 @@ logfile = f"{user_home}/printcfg/logs/find_string.log"
 # Check the date of the first log entry
 # If it is older than 30 days, delete the logfile
 if os.path.exists(logfile):
-    with open(logfile, "r", encoding="utf-8") as logf:
-        first_line = logf.readline()
+    with open(logfile, "r", encoding="utf-8") as file:
+        first_line = file.readline()
         if first_line:
             first_line = first_line.split(" - ")[0]
-            first_line = datetime.datetime.strptime(first_line, "%Y-%m-%d %H:%M:%S,%f")
+            first_date = datetime.datetime.strptime(first_line, "%Y-%m-%d %H:%M:%S,%f")
             thirty_days_ago = datetime.datetime.now() - datetime.timedelta(days=30)
-            if first_line < thirty_days_ago:
+            if first_date < thirty_days_ago:
                 os.remove(logfile)
 
 # Set the logging level
@@ -87,9 +86,9 @@ def find_string(search_text: str, file_name: str) -> str:
     if not check_file(file_name):
         return "File not accessible."
     # Open the file in read mode
-    with open(file_name, "r", encoding="utf-8") as file:
+    with open(file_name, "r", encoding="utf-8") as sfile:
         # Read each line
-        for line in file:
+        for line in sfile:
             # Strip the newline character at the end
             line = line.rstrip("\n")
             # Check if the search text is in the line
@@ -121,9 +120,9 @@ def string_exists(search_text: str, file_name: str) -> bool:
     if not check_file(file_name):
         return False
     # Open the file in read mode
-    with open(file_name, "r", encoding="utf-8") as file:
+    with open(file_name, "r", encoding="utf-8") as filee:
         # Read each line
-        for line in file:
+        for line in filee:
             # Strip the newline character at the end
             line = line.rstrip("\n")
             # Check if the search text is in the line
@@ -162,9 +161,12 @@ if __name__ == "__main__":
         print(result)
     elif len(sys.argv) == 4 and sys.argv[3] == "--exists" or sys.argv[3] == "-e":
         # Call the find_string function
-        result = string_exists(S_TEXT, F_NAME)
+        if string_exists(S_TEXT, F_NAME):
+            exists = "True"
+        else:
+            exists = "False"
         # Return the result
-        print(result)
+        print(exists)
     else:
         # Print an error message
         print("Usage: find_string.py <search_text> <file_name>")

@@ -16,12 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 
-#!/usr/bin/env python3
-
 # This script reads the patch notes file and returns the highest version number.
 
-import sys
 import re
+import sys
 
 
 def find_highest_version(file_name):

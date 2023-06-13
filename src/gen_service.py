@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (C) 2023 Chris Laprade (chris@rootiest.com)
 #
 # This file is part of printcfg.
@@ -17,7 +18,6 @@
 
 # This script generates a service file for printcfg.
 
-#!/usr/bin/env python3
 """Generate a service file for printcfg."""
 import os
 import sys
