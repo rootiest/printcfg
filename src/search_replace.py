@@ -116,7 +116,7 @@ def simple_search_and_replace(search_text, replace_text, file_name):
         logger.debug(
             "search_and_replace() did not find the search_text %s", search_text
         )
-            break
+        break
 
     if not found:
         logger.debug("search_and_replace() did not find the search_text %s", search_text)
