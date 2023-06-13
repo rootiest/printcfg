@@ -1,18 +1,18 @@
 #!/bin/bash
 # Copyright (C) 2023 Chris Laprade (chris@rootiest.com)
-# 
+#
 # This file is part of printcfg.
-# 
+#
 # printcfg is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # printcfg is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -73,7 +73,12 @@ fi
 # Remove the [include user_config.cfg] line from printer.cfg
 include_line="[include user_config.cfg]"
 replace_line="#[include user_config.cfg]"
-python3 $home/$repo/scripts/search_replace.py $include_line $replace_line $printer
+python3 $home/$repo/scripts/search_replace.py "$include_line" "$replace_line" "$printer"
+
+# Remove the [include printcfg-moonraker.conf] line from moonraker.conf
+include_line="[include printcfg-moonraker.conf]"
+replace_line="#[include printcfg-moonraker.conf]"
+python3 $home/$repo/scripts/search_replace.py "$include_line" "$replace_line" "$moonraker"
 
 # Remove the printcfg directory
 sudo rm -r $home/$repo
