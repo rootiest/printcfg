@@ -96,8 +96,14 @@ def normal_ops():
     '''Run the script normally.'''
     logger.info("Starting normal operations...")
     try:
+        profile_name = find_profile(profile_path)
+    except ValueError as err:
+        logger.error("Error: %s", str(err))
+        profile_name = "default"
+        logger.info("Using default profile.")
+    try:
         # Run the shell script at startup
-        subprocess.Popen(["/bin/bash", setup_script])
+        subprocess.Popen(["/bin/bash", setup_script, profile_name])
         logger.info("Startup script complete.")
     except subprocess.CalledProcessError as err:
         # Log the error
