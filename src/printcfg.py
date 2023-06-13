@@ -258,11 +258,10 @@ if __name__ == "__main__":
         normal_ops()
         sys.exit(1)
     # Check the argument
-    if sys.argv[1] not in ["install", "change", "remove", "update", "help"]:
-        print(
-            "Error: The argument must be either install, change, remove, update, or help."
-        )
-        logger.error("Error: The argument must be either install, change, remove, update, or help.")
+    if sys.argv[1] not in ["install", "change", "remove", "update", "status", "help"]:
+        print(f"Error: Invalid Argument: {sys.argv[1]}")
+        logger.error("Error: Invalid Argument: %s", sys.argv[1])
+        show_help()
         sys.exit(1)
     # If the argument is 'install' start the script as root
     if sys.argv[1] == "install":
