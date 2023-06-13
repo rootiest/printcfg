@@ -43,7 +43,7 @@ REPO = "printcfg"
 # Get the current user name
 current_user = getpass.getuser()
 user_home = os.path.expanduser("~")
-profile_path = f"{user_home}/printer_data/user_profile.cfg"
+profile_path = f"{user_home}/printer_data/config/user_profile.cfg"
 setup_script = f"{user_home}/printcfg/scripts/setup.sh"
 
 # Set the logfile
