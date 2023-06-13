@@ -23,6 +23,9 @@ import getpass
 import logging
 import datetime
 
+S_TEXT = sys.argv[1]
+F_NAME = sys.argv[2]
+
 logger: logging.Logger = logging.getLogger(__name__)
 
 # Get the current user name
@@ -51,7 +54,7 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 # Log start of script
-logger.info(f"Starting script: {__file__}")
+logger.info("Starting script: %s", __file__)
 
 def find_string(search_text: str, file_name: str) -> str:
     """Search for a string in a file.
@@ -65,15 +68,15 @@ def find_string(search_text: str, file_name: str) -> str:
     """
     # Check if the file exists
     if not os.path.exists(file_name):
-        logger.error(f"File not found: {file_name}")
+        logger.error("File not found: %s", file_name)
         return "File not found."
     # Check if the file is readable
     if not os.access(file_name, os.R_OK):
-        logger.error(f"File is not readable: {file_name}")
+        logger.error("File is not readable: %s", file_name)
         return "File is not readable."
     # Check if the file is writable
     if not os.access(file_name, os.W_OK):
-        logger.error(f"File is not writable: {file_name}")
+        logger.error("File is not writable: %s", file_name)
         return "File is not writable."
     # Open the file in read mode
     with open(file_name, "r", encoding="utf-8") as file:
@@ -85,14 +88,14 @@ def find_string(search_text: str, file_name: str) -> str:
             if search_text in line:
                 # Return the rest of the line
                 # after the search text
-                logger.info(f"Search text found: {search_text}")
-                logger.info(f"File name: {file_name}")
-                logger.info(f"Line: {line}")
-                logger.info(f"Rest of line: {line.split(search_text)[1]}")
+                logger.info("Search text found: %s", search_text)
+                logger.info("File name: %s", file_name)
+                logger.info("Line: %s", line)
+                logger.info("Rest of line: %s", line.split(search_text)[1])
                 return line.split(search_text)[1]
     # If the search text was not found, return an error
-    logger.error(f"Search text not found: {search_text}")
-    logger.info(f"File name: {file_name}")
+    logger.error("Search text not found: %s", search_text)
+    logger.info("File name: %s", file_name)
     return "Search text not found."
 
 def string_exists(search_text: str, file_name: str) -> bool:
@@ -107,15 +110,15 @@ def string_exists(search_text: str, file_name: str) -> bool:
     """
     # Check if the file exists
     if not os.path.exists(file_name):
-        logger.error(f"File not found: {file_name}")
+        logger.error("File not found: %s", file_name)
         return False
     # Check if the file is readable
     if not os.access(file_name, os.R_OK):
-        logger.error(f"File is not readable: {file_name}")
+        logger.error("File is not readable: %s", file_name)
         return False
     # Check if the file is writable
     if not os.access(file_name, os.W_OK):
-        logger.error(f"File is not writable: {file_name}")
+        logger.error("File is not writable: %s", file_name)
         return False
     # Open the file in read mode
     with open(file_name, "r", encoding="utf-8") as file:
@@ -127,21 +130,21 @@ def string_exists(search_text: str, file_name: str) -> bool:
             if search_text in line:
                 # Return the rest of the line
                 # after the search text
-                logger.info(f"Search text found: {search_text}")
-                logger.info(f"File name: {file_name}")
-                logger.info(f"Line: {line}")
+                logger.info("Search text found: %s", search_text)
+                logger.info("File name: %s", file_name)
+                logger.info("Line: %s", line)
                 return True
     # If the search text was not found, return an error
-    logger.error(f"Search text not found: {search_text}")
-    logger.info(f"File name: {file_name}")
+    logger.error("Search text not found: %s", search_text)
+    logger.info("File name: %s", file_name)
     return False
 
 # Check if the script was run from the command line
 if __name__ == "__main__":
     # Log the current user
-    logger.info(f"Current user: {current_user}")
+    logger.info("Current user: %s", current_user)
     # Log arguments
-    logger.info(f"Arguments: {sys.argv}")
+    logger.info("Arguments: %s", sys.argv)
     # Check for help argument
     if len(sys.argv) == 2 and sys.argv[1] == "--help" or sys.argv[1] == "-h":
         print("Usage: find_string.py <search_text> <file_name> [options]")
@@ -152,21 +155,15 @@ if __name__ == "__main__":
         print("  --help, -h   Show this help message and exit.")
         exit(0)
     if len(sys.argv) == 3:
-            # Get the search text and file name from the arguments
-            s_text = sys.argv[1]
-            f_name = sys.argv[2]
-            # Call the find_string function
-            result = find_string(s_text, f_name)
-            # Return the result
-            print(result)
+        # Call the find_string function
+        result = find_string(S_TEXT, F_NAME)
+        # Return the result
+        print(result)
     elif len(sys.argv) == 4 and sys.argv[3] == "--exists" or sys.argv[3] == "-e":
-            # Get the search text and file name from the arguments
-            s_text = sys.argv[1]
-            f_name = sys.argv[2]
-            # Call the find_string function
-            result = string_exists(s_text, f_name)
-            # Return the result
-            print(result)
+        # Call the find_string function
+        result = string_exists(S_TEXT, F_NAME)
+        # Return the result
+        print(result)
     else:
         # Print an error message
         print("Usage: find_string.py <search_text> <file_name>")
@@ -176,4 +173,4 @@ else:
     # Print an error message
     print("This script must be run from the command line.")
     # Exit with an error code
-    exit(1)
+    sys.exit(1)
