@@ -50,9 +50,12 @@ handler = logging.FileHandler(logfile)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
+<<<<<<< HEAD
 # Log start of script
 logger.info(f"Starting script: {__file__}")
 
+=======
+>>>>>>> 7d154ad3cea1c93cb9b15444cb21d59d8c2a7622
 def find_string(search_text: str, file_name: str) -> str:
     """Search for a string in a file.
 
@@ -85,6 +88,7 @@ def find_string(search_text: str, file_name: str) -> str:
             if search_text in line:
                 # Return the rest of the line
                 # after the search text
+<<<<<<< HEAD
                 logger.info(f"Search text found: {search_text}")
                 logger.info(f"File name: {file_name}")
                 logger.info(f"Line: {line}")
@@ -152,6 +156,21 @@ if __name__ == "__main__":
         print("  --help, -h   Show this help message and exit.")
         exit(0)
     if len(sys.argv) == 3:
+=======
+                return line.split(search_text)[1]
+    # If the search text was not found, return an error
+    logger.error(f"Search text not found: {search_text}")
+    return "Search text not found."
+
+# Check if the script was run from the command line
+if __name__ == "__main__":
+    # Check if the script was run with the correct number of arguments
+    if len(sys.argv) == 3:
+        if sys.argv[1] == "--help" or sys.argv[1] == "-h":
+            print("Usage: find_string.py <search_text> <file_name>")
+            exit(0)
+        else:
+>>>>>>> 7d154ad3cea1c93cb9b15444cb21d59d8c2a7622
             # Get the search text and file name from the arguments
             s_text = sys.argv[1]
             f_name = sys.argv[2]
@@ -159,6 +178,7 @@ if __name__ == "__main__":
             result = find_string(s_text, f_name)
             # Return the result
             print(result)
+<<<<<<< HEAD
     elif len(sys.argv) == 4 and sys.argv[3] == "--exists" or sys.argv[3] == "-e":
             # Get the search text and file name from the arguments
             s_text = sys.argv[1]
@@ -167,6 +187,8 @@ if __name__ == "__main__":
             result = string_exists(s_text, f_name)
             # Return the result
             print(result)
+=======
+>>>>>>> 7d154ad3cea1c93cb9b15444cb21d59d8c2a7622
     else:
         # Print an error message
         print("Usage: find_string.py <search_text> <file_name>")
