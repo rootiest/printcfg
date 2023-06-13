@@ -116,7 +116,7 @@ def generate_service():
     mode = sys.argv[1]
     logger.debug("Mode: %s", mode)
     # Define the path to the second script
-    script_path = f"{script_dir}/src/gen_service.py"
+    script_path = f"{script_dir}src/gen_service.py"
     logger.debug("Script path: %s", script_path)
     # Check if the second script exists
     if not os.path.isfile(script_path):
