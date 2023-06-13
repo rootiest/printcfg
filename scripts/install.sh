@@ -259,7 +259,7 @@ then
     # Copy user profile to config directory
     echo -e "\e[36mUsing config profile: $src\e[0m" >&3
     echo "Creating user_config in config directory..." >&3
-    cp -r "$home"/$repo/profiles/"$src"/config.cfg $"config"/user_config.cfg
+    cp -r "$home"/$repo/profiles/"$src"/config.cfg "$config"/user_config.cfg
 else
     echo -e "\e[32mUser config already exists.\e[0m" >&3
 fi
