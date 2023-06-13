@@ -48,7 +48,12 @@ fi
 systemctl stop $repo.service || { echo -e "\e[31mFailed to stop $repo service.\e[0m"; exit 1; }
 
 # Remove the printcfg service
-sudo rm /etc/systemd/system/$repo.service
+service_file="/etc/systemd/system/$repo.service"
+if [ -f "$service_file" ]; then
+    sudo rm "$service_file" || { echo -e "\e[31mFailed to remove $service_file.\e[0m"; exit 1; }
+else
+    echo -e "\e[31m$service_file does not exist.\e[0m"
+fi
 
 # Verify that the printcfg service was removed
 if [ -f /etc/systemd/system/$repo.service ]; then
@@ -75,8 +80,13 @@ if [ -d "$home"/$repo ]; then
     exit 1
 fi
 
-# Remove the printcfg symlink from the klipper config directory
-sudo rm "$config"/$repo
+# Remove the printcfg directory
+sudo rm -rf "$home/$repo"
+# Verify that the printcfg directory was removed
+if [ -d "$home/$repo" ]; then
+    echo -e "\e[31mFailed to remove $home/$repo.\e[0m"
+    exit 1
+fi
 
 # Verify that the printcfg symlink was removed
 if [ -L "$config"/$repo ]; then
