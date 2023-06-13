@@ -26,28 +26,38 @@
 #   remove: Remove the printcfg service
 #   update: Update printcfg
 
-#!/usr/bin/env python3
-
-import os
-import sys
-import getpass
-import subprocess
-import logging
+""" printcfg - A configuration manager for Klipper printers."""
 import datetime
+import getpass
+import logging
+import os
+import subprocess
+import sys
 
 logger: logging.Logger = logging.getLogger(__name__)
 
 # Set the repo name
 REPO = "printcfg"
-
+# Set arguments
+ARGUMENTS_LIST = [
+    "help",
+    "install",
+    "restart",
+    "change",
+    "remove",
+    "update",
+    "repair",
+    "branch",
+    "status",
+]
 # Get the current user name
 current_user = getpass.getuser()
 user_home = os.path.expanduser("~")
-profile_path = f"{user_home}/printer_data/user_profile.cfg"
-setup_script = f"{user_home}/printcfg/scripts/setup.sh"
+profile_path = f"{user_home}/printer_data/config/user_profile.cfg"
+setup_script = f"{user_home}/{REPO}/scripts/setup.sh"
 
 # Set the logfile
-logfile = f"{user_home}/printcfg/logs/printcfg.log"
+logfile = f"{user_home}/{REPO}/logs/{REPO}.log"
 
 # Check the date of the first log entry
 # If it is older than 30 days, delete the logfile
@@ -56,18 +66,26 @@ if os.path.exists(logfile):
         first_line = file.readline()
         if first_line:
             first_line = first_line.split(" - ")[0]
-            first_line = datetime.datetime.strptime(first_line, "%Y-%m-%d %H:%M:%S,%f")
+            first_date = datetime.datetime.strptime(first_line, "%Y-%m-%d %H:%M:%S,%f")
             thirty_days_ago = datetime.datetime.now() - datetime.timedelta(days=30)
-            if first_line < thirty_days_ago:
+            if first_date < thirty_days_ago:
                 os.remove(logfile)
 
 # Check if the logfile exists
-if not os.path.exists(f"{user_home}/printcfg/logs/"):
-    # Create the log directory
-    os.mkdir(f"{user_home}/printcfg/logs/")
+log_dir = f"{user_home}/{REPO}/logs/"
+if not os.path.exists(log_dir):
+    try:
+        # Create the log directory
+        os.makedirs(log_dir)
+    except OSError as err:
+        print(f"Error creating log directory: {err}")
     # Create the logfile
-    with open(logfile, "w", encoding="utf-8") as file:
-        pass
+    try:
+        with open(logfile, "w", encoding="utf-8") as file:
+            pass
+        logging.info("Created log file: %s", logfile)
+    except OSError as err:
+        logging.error("Error creating log file: %s", err)
 
 # Set the logging level
 logger.setLevel(logging.DEBUG)
@@ -77,99 +95,131 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-def find_profile(path):
-    logger.debug("Searching for profile name in file: {}".format(path))
+def show_help():
+    """Show the help message."""
+    logger.info("Showing help message...")
+    print(f"Usage: {sys.argv[0]} [install|change|remove|update|help]")
+    print(f"  install: Install the {REPO} service")
+    print(f"  restart: Restart the {REPO} service")
+    print("  change: Change the current profile")
+    print(f"  branch: Change the current {REPO} branch")
+    print(f"  remove: Remove {REPO} service")
+    print(f"  update: Update {REPO}")
+    print(f"  status: Show the status of the {REPO} service")
+    print(f"  repair: Repair the {REPO} service")
+    print("  help: Show this help message")
+    logger.info("Help message shown.")
+    sys.exit(0)
+
+
+def find_profile(path: str):
+    """Find the profile name in the given file."""
+    logger.debug("Searching for profile name in file: %s", path)
     # Find the profile name (Eg: '# Profile: default' = 'default')
-    with open(path, "r", encoding="utf-8") as file:
-        for line in file:
-            if line.startswith("# Profile: "):
-                logger.debug("Found profile name: {}".format(line[11:].strip()))
+    with open(path, "r", encoding="utf-8") as p_file:
+        for line in p_file:
+            if line.startswith("# Profile:"):
+                the_profile = line[10:].strip()
+                logger.debug("Found profile name: %s", the_profile)
                 # Return the profile name
-                return line[11:].strip()
+                return the_profile
 
     # If no profile was found, raise an error
-    logger.error("Profile not found in file: {}".format(path))
-    raise ValueError("Profile not found in file: {}".format(path))
+    logger.error("Profile not found in file: %s", path)
+    raise ValueError(f"Profile not found in file: {path}")
 
 
 def normal_ops():
+    """Run the script normally."""
     logger.info("Starting normal operations...")
     try:
+        profile_name = find_profile(profile_path)
+    except ValueError as errnorm:
+        logger.error("Error: %s", str(errnorm))
+        profile_name = "default"
+        logger.info("Using default profile.")
+    try:
         # Run the shell script at startup
-        subprocess.Popen(["/bin/bash", setup_script])
+        subprocess.Popen(["/bin/bash", setup_script, profile_name])
         logger.info("Startup script complete.")
-    except Exception as e:
+    except subprocess.CalledProcessError as errsetscript:
         # Log the error
-        logger.error("Error running startup script: {}".format(str(e)))
+        logger.error("Error running startup script: %s", str(errsetscript))
         # Exit with error
-        exit(1)
-    # Exit successfully
+        sys.exit(1)
+    # Exit gracefully
     logger.info("Startup script complete, exiting.")
-    exit(0)
+    sys.exit(0)
 
 
 def generate_service():
-    logger.info("Generating service...")
+    """Generate the printcfg service."""
+    logger.info("Generating %s service...", REPO)
     # Define the path to the second script
     script_dir = f"{user_home}/{REPO}/"
-    logger.debug("Script directory: {}".format(script_dir))
+    logger.debug("Script directory: %s", script_dir)
     mode = sys.argv[1]
-    logger.debug("Mode: {}".format(mode))
+    logger.debug("Mode: %s", mode)
     # Define the path to the second script
-    script_path = f"{script_dir}/src/gen_service.py"
-    logger.debug("Script path: {}".format(script_path))
+    script_path = f"{script_dir}src/gen_service.py"
+    logger.debug("Script path: %s", script_path)
     # Check if the second script exists
     if not os.path.isfile(script_path):
         print(f"Error: The script '{script_path}' does not exist.")
-        logger.error("Error: The script '{}' does not exist.".format(script_path))
+        logger.error("Error: The script '%s' does not exist.", script_path)
         return
     # Start the second script as root with the current user name as the first argument
-    command = ["sudo", "python3", script_path, current_user, user_home, mode]
-    logger.debug("Executing command: {}".format(command))
+    command = f"sudo python3 {script_path} {current_user} {user_home} {mode}"
+    logger.debug("Executing command: %s", command)
     print(f"Executing command: {command}")
     try:
-        result = subprocess.run(command, capture_output=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Error: The subprocess returned an error.")
-        print(e.stderr)
-        logger.error("Error: The subprocess returned an error: {}".format(e.stderr))
+        result = subprocess.run(command, capture_output=True, check=False)
+    except subprocess.CalledProcessError as errgen:
+        print("Error: The subprocess returned an error.")
+        print(errgen.stderr)
+        logger.error("Error: The subprocess returned an error: %s", errgen.stderr)
         return
-    logger.debug("Command output: {}".format(result.stdout.decode("utf-8")))
+    logger.debug("Command output: %s", result.stdout.decode("utf-8"))
     if result.returncode != 0:
         print(f"Error: The command '{command}' failed with code {result.returncode}.")
-        logger.error("Error: The command '{}' failed with code {}.".format(command, result.returncode))
+        logger.error(
+            "Error: The command '%s' failed with code %s.", command, result.returncode
+        )
         print(f"Output from command: {result.stdout.decode('utf-8')}")
         print(f"Error from command: {result.stderr.decode('utf-8')}")
         return
-    # Exit successfully
-    logger.info("Service generated successfully.")
-    exit(0)
+    # Exit gracefully
+    logger.info("%s service generated successfully.", REPO)
+    sys.exit(0)
 
 
-def change_profile(profile):
+def change_profile(profile_name: str):
+    """Change the profile."""
     # Define the path to the second script
     script_path = f"{user_home}/{REPO}/scripts/change_profile.sh"
-    logger.debug("Script path: {}".format(script_path))
+    logger.debug("Script path: %s", script_path)
     # Check if the second script exists
     if not os.path.isfile(script_path):
         print(f"Error: The script '{script_path}' does not exist.")
-        logger.error("Error: The script '{}' does not exist.".format(script_path))
+        logger.error("Error: The script '%s' does not exist.", script_path)
         return
     # Start the change profile script
-    command = ["bash", script_path, profile]
-    logger.debug("Executing command: {}".format(command))
+    command = ["bash", script_path, profile_name]
+    logger.debug("Executing command: %s", command)
     try:
         subprocess.run(command, check=True)
-    except subprocess.CalledProcessError as e:
+    except subprocess.CalledProcessError as errprofile:
         print("Error: The subprocess returned an error.")
-        print(e.stderr)
-        logger.error("Error: The subprocess returned an error: {}".format(e.stderr))
-    # Exit successfully
-    logger.info("Profile changed successfully.")
-    exit(0)
+        print(errprofile.stderr)
+        logger.error("Error: The subprocess returned an error: %s", errprofile.stderr)
+    # Exit gracefully
+    logger.info("Profile changed to %s successfully.", profile_name)
+    print(f"Profile changed to {profile_name} successfully.")
+    sys.exit(0)
 
 
 def update_printcfg():
+    """Update printcfg."""
     # Define the path to the second script
     script_path = f"{user_home}/{REPO}/scripts/install.sh"
     # Check if the second script exists
@@ -177,42 +227,158 @@ def update_printcfg():
         print(f"Error: The script '{script_path}' does not exist.")
         return
     # Find the current profile
-    profile = find_profile(profile_path)
+    profile_name = find_profile(profile_path)
     # Start the update script
-    command = ["bash", script_path, profile]
-    logger.debug("Executing command: {}".format(command))
+    command = ["bash", script_path, profile_name]
+    logger.debug("Executing command: %s", command)
     try:
-        subprocess.run(command)
-    except subprocess.CalledProcessError as e:
+        subprocess.run(command, check=True)
+    except subprocess.CalledProcessError as errr:
         print("Error: The subprocess returned an error.")
-        print(e.stderr)
-        logger.error("Error: The subprocess returned an error: {}".format(e.stderr))
-    # Exit successfully
-    logger.info("Update complete.")
-    exit(0)
+        print(errr.stderr)
+        logger.error("Error: The subprocess returned an error: %s", errr.stderr)
+    # Exit gracefully
+    logger.info("%s updated successfully.", REPO)
+    print(f"{REPO} updated successfully.")
+    sys.exit(0)
 
 
-def remove_printcfg():
+def restart_service(service_name: str):
+    """Restarts a systemctl service.
+
+    Args:
+        service_name: The name of the systemctl service to restart.
+
+    Returns:
+        True if the service was restarted successfully, False otherwise.
+    """
+    command = ["systemctl", "restart", f"{service_name}.service"]
+    logger.debug("Executing command: %s", command)
+    try:
+        subprocess.check_call(command)
+        logger.info("Service '%s' restarted successfully.", service_name)
+        print(f"Service '{service_name}' restarted successfully.")
+        return True
+    except subprocess.CalledProcessError as errserv:
+        logger.error("Error restarting %s service: %s", service_name, errserv)
+        print(f"Error restarting {service_name} service: {errserv}")
+        return False
+
+
+def change_branch(branch_name: str):
+    """Changes the branch of the printcfg repo."""
+    logger.info("Changing to branch '%s'.", branch_name)
     # Define the path to the second script
-    script_path = f"{user_home}/{REPO}/scripts/remove_{REPO}.sh"
-    logger.debug("Script path: {}".format(script_path))
+    script_path = f"{user_home}/{REPO}/scripts/install.sh"
+    logger.debug("Script: %s", script_path)
     # Check if the second script exists
     if not os.path.isfile(script_path):
         print(f"Error: The script '{script_path}' does not exist.")
-        logger.error("Error: The script '{}' does not exist.".format(script_path))
+        return
+    # Find the current profile
+    profile_name = find_profile(profile_path)
+    # Start the change branch script
+    command = ["bash", script_path, profile_name, branch_name]
+    logger.debug("Executing command: %s", command)
+    logger.debug(
+        "Changing to branch '%s' with profile '%s'.", branch_name, profile_name
+    )
+    print(f"Changing to branch '{branch_name}' with profile '{profile_name}'.")
+    try:
+        subprocess.run(command, check=False)
+    except subprocess.CalledProcessError as errbranch:
+        print("Error: The subprocess returned an error.")
+        print(errbranch.stderr)
+        logger.error("Error: The subprocess returned an error: %s", errbranch.stderr)
+    # Exit gracefully
+    logger.info("Succesfully changed to branch '%s'.", branch_name)
+    print(f"Succesfully changed to branch '{branch_name}'.")
+    sys.exit(0)
+
+
+def repair_printcfg():
+    """Repairs printcfg."""
+    # Define the path to the second script
+    script_path = f"{user_home}/{REPO}/scripts/setup.sh"
+    # Check if the second script exists
+    if not os.path.isfile(script_path):
+        print(f"Error: The script '{script_path}' does not exist.")
+        return
+    # Find the current profile
+    profile_name = find_profile(profile_path)
+    # Start the update script
+    command = ["bash", script_path, profile_name, "force"]
+    logger.debug("Executing command: %s", command)
+    try:
+        subprocess.run(command, check=True)
+    except subprocess.CalledProcessError as errepair:
+        print("Error: The subprocess returned an error.")
+        print(errepair.stderr)
+        logger.error("Error: The subprocess returned an error: %s", errepair.stderr)
+    # Exit gracefully
+    logger.info("Repairing %s completed successfully.", REPO)
+    print(f"Repairing {REPO} completed successfully.")
+    sys.exit(0)
+
+
+def remove_printcfg():
+    """Remove printcfg from the system."""
+    # Define the path to the second script
+    script_path = f"{user_home}/{REPO}/scripts/remove_{REPO}.sh"
+    logger.debug("Script path: %s", script_path)
+    # Check if the second script exists
+    if not os.path.isfile(script_path):
+        print(f"Error: The script '{script_path}' does not exist.")
+        logger.error("Error: The script '%s' does not exist.", script_path)
         return
     # Start the second script as root with the current user name as the first argument
     command = ["bash", script_path]
-    logger.debug("Executing command: {}".format(command))
+    logger.debug("Executing command: %s", command)
     try:
-        subprocess.run(command)
-    except subprocess.CalledProcessError as e:
+        subprocess.run(command, check=True)
+    except subprocess.CalledProcessError as erremove:
         print("Error: The subprocess returned an error.")
-        print(e.stderr)
-        logger.error("Error: The subprocess returned an error: {}".format(e.stderr))
-    # Exit successfully
-    logger.info("Printcfg removed successfully.")
-    exit(0)
+        print(erremove.stderr)
+        logger.error("Error: The subprocess returned an error: %s", erremove.stderr)
+    # Exit gracefully
+    logger.info("%s removed successfully.", REPO)
+    print(f"{REPO} removed successfully.")
+    sys.exit(0)
+
+
+def show_status(service_name: str):
+    """Show the status of a systemctl service.
+
+    Args:
+        service_name: The name of the systemctl service to restart.
+
+    Returns:
+        True if the status was displayed successfully, False otherwise.
+    """
+    # Get the systemctl status
+    command = ["systemctl", "status", f"{service_name}.service"]
+    logger.debug("Executing command: %s", command)
+    try:
+        result = subprocess.run(command, capture_output=True, check=False)
+    except subprocess.CalledProcessError as errstat:
+        print("Error: The subprocess returned an error.")
+        print(errstat.stderr)
+        logger.error("Error: The subprocess returned an error: %s", errstat.stderr)
+        return False
+    logger.debug("Command output: %s", result.stdout.decode("utf-8"))
+    if result.returncode != 0:
+        print(f"Error: The command '{command}' failed with code {result.returncode}.")
+        logger.error(
+            "Error: The command '%s' failed with code %s.", command, result.returncode
+        )
+        print(f"Output from command: {result.stdout.decode('utf-8')}")
+        print(f"Error from command: {result.stderr.decode('utf-8')}")
+        return False
+    # Print the status
+    print(result.stdout.decode("utf-8"))
+    # Exit gracefully
+    logger.info("Status shown successfully.")
+    return True
 
 
 if __name__ == "__main__":
@@ -222,11 +388,10 @@ if __name__ == "__main__":
         normal_ops()
         sys.exit(1)
     # Check the argument
-    if sys.argv[1] not in ["install", "change", "remove", "update", "default"]:
-        print(
-            "Error: The argument must be either install, change, remove, update, or default."
-        )
-        logger.error("Error: The argument must be either install, change, remove, update, or default.")
+    if sys.argv[1] not in ARGUMENTS_LIST:
+        print(f"Error: Invalid Argument: {sys.argv[1]}")
+        logger.error("Error: Invalid Argument: %s", sys.argv[1])
+        show_help()
         sys.exit(1)
     # If the argument is 'install' start the script as root
     if sys.argv[1] == "install":
@@ -244,7 +409,7 @@ if __name__ == "__main__":
             profile = sys.argv[2]
             logger.info("Running change operations.")
             profile_path = f"{user_home}/{REPO}/profiles/{profile}"
-            logger.debug("Profile path: {}".format(profile_path))
+            logger.debug("Profile path: %s", profile_path)
             print(f"Changing to profile '{profile}'")
             # If the profile is 'backup' then skip the check
             if profile == "backup":
@@ -254,10 +419,10 @@ if __name__ == "__main__":
                 # If the profile path does not exist, exit
                 if not os.path.isdir(profile_path):
                     print(f"Error: The profile '{profile}' does not exist.")
-                    logger.error("Error: The profile '{}' does not exist.".format(profile))
+                    logger.error("Error: The profile '%s' does not exist.", profile)
                     sys.exit(1)
                 else:
-                    logger.info("Changing to profile '{}'.".format(profile))
+                    logger.info("Changing to profile '%s'.", profile)
                     change_profile(profile)
     # If the argument is 'remove'
     elif sys.argv[1] == "remove":
@@ -266,7 +431,33 @@ if __name__ == "__main__":
     elif sys.argv[1] == "update":
         logger.info("Running update operations.")
         update_printcfg()
-
+    elif sys.argv[1] == "status":
+        logger.info("Running status operations.")
+        show_status(REPO)
+    elif sys.argv[1] == "restart":
+        logger.info("Running restart operations.")
+        restart_service(REPO)
+    elif sys.argv[1] == "repair":
+        logger.info("Running repair operations.")
+        repair_printcfg()
+    elif sys.argv[1] == "branch":
+        logger.info("Running branch operations.")
+        # Make sure the branch was provided
+        if len(sys.argv) != 3:
+            print("Error: The branch script requires two arguments.")
+            print(f"Usage: python3 {REPO}.py branch <branch>")
+            logger.error("Error: The branch script requires two arguments.")
+            sys.exit(1)
+        else:
+            branch_arg = sys.argv[2]
+            change_branch(branch_arg)
+    elif sys.argv[1] == "help":
+        logger.info("Running help operations.")
+        show_help()
     else:
         logger.info("Running normal operations.")
         normal_ops()
+
+    # Exit gracefully
+    logger.info("%s completed successfully.", REPO)
+    exit(0)

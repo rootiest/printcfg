@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 
-#!/usr/bin/env python3
-
 # This code searches for a string in a file and replaces the whole line
 # containing the string with a different string.
 # The search is case sensitive.
@@ -40,12 +38,12 @@
 # Example:
 #   python3 search_replace.py "version" "version: 1.0.0" "patch_notes.txt"
 
-import sys
-import os
-import getpass
-import re
-import logging
 import datetime
+import getpass
+import logging
+import os
+import re
+import sys
 
 logger: logging.Logger = logging.getLogger(__name__)
 
@@ -62,9 +60,9 @@ if os.path.exists(logfile):
         first_line = file.readline()
         if first_line:
             first_line = first_line.split(" - ")[0]
-            first_line = datetime.datetime.strptime(first_line, "%Y-%m-%d %H:%M:%S,%f")
+            first_date = datetime.datetime.strptime(first_line, "%Y-%m-%d %H:%M:%S,%f")
             thirty_days_ago = datetime.datetime.now() - datetime.timedelta(days=30)
-            if first_line < thirty_days_ago:
+            if first_date < thirty_days_ago:
                 os.remove(logfile)
 
 # Set the logging level
@@ -76,7 +74,10 @@ logger.addHandler(handler)
 
 
 def simple_search_and_replace(search_text, replace_text, file_name):
-    """Searches for the line containing the search_text and replaces the whole line with the replace_text and saves the updated file over the original.
+    """
+    Searches for the line containing the search_text
+    and replaces the whole line with the replace_text
+    and saves the updated file over the original.
 
     Args:
         search_text: The text to search for.
@@ -86,7 +87,7 @@ def simple_search_and_replace(search_text, replace_text, file_name):
     Returns:
         A status indicating whether the change was successful.
     """
-    
+
     # Log the input
     logger.debug(
         "search_and_replace() called with: search_text=%s, replace_text=%s, file_name=%s",
@@ -94,7 +95,7 @@ def simple_search_and_replace(search_text, replace_text, file_name):
         replace_text,
         file_name,
     )
-    
+
     if search_text is None or replace_text is None or file_name is None:
         logger.error(
             "search_and_replace() failed due to invalid input: search_text=%s, replace_text=%s, file_name=%s",
@@ -111,13 +112,17 @@ def simple_search_and_replace(search_text, replace_text, file_name):
     found = False
     for i, line in enumerate(lines):
         if search_text in line:
-            lines[i] = replace_text + '\n'
+            lines[i] = replace_text + "\n"
             found = True
-            logger.debug("search_and_replace() found the search_text %s", search_text)
-            break
+        logger.debug(
+            "search_and_replace() did not find the search_text %s", search_text
+        )
+        break
 
     if not found:
-        logger.debug("search_and_replace() did not find the search_text %s", search_text)
+        logger.debug(
+            "search_and_replace() did not find the search_text %s", search_text
+        )
         lines.insert(0, replace_text + "\n")
         logger.debug("search_and_replace() inserted the replace_text %s", replace_text)
 
@@ -129,7 +134,10 @@ def simple_search_and_replace(search_text, replace_text, file_name):
 
 
 def search_and_replace(search_text: str, replace_text: str, file_name: str) -> bool:
-    """Searches for the line containing the search_text and replaces the whole line with the replace_text and saves the updated file over the original.
+    """
+    Searches for the line containing the search_text
+    and replaces the whole line with the replace_text
+    and saves the updated file over the original.
 
     Args:
         search_text: The text to search for.
@@ -200,4 +208,4 @@ status = simple_search_and_replace(s_text, r_text, f_name)
 if status:
     print("The change was successful.")
 else:
-    print("The text to search for was not found.")
+    print("The text was added.")

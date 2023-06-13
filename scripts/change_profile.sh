@@ -25,39 +25,30 @@
 # This script will change the user profile to the specified profile.
 # Arguments:
 #   $1: <profile name> (mandatory)
-
-####################################################################################################
-
+#       The name of the profile to change to.
 # Example:
 #   ./change_profile.sh default
 # This will change the user profile to the default profile.
 
-####################################################################################################
-
-# Set the dev and repo name
-dev="rootiest"
+# Set the repo name
 repo="printcfg"
-branch="master"
 # Get home directory
-home=$(eval echo ~$USER)
+home=$(eval echo ~"$USER")
 # Define the klipper config file
 config=$home/printer_data/config
-# Define the printer.cfg and moonraker.conf files
-printer=$home/printer_data/config/printer.cfg
-moonraker=$home/printer_data/config/moonraker.conf
-# Set the default profile
-default_src=default
 user_vars=$config/user_profile.cfg
-old_user_vars=$config/$repo/user_profile.cfg
 user_cfg=$config/user_config.cfg
-old_user_cfg=$config/$repo/user_config.cfg
 profile_pattern="# Profile:(.*)"
+LOGFILE="$home/$repo/logs/change_profile.log"
+exec 3>&1 1>"$LOGFILE" 2>&1
+trap "echo 'ERROR: An error occurred during execution, check log for details.' >&3" ERR
+trap '{ set +x; } 2>/dev/null; echo -n "[$(date -Is)]  "; set -x' DEBUG
 
 # Check if any parameters were provided
 if [ $# -eq 0 ]
 then
-    echo -e "\n\e[31mERROR: No profile name provided.\e[0m"
-    echo "Usage: ./change_profile.sh <profile name>"
+    echo -e "\n\e[31mERROR: No profile name provided.\e[0m" >&3
+    echo "Usage: ./change_profile.sh <profile name>" >&3
     exit 1
 else
     # Set the profile name
@@ -76,13 +67,20 @@ else
     fi
 fi
 
-echo -e "\nChanging profile to $1..."
+echo -e "\nChanging profile to $1..." >&3
 
 # Check if the profile exists
 if [ ! -d "$src_path" ]
 then
-    echo -e "\n\e[31mERROR: Profile $1 does not exist.\e[0m"
-    echo "Usage: ./change_profile.sh <profile name>"
+    echo -e "\n\e[31mERROR: Profile $1 does not exist.\e[0m" >&3
+    echo "Usage: ./change_profile.sh <profile name>" >&3
+    exit 1
+fi
+# Check if the profile directory is empty
+if [ ! "$(ls -A "$src_path")" ]
+then
+    echo -e "\n\e[31mERROR: Profile $1 is empty.\e[0m" >&3
+    echo "Usage: ./change_profile.sh <profile name>" >&3
     exit 1
 fi
 
@@ -94,8 +92,10 @@ then
     # Verify that the profile marker was found
     if [ -z "$vars_profile" ]
     then
-        echo -e "\n\e[31mERROR: Profile marker not found in $user_vars.\e[0m"
-        echo "Usage: ./change_profile.sh <profile name>"
+        echo -e "\n\e[31mERROR: Profile marker not found in $user_vars.\e[0m" >&3
+        echo "The profile marker should be near the top of the file." >&3
+        echo "It should look like this: # Profile: <profile name>" >&3
+        echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
     # Search for the profile_pattern in the src_vars using grep
@@ -103,15 +103,17 @@ then
     # Verify that the profile marker was found
     if [ -z "$src_profile" ]
     then
-        echo -e "\n\e[31mERROR: Profile marker not found in $src_vars.\e[0m"
-        echo "Usage: ./change_profile.sh <profile name>"
+        echo -e "\n\e[31mERROR: Profile marker not found in $src_vars.\e[0m" >&3
+        echo "The profile marker should be near the top of the file." >&3
+        echo "It should look like this: # Profile: <profile name>" >&3
+        echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
     # Check if the profile is already active
     if [ "$vars_profile" == "$src_profile" ]
     then
-        echo -e "\n\e[31mERROR: Profile $1 is already active.\e[0m"
-        echo "Usage: ./change_profile.sh <profile name>"
+        echo -e "\n\e[31mERROR: Profile $1 is already active.\e[0m" >&3
+        echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
 fi
@@ -124,8 +126,8 @@ then
     # Verify that the profile marker was found
     if [ -z "$cfg_profile" ]
     then
-        echo -e "\n\e[31mERROR: Profile marker not found in $user_cfg.\e[0m"
-        echo "Usage: ./change_profile.sh <profile name>"
+        echo -e "\n\e[31mERROR: Profile marker not found in $user_cfg.\e[0m" >&3
+        echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
     # Search for the profile_pattern in the src_cfg using grep
@@ -133,15 +135,15 @@ then
     # Verify that the profile marker was found
     if [ -z "$src_profile" ]
     then
-        echo -e "\n\e[31mERROR: Profile marker not found in $src_cfg.\e[0m"
-        echo "Usage: ./change_profile.sh <profile name>"
+        echo -e "\n\e[31mERROR: Profile marker not found in $src_cfg.\e[0m" >&3
+        echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
     # Check if the profile is already active
     if [ "$cfg_profile" == "$src_profile" ]
     then
-        echo -e "\n\e[31mERROR: Profile $1 is already active.\e[0m"
-        echo "Usage: ./change_profile.sh <profile name>"
+        echo -e "\n\e[31mERROR: Profile $1 is already active.\e[0m" >&3
+        echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
 fi
@@ -167,22 +169,16 @@ then
     if [ -f "$user_vars.bak" ]
     then
         # Rename the backup
-        cp "$user_vars.bak" "$user_vars.old"
-        # Verify that the rename was successful
-        if [ $? -ne 0 ]
-        then
-            echo -e "\n\e[31mERROR: Failed to rename $user_vars.bak to $user_vars.old.\e[0m"
-            echo "Usage: ./change_profile.sh <profile name>"
+        if ! cp "$user_vars.bak" "$user_vars.old";then
+            echo -e "\n\e[31mERROR: Failed to rename $user_vars.bak to $user_vars.old.\e[0m" >&3
+            echo "Usage: ./change_profile.sh <profile name>" >&3
             exit 1
         fi
     fi
     # Backup the current user profile
-    cp "$user_vars" "$user_vars.bak"
-    # Verify that the backup was successful
-    if [ $? -ne 0 ]
-    then
-        echo -e "\n\e[31mERROR: Failed to backup $user_vars.\e[0m"
-        echo "Usage: ./change_profile.sh <profile name>"
+    if ! cp "$user_vars" "$user_vars.bak"; then
+        echo -e "\n\e[31mERROR: Failed to backup $user_vars.\e[0m" >&3
+        echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
 fi
@@ -194,22 +190,16 @@ then
     if [ -f "$user_cfg.bak" ]
     then
         # Rename the backup
-        cp "$user_cfg.bak" "$user_cfg.old"
-        # Verify that the rename was successful
-        if [ $? -ne 0 ]
-        then
-            echo -e "\n\e[31mERROR: Failed to rename $user_cfg.bak to $user_cfg.old.\e[0m"
-            echo "Usage: ./change_profile.sh <profile name>"
+        if ! cp "$user_cfg.bak" "$user_cfg.old"; then
+            echo -e "\n\e[31mERROR: Failed to rename $user_cfg.bak to $user_cfg.old.\e[0m" >&3
+            echo "Usage: ./change_profile.sh <profile name>" >&3
             exit 1
         fi
     fi
     # Backup the current user config
-    cp "$user_cfg" "$user_cfg.bak"
-    # Verify that the backup was successful
-    if [ $? -ne 0 ]
-    then
-        echo -e "\n\e[31mERROR: Failed to backup $user_cfg.\e[0m"
-        echo "Usage: ./change_profile.sh <profile name>"
+    if ! cp "$user_cfg" "$user_cfg.bak"; then
+        echo -e "\n\e[31mERROR: Failed to backup $user_cfg.\e[0m" >&3
+        echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
 fi
@@ -218,12 +208,9 @@ fi
 if [ -f "$user_vars" ]
 then
     # Copy the new profile to the user profile
-    cp "$src_vars" "$user_vars"
-    # Verify that the copy was successful
-    if [ $? -ne 0 ]
-    then
-        echo -e "\n\e[31mERROR: Failed to copy $src_vars to $user_vars.\e[0m"
-        echo "Usage: ./change_profile.sh <profile name>"
+    if ! cp "$src_vars" "$user_vars"; then
+        echo -e "\n\e[31mERROR: Failed to copy $src_vars to $user_vars.\e[0m" >&3
+        echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
 fi
@@ -232,12 +219,9 @@ fi
 if [ -f "$user_cfg" ]
 then
     # Copy the new config to the user config
-    cp "$src_cfg" "$user_cfg"
-    # Verify that the copy was successful
-    if [ $? -ne 0 ]
-    then
-        echo -e "\n\e[31mERROR: Failed to copy $src_cfg to $user_cfg.\e[0m"
-        echo "Usage: ./change_profile.sh <profile name>"
+    if ! cp "$src_cfg" "$user_cfg"; then
+        echo -e "\n\e[31mERROR: Failed to copy $src_cfg to $user_cfg.\e[0m" >&3
+        echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
 fi
@@ -250,8 +234,7 @@ then
     # Verify that the profile marker was found
     if [ -z "$vars_profile" ]
     then
-        echo -e "\n\e[31mERROR: Profile marker not found in $user_vars.\e[0m"
-        echo "Usage: ./change_profile.sh <profile name>"
+        echo -e "\n\e[31mERROR: Profile marker not found in $user_vars.\e[0m" >&3
         exit 1
     fi
     # Search for the profile_pattern in the src_vars using grep
@@ -259,15 +242,13 @@ then
     # Verify that the profile marker was found
     if [ -z "$src_profile" ]
     then
-        echo -e "\n\e[31mERROR: Profile marker not found in $src_vars.\e[0m"
-        echo "Usage: ./change_profile.sh <profile name>"
+        echo -e "\n\e[31mERROR: Profile marker not found in $src_vars.\e[0m" >&3
         exit 1
     fi
     # Check if the profile is already active
     if [ "$vars_profile" != "$src_profile" ]
     then
-        echo -e "\n\e[31mERROR: Failed to apply profile $1.\e[0m"
-        echo "Usage: ./change_profile.sh <profile name>"
+        echo -e "\n\e[31mERROR: Failed to apply profile $1.\e[0m" >&3
         exit 1
     fi
 fi
@@ -280,8 +261,8 @@ then
     # Verify that the profile marker was found
     if [ -z "$cfg_profile" ]
     then
-        echo -e "\n\e[31mERROR: Profile marker not found in $user_cfg.\e[0m"
-        echo "Usage: ./change_profile.sh <profile name>"
+        echo -e "\n\e[31mERROR: Profile marker not found in $user_cfg.\e[0m" >&3
+        echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
     # Search for the profile_pattern in the src_cfg using grep
@@ -289,15 +270,15 @@ then
     # Verify that the profile marker was found
     if [ -z "$src_profile" ]
     then
-        echo -e "\n\e[31mERROR: Profile marker not found in $src_cfg.\e[0m"
-        echo "Usage: ./change_profile.sh <profile name>"
+        echo -e "\n\e[31mERROR: Profile marker not found in $src_cfg.\e[0m" >&3
+        echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
     # Check if the profile is already active
     if [ "$cfg_profile" != "$src_profile" ]
     then
-        echo -e "\n\e[31mERROR: Failed to apply profile $1.\e[0m"
-        echo "Usage: ./change_profile.sh <profile name>"
+        echo -e "\n\e[31mERROR: Failed to apply profile $1.\e[0m" >&3
+        echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
 fi
@@ -308,12 +289,9 @@ fi
 if [ "${src_vars: -4}" == ".tmp" ]
 then
     # Remove the temp file
-    rm "$src_vars"
-    # Verify that the file was removed
-    if [ $? -ne 0 ]
-    then
-        echo -e "\n\e[31mERROR: Failed to remove $src_vars.\e[0m"
-        echo "Usage: ./change_profile.sh <profile name>"
+    if ! rm "$src_vars"; then
+        echo -e "\n\e[31mERROR: Failed to remove $src_vars.\e[0m" >&3
+        echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
 fi
@@ -322,15 +300,12 @@ fi
 if [ "${src_cfg: -4}" == ".tmp" ]
 then
     # Remove the temp file
-    rm "$src_cfg"
-    # Verify that the file was removed
-    if [ $? -ne 0 ]
-    then
-        echo -e "\n\e[31mERROR: Failed to remove $src_cfg.\e[0m"
-        echo "Usage: ./change_profile.sh <profile name>"
+    if ! rm "$src_cfg"; then
+        echo -e "\n\e[31mERROR: Failed to remove $src_cfg.\e[0m" >&3
+        echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
     fi
 fi
 
 # Success
-echo -e "\n\e[32mSuccessfully applied profile $1.\e[0m"
+echo -e "\n\e[32mSuccessfully applied profile $1.\e[0m" >&3

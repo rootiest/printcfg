@@ -35,18 +35,20 @@ To change to this profile, run:
 
 ## Features
 
-- 300mm build volume
-- Voron TAP probe
-- Nozzle brush
-- Nevermore Filter
-- Exhaust Fan
-- Bed fans
-- Chamber sensor
-- Filament sensor on toolhead (load detection possible)
-- Door sensor
-- Case lights (125 RGBW LEDs)
-- StealthBurner LEDs (rainbow barf + RGBW LEDs)
-- Beeper (for notifications)
+- 300mm build volume: The printer has a build volume of 300mm.
+- Voron TAP probe: The printer uses a Voron TAP probe for bed leveling.
+- Nozzle brush: The printer has a nozzle brush attached to it.
+- Nevermore Filter: The printer has a Nevermore filter installed.
+- Exhaust Fan: The printer has an exhaust fan installed.
+- Bed fans: The printer has bed fans installed.
+- Chamber sensor: The printer has a chamber sensor installed.
+- Filament sensor on toolhead (load detection possible): The printer has a filament sensor installed on the toolhead that can detect when filament is loaded.
+- Door sensor: The printer has a door sensor installed.
+- Case lights (125 RGBW LEDs): The printer has 125 RGBW LEDs installed for lighting.
+- StealthBurner LEDs (rainbow barf + RGBW LEDs): The printer has StealthBurner LEDs installed.
+- Beeper (for notifications): The printer has a beeper installed for notifications.
+- Sensorless homing: The printer uses sensorless homing.
+- Adaptive meshing: The printer uses adaptive meshing.
 
 ## Notes
 

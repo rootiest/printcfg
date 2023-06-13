@@ -1,40 +1,32 @@
 #!/bin/bash
 # Copyright (C) 2023 Chris Laprade (chris@rootiest.com)
-# 
+#
 # This file is part of printcfg.
-# 
+#
 # printcfg is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # printcfg is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 
 # This script will remove printcfg from your system.
 
-# Set the dev and repo name
-dev="rootiest"
+# Set the repo name
 repo="printcfg"
-branch="master"
 # Get home directory
-home=$(eval echo ~$USER)
+home=$(eval echo ~"$USER")
 # Define the klipper config file
 config=$home/printer_data/config
 # Define the printer.cfg and moonraker.conf files
 printer=$home/printer_data/config/printer.cfg
 moonraker=$home/printer_data/config/moonraker.conf
-# Set the default profile
-default_src=default
-user_vars=$config/user_profile.cfg
-old_user_vars=$config/$repo/user_profile.cfg
-user_cfg=$config/user_config.cfg
-old_user_cfg=$config/$repo/user_config.cfg
 
 # Check if any parameters were provided
 if [ "$1" ]; then
@@ -49,71 +41,53 @@ if [ "$1" ]; then
             # Exit the script
             exit 1
         fi
+    fi
 fi
 
 # Stop the printcfg service
-sudo systemctl stop $repo.service
-
-# Verify that the printcfg service was stopped
-if [ "$(systemctl is-active $repo.service)" = "active" ]; then
-    echo -e "\e[31mFailed to stop the printcfg service.\e[0m"
-    exit 1
-fi
+systemctl stop $repo.service || { echo -e "\e[31mFailed to stop $repo service.\e[0m"; exit 1; }
 
 # Remove the printcfg service
-sudo rm /etc/systemd/system/$repo.service
-
-# Verify that the printcfg service was removed
-if [ -f /etc/systemd/system/$repo.service ]; then
-    echo -e "\e[31mFailed to remove the printcfg service.\e[0m"
-    exit 1
+service_file="/etc/systemd/system/$repo.service"
+if [ -f "$service_file" ]; then
+    sudo systemctl disable $repo.service || { echo -e "\e[31mFailed to disable $repo service.\e[0m"; exit 1; }
+    sudo rm "$service_file" || { echo -e "\e[31mFailed to remove $service_file.\e[0m"; exit 1; }
+else
+    echo -e "\e[31m$service_file does not exist.\e[0m"
 fi
 
 # Remove the [include user_config.cfg] line from printer.cfg
 include_line="[include user_config.cfg]"
 replace_line="#[include user_config.cfg]"
-python3 $home/$repo/scripts/search_replace.py $include_line $replace_line $printer
+python3 "$SCRIPT_DIR/search_replace.py" "$include_line" "$replace_line" "$printer" || { echo -e "\e[31mFailed to remove [include user_config.cfg] from printer.cfg.\e[0m"; exit 1; }
+
+# Remove the [include printcfg-moonraker.conf] line from moonraker.conf
+include_line="[include printcfg-moonraker.conf]"
+replace_line="#[include printcfg-moonraker.conf]"
+python3 "$SCRIPT_DIR/search_replace.py" "$include_line" "$replace_line" "$moonraker" || { echo -e "\e[31mFailed to remove [include printcfg-moonraker.conf] from moonraker.conf.\e[0m"; exit 1; }
 
 # Remove the printcfg directory
-sudo rm -r $home/$repo
+sudo rm -rf "$home"/$repo
 
 # Verify that the printcfg directory was removed
-if [ -d $home/$repo ]; then
+if [ -d "$home"/$repo ]; then
     echo -e "\e[31mFailed to remove the printcfg directory.\e[0m"
     exit 1
 fi
 
-# Remove the printcfg symlink from the klipper config directory
-sudo rm $config/$repo
+# Remove the printcfg directory
+sudo rm -rf "$home/$repo"
+# Verify that the printcfg directory was removed
+if [ -d "$home/$repo" ]; then
+    echo -e "\e[31mFailed to remove $home/$repo.\e[0m"
+    exit 1
+fi
 
 # Verify that the printcfg symlink was removed
-if [ -L $config/$repo ]; then
+if [ -L "$config"/$repo ]; then
     echo -e "\e[31mFailed to remove the printcfg symlink.\e[0m"
     exit 1
 fi
 
 # Success
 echo -e "\e[32mSuccessfully removed $repo.\e[0m"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Get the current script directory
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-# Remove the script directory
-rm -r "$SCRIPT_DIR"
-
-# Remove the script file
-rm "$0"
