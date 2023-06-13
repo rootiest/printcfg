@@ -50,15 +50,10 @@ systemctl stop $repo.service || { echo -e "\e[31mFailed to stop $repo service.\e
 # Remove the printcfg service
 service_file="/etc/systemd/system/$repo.service"
 if [ -f "$service_file" ]; then
+    sudo systemctl disable $repo.service || { echo -e "\e[31mFailed to disable $repo service.\e[0m"; exit 1; }
     sudo rm "$service_file" || { echo -e "\e[31mFailed to remove $service_file.\e[0m"; exit 1; }
 else
     echo -e "\e[31m$service_file does not exist.\e[0m"
-fi
-
-# Verify that the printcfg service was removed
-if [ -f /etc/systemd/system/$repo.service ]; then
-    echo -e "\e[31mFailed to remove the printcfg service.\e[0m"
-    exit 1
 fi
 
 # Remove the [include user_config.cfg] line from printer.cfg

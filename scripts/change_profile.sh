@@ -25,16 +25,12 @@
 # This script will change the user profile to the specified profile.
 # Arguments:
 #   $1: <profile name> (mandatory)
-
-####################################################################################################
-
+#       The name of the profile to change to.
 # Example:
 #   ./change_profile.sh default
 # This will change the user profile to the default profile.
 
-####################################################################################################
-
-# Set the dev and repo name
+# Set the repo name
 repo="printcfg"
 # Get home directory
 home=$(eval echo ~"$USER")
@@ -45,7 +41,7 @@ user_cfg=$config/user_config.cfg
 profile_pattern="# Profile:(.*)"
 LOGFILE="$home/$repo/logs/change_profile.log"
 exec 3>&1 1>"$LOGFILE" 2>&1
-trap "echo 'ERROR: An error occurred during execution, check log '$LOGFILE' for details.' >&3" ERR
+trap "echo 'ERROR: An error occurred during execution, check log for details.' >&3" ERR
 trap '{ set +x; } 2>/dev/null; echo -n "[$(date -Is)]  "; set -x' DEBUG
 
 # Check if any parameters were provided
@@ -183,10 +179,7 @@ then
         fi
     fi
     # Backup the current user profile
-    cp "$user_vars" "$user_vars.bak"
-    # Verify that the backup was successful
-    if [ $? -ne 0 ]
-    then
+    if ! cp "$user_vars" "$user_vars.bak"; then
         echo -e "\n\e[31mERROR: Failed to backup $user_vars.\e[0m" >&3
         echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
@@ -200,20 +193,14 @@ then
     if [ -f "$user_cfg.bak" ]
     then
         # Rename the backup
-        cp "$user_cfg.bak" "$user_cfg.old"
-        # Verify that the rename was successful
-        if [ $? -ne 0 ]
-        then
+        if ! cp "$user_cfg.bak" "$user_cfg.old"; then
             echo -e "\n\e[31mERROR: Failed to rename $user_cfg.bak to $user_cfg.old.\e[0m" >&3
             echo "Usage: ./change_profile.sh <profile name>" >&3
             exit 1
         fi
     fi
     # Backup the current user config
-    cp "$user_cfg" "$user_cfg.bak"
-    # Verify that the backup was successful
-    if [ $? -ne 0 ]
-    then
+    if ! cp "$user_cfg" "$user_cfg.bak"; then
         echo -e "\n\e[31mERROR: Failed to backup $user_cfg.\e[0m" >&3
         echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
@@ -224,10 +211,7 @@ fi
 if [ -f "$user_vars" ]
 then
     # Copy the new profile to the user profile
-    cp "$src_vars" "$user_vars"
-    # Verify that the copy was successful
-    if [ $? -ne 0 ]
-    then
+    if ! cp "$src_vars" "$user_vars"; then
         echo -e "\n\e[31mERROR: Failed to copy $src_vars to $user_vars.\e[0m" >&3
         echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
@@ -238,10 +222,7 @@ fi
 if [ -f "$user_cfg" ]
 then
     # Copy the new config to the user config
-    cp "$src_cfg" "$user_cfg"
-    # Verify that the copy was successful
-    if [ $? -ne 0 ]
-    then
+    if ! cp "$src_cfg" "$user_cfg"; then
         echo -e "\n\e[31mERROR: Failed to copy $src_cfg to $user_cfg.\e[0m" >&3
         echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
@@ -314,10 +295,7 @@ fi
 if [ "${src_vars: -4}" == ".tmp" ]
 then
     # Remove the temp file
-    rm "$src_vars"
-    # Verify that the file was removed
-    if [ $? -ne 0 ]
-    then
+    if ! rm "$src_vars"; then
         echo -e "\n\e[31mERROR: Failed to remove $src_vars.\e[0m" >&3
         echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1
@@ -328,10 +306,7 @@ fi
 if [ "${src_cfg: -4}" == ".tmp" ]
 then
     # Remove the temp file
-    rm "$src_cfg"
-    # Verify that the file was removed
-    if [ $? -ne 0 ]
-    then
+    if ! rm "$src_cfg"; then
         echo -e "\n\e[31mERROR: Failed to remove $src_cfg.\e[0m" >&3
         echo "Usage: ./change_profile.sh <profile name>" >&3
         exit 1

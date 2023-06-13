@@ -40,16 +40,13 @@
 ####################################################################################################
 
 # Set the dev and repo name
-dev="rootiest"
 repo="printcfg"
-branch="master"
 # Get home directory
-home=$(eval echo ~$USER)
+home=$(eval echo ~"$USER")
 # Define the klipper config file
 config=$home/printer_data/config
 # Define the printer.cfg and moonraker.conf files
 printer=$home/printer_data/config/printer.cfg
-moonraker=$home/printer_data/config/moonraker.conf
 # Set the default profile
 default_src=default
 user_vars=$config/user_profile.cfg
@@ -59,7 +56,7 @@ old_user_cfg=$config/$repo/user_config.cfg
 
 LOGFILE="$home/$repo/logs/setup.log"
 exec 3>&1 1>"$LOGFILE" 2>&1
-trap "echo 'ERROR: An error occurred during execution, check log $LOGFILE for details.' >&3" ERR
+trap "echo 'ERROR: An error occurred during execution, check log for details.' >&3" ERR
 trap '{ set +x; } 2>/dev/null; echo -n "[$(date -Is)]  "; set -x' DEBUG
 
 # Check if any parameters were provided
@@ -85,7 +82,7 @@ echo "Checking $repo executable..."
 if [ ! -f /usr/local/bin/$repo ]
 then
     echo "Creating $repo bin..." >&3
-    sudo ln -s $home/$repo/src/$repo.py /usr/local/bin/$repo
+    sudo ln -s "$home"/$repo/src/$repo.py /usr/local/bin/$repo
     sudo chmod +x /usr/local/bin/$repo
     echo -e "\e[32m$repo bin created successfully.\e[0m" >&3
 else
@@ -107,21 +104,21 @@ then
     echo
     echo "Updating user config..." >&3
     # Check if src_cfg exists
-    if [ -f $src_cfg ]
+    if [ -f "$src_cfg" ]
     then
         # Check if user config exists
-        if [ -f $user_cfg ]
+        if [ -f "$user_cfg" ]
         then
             # Remove old user config
-            rm $user_cfg
+            rm "$user_cfg"
             # Verify removal was successful
-            if [ ! -f $user_cfg ]
+            if [ ! -f "$user_cfg" ]
             then
                 echo "Old user config removed." >&3
                 # Copy new user config
-                cp $src_cfg $user_cfg
+                cp "$src_cfg" "$user_cfg"
                 # Verify copy was successful
-                if [ -f $user_cfg ]
+                if [ -f "$user_cfg" ]
                 then
                     echo "New user config copied."
                     # User config is up to date
@@ -143,21 +140,21 @@ then
         exit 1
     fi
     # Check if src_vars exists
-    if [ -f $src_vars ]
+    if [ -f "$src_vars" ]
     then
         # Check if user vars exists
-        if [ -f $user_vars ]
+        if [ -f "$user_vars" ]
         then
             # Remove old user vars
-            rm $user_vars
+            rm "$user_vars"
             # Verify removal was successful
-            if [ ! -f $user_vars ]
+            if [ ! -f "$user_vars" ]
             then
                 echo "Old user vars removed."
                 # Copy new user vars
-                cp $src_vars $user_vars
+                cp "$src_vars" "$user_vars"
                 # Verify copy was successful
-                if [ -f $user_vars ]
+                if [ -f "$user_vars" ]
                 then
                     echo "New user vars copied."
                     # User vars is up to date
@@ -181,15 +178,15 @@ then
 else
     echo "Checking user config..." >&3
     # Check that user config exists
-    if [ ! -f $user_cfg ]
+    if [ ! -f "$user_cfg" ]
     then
         # Check if old user config exists
-        if [ -f $old_user_cfg ]
+        if [ -f "$old_user_cfg" ]
         then
             echo -e "\e[31mUser config location is out of date.\e[0m" >&3
-            mv $old_user_cfg $user_cfg
+            mv "$old_user_cfg" "$user_cfg"
             # Verify move was successful
-            if [ -f $user_cfg ]
+            if [ -f "$user_cfg" ]
             then
                 echo "User config moved to $config/user_config.cfg" >&3
             else
@@ -202,9 +199,9 @@ else
             then
                 echo -e "\e[31mInclude line is out of date.\e[0m" >&3
                 # Remove old include line
-                sed -i '/\[include $repo\/user_config.cfg\]/d' "$printer"
+                sed -i "/\[include $repo\/user_config.cfg\]/d" "$printer"
                 # Add new include line
-                sed -i '1s/^/[include user_config.cfg]\n/' "$printer"
+                sed -i "1s/^/[include user_config.cfg]\n/" "$printer"
                 # Verify include line was added
                 if grep -qFx "[include user_config.cfg]" "$printer"
                 then
@@ -237,15 +234,15 @@ else
     echo "Checking user profile..." >&3
     
     # Check that user profile exists
-    if [ ! -f $user_vars ]
+    if [ ! -f "$user_vars" ]
     then
         # Check if old user profile exists
-        if [ -f $old_user_vars ]
+        if [ -f "$old_user_vars" ]
         then
             echo -e "\e[31mUser profile location is out of date.\e[0m" >&3
-            mv $old_user_vars $user_vars
+            mv "$old_user_vars" "$user_vars"
             # Verify move was successful
-            if [ -f $user_vars ]
+            if [ -f "$user_vars" ]
             then
                 echo "User profile moved to $config/user_profile.cfg" >&3
             else
@@ -263,8 +260,8 @@ else
     #user_vars_version=${user_vars_version#variable_version: }
     #src_vars_version=$(grep -oP '(variable_version: ).*' $src_vars)
     #src_vars_version=${src_vars_version#variable_version: }
-    user_vars_version=$(python3 $home/$repo/src/find_string.py "variable_version: " $user_vars)
-    src_vars_version=$(python3 $home/$repo/src/find_string.py "variable_version: " $src_vars)
+    user_vars_version=$(python3 "$home"/$repo/src/find_string.py "variable_version: " "$user_vars")
+    src_vars_version=$(python3 "$home"/$repo/src/find_string.py "variable_version: " "$src_vars")
     
     # Check if user profile is up to date
     
@@ -279,13 +276,13 @@ else
         echo >&3
         echo "Attempting to patch user profile..." >&3
         echo >&3
-        if [ -f $src_path/patch_notes.txt ]; then
+        if [ -f "$src_path"/patch_notes.txt ]; then
             echo -e "\e[31mPatch notes:" >&3
-            cat $src_path/patch_notes.txt
+            cat "$src_path"/patch_notes.txt
             echo -e "\e[0m" >&3
         fi
         echo >&3
-        bash $home/$repo/scripts/patch.sh
+        bash "$home"/$repo/scripts/patch.sh
         exit 1
     else
         echo -e "\e[32mUser profile is up to date.\e[0m" >&3
