@@ -83,7 +83,7 @@ def find_profile(path):
     with open(path, "r", encoding="utf-8") as p_file:
         for line in p_file:
             if line.startswith("# Profile:"):
-                logger.debug("Found profile name: %s",line[11:].strip())
+                logger.debug("Found profile name: %s",line[10:].strip())
                 # Return the profile name
                 return line[11:].strip()
 
