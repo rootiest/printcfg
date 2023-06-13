@@ -40,8 +40,17 @@ logger: logging.Logger = logging.getLogger(__name__)
 # Set the repo name
 REPO = "printcfg"
 # Set arguments
-ARGUMENTS_LIST = ["help", "install", "restart", "change", "remove", "update", "repair", "branch", "status" ]
-
+ARGUMENTS_LIST = [
+    "help",
+    "install",
+    "restart",
+    "change",
+    "remove",
+    "update",
+    "repair",
+    "branch",
+    "status",
+]
 # Get the current user name
 current_user = getpass.getuser()
 user_home = os.path.expanduser("~")
@@ -78,6 +87,7 @@ handler = logging.FileHandler(logfile)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
+
 def show_help():
     """Show the help message."""
     logger.info("Showing help message...")
@@ -94,9 +104,10 @@ def show_help():
     logger.info("Help message shown.")
     sys.exit(0)
 
+
 def find_profile(path: str):
     """Find the profile name in the given file."""
-    logger.debug("Searching for profile name in file: %s",path)
+    logger.debug("Searching for profile name in file: %s", path)
     # Find the profile name (Eg: '# Profile: default' = 'default')
     with open(path, "r", encoding="utf-8") as p_file:
         for line in p_file:
@@ -109,6 +120,7 @@ def find_profile(path: str):
     # If no profile was found, raise an error
     logger.error("Profile not found in file: %s", path)
     raise ValueError(f"Profile not found in file: {path}")
+
 
 def normal_ops():
     """Run the script normally."""
@@ -131,6 +143,7 @@ def normal_ops():
     # Exit gracefully
     logger.info("Startup script complete, exiting.")
     sys.exit(0)
+
 
 def generate_service():
     """Generate the printcfg service."""
@@ -162,13 +175,16 @@ def generate_service():
     logger.debug("Command output: %s", result.stdout.decode("utf-8"))
     if result.returncode != 0:
         print(f"Error: The command '{command}' failed with code {result.returncode}.")
-        logger.error("Error: The command '%s' failed with code %s.", command, result.returncode)
+        logger.error(
+            "Error: The command '%s' failed with code %s.", command, result.returncode
+        )
         print(f"Output from command: {result.stdout.decode('utf-8')}")
         print(f"Error from command: {result.stderr.decode('utf-8')}")
         return
     # Exit gracefully
     logger.info("%s service generated successfully.", REPO)
     sys.exit(0)
+
 
 def change_profile(profile_name: str):
     """Change the profile."""
@@ -194,6 +210,7 @@ def change_profile(profile_name: str):
     print(f"Profile changed to {profile_name} successfully.")
     sys.exit(0)
 
+
 def update_printcfg():
     """Update printcfg."""
     # Define the path to the second script
@@ -218,6 +235,7 @@ def update_printcfg():
     print(f"{REPO} updated successfully.")
     sys.exit(0)
 
+
 def restart_service(service_name: str):
     """Restarts a systemctl service.
 
@@ -239,6 +257,7 @@ def restart_service(service_name: str):
         print(f"Error restarting {service_name} service: {err}")
         return False
 
+
 def change_branch(branch_name: str):
     """Changes the branch of the printcfg repo."""
     logger.info("Changing to branch '%s'.", branch_name)
@@ -254,7 +273,9 @@ def change_branch(branch_name: str):
     # Start the change branch script
     command = ["bash", script_path, profile_name, branch_name]
     logger.debug("Executing command: %s", command)
-    logger.debug("Changing to branch '%s' with profile '%s'.", branch_name, profile_name)
+    logger.debug(
+        "Changing to branch '%s' with profile '%s'.", branch_name, profile_name
+    )
     print(f"Changing to branch '{branch_name}' with profile '{profile_name}'.")
     try:
         subprocess.run(command, check=False)
@@ -266,6 +287,7 @@ def change_branch(branch_name: str):
     logger.info("Succesfully changed to branch '%s'.", branch_name)
     print(f"Succesfully changed to branch '{branch_name}'.")
     sys.exit(0)
+
 
 def repair_printcfg():
     """Repairs printcfg."""
@@ -338,7 +360,9 @@ def show_status(service_name: str):
     logger.debug("Command output: %s", result.stdout.decode("utf-8"))
     if result.returncode != 0:
         print(f"Error: The command '{command}' failed with code {result.returncode}.")
-        logger.error("Error: The command '%s' failed with code %s.", command, result.returncode)
+        logger.error(
+            "Error: The command '%s' failed with code %s.", command, result.returncode
+        )
         print(f"Output from command: {result.stdout.decode('utf-8')}")
         print(f"Error from command: {result.stderr.decode('utf-8')}")
         return False
@@ -347,6 +371,7 @@ def show_status(service_name: str):
     # Exit gracefully
     logger.info("Status shown successfully.")
     return True
+
 
 if __name__ == "__main__":
     # Check if there are any arguments
@@ -424,7 +449,7 @@ if __name__ == "__main__":
     else:
         logger.info("Running normal operations.")
         normal_ops()
-    
+
     # Exit gracefully
     logger.info("%s completed successfully.", REPO)
     exit(0)
