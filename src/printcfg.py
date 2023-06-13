@@ -76,7 +76,6 @@ handler = logging.FileHandler(logfile)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-
 def find_profile(path):
     logger.debug("Searching for profile name in file: {}".format(path))
     # Find the profile name (Eg: '# Profile: default' = 'default')
@@ -90,7 +89,6 @@ def find_profile(path):
     # If no profile was found, raise an error
     logger.error("Profile not found in file: {}".format(path))
     raise ValueError("Profile not found in file: {}".format(path))
-
 
 def normal_ops():
     logger.info("Starting normal operations...")
@@ -106,7 +104,6 @@ def normal_ops():
     # Exit successfully
     logger.info("Startup script complete, exiting.")
     exit(0)
-
 
 def generate_service():
     logger.info("Generating service...")
@@ -145,7 +142,6 @@ def generate_service():
     logger.info("Service generated successfully.")
     exit(0)
 
-
 def change_profile(profile):
     # Define the path to the second script
     script_path = f"{user_home}/{REPO}/scripts/change_profile.sh"
@@ -167,7 +163,6 @@ def change_profile(profile):
     # Exit successfully
     logger.info("Profile changed successfully.")
     exit(0)
-
 
 def update_printcfg():
     # Define the path to the second script
@@ -191,7 +186,6 @@ def update_printcfg():
     logger.info("Update complete.")
     exit(0)
 
-
 def remove_printcfg():
     # Define the path to the second script
     script_path = f"{user_home}/{REPO}/scripts/remove_{REPO}.sh"
@@ -214,6 +208,14 @@ def remove_printcfg():
     logger.info("Printcfg removed successfully.")
     exit(0)
 
+def show_help():
+    print(f"Usage: {sys.argv[0]} [install|change|remove|update|help]")
+    print(f"  install: Install {REPO} service")
+    print(f"  change: Change the current profile")
+    print(f"  remove: Remove {REPO} service")
+    print(f"  update: Update {REPO}")
+    print(f"  help: Show this help message")
+    exit(0)
 
 if __name__ == "__main__":
     # Check if there are any arguments
@@ -222,11 +224,11 @@ if __name__ == "__main__":
         normal_ops()
         sys.exit(1)
     # Check the argument
-    if sys.argv[1] not in ["install", "change", "remove", "update", "default"]:
+    if sys.argv[1] not in ["install", "change", "remove", "update", "help"]:
         print(
-            "Error: The argument must be either install, change, remove, update, or default."
+            "Error: The argument must be either install, change, remove, update, or help."
         )
-        logger.error("Error: The argument must be either install, change, remove, update, or default.")
+        logger.error("Error: The argument must be either install, change, remove, update, or help.")
         sys.exit(1)
     # If the argument is 'install' start the script as root
     if sys.argv[1] == "install":
@@ -266,7 +268,9 @@ if __name__ == "__main__":
     elif sys.argv[1] == "update":
         logger.info("Running update operations.")
         update_printcfg()
-
+    elif sys.argv[1] == "help":
+        logger.info("Running help operations.")
+        show_help()
     else:
         logger.info("Running normal operations.")
         normal_ops()
