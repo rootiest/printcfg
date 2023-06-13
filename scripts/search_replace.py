@@ -200,4 +200,4 @@ status = simple_search_and_replace(s_text, r_text, f_name)
 if status:
     print("The change was successful.")
 else:
-    print("The text to search for was not found.")
+    print("The text was added.")
