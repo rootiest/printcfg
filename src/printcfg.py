@@ -76,7 +76,7 @@ handler = logging.FileHandler(logfile)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-def find_profile(path):
+def find_profile(path: str):
     '''Find the profile name in the given file.'''
     logger.debug("Searching for profile name in file: %s",path)
     # Find the profile name (Eg: '# Profile: default' = 'default')
