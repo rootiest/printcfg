@@ -169,10 +169,7 @@ then
     if [ -f "$user_vars.bak" ]
     then
         # Rename the backup
-        cp "$user_vars.bak" "$user_vars.old"
-        # Verify that the rename was successful
-        if [ $? -ne 0 ]
-        then
+        if ! cp "$user_vars.bak" "$user_vars.old";then
             echo -e "\n\e[31mERROR: Failed to rename $user_vars.bak to $user_vars.old.\e[0m" >&3
             echo "Usage: ./change_profile.sh <profile name>" >&3
             exit 1
