@@ -26,7 +26,13 @@
 #   remove: Remove the printcfg service
 #   update: Update printcfg
 
-""" printcfg - A configuration manager for Klipper printers."""
+""" PrintCFG Klipper Suite - 
+
+    A configuration manager
+    and macro suite 
+    for Klipper printers.
+    
+"""
 import datetime
 import getpass
 import logging
