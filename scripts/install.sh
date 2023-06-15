@@ -62,10 +62,16 @@ REPO_DATA="$home"/$repo/$repo.conf
 source "$home"/$repo/src/log4bash.sh
 # set log file
 LOGFILE="$home/$repo/logs/install.log"
+
+exec 3>&1 4>&2
+trap 'exec 2>&4 1>&3' 0 1 2 3
+exec 1>$LOGFILE 2>&1
+
+#exec 3>&1 1>"$LOGFILE" 2>&1
+
 # log start of script
 log_info "Starting $repo install script..."
 
-#exec 3>&1 1>"$LOGFILE" 2>&1
 
 #trap "echo 'ERROR: An error occurred during execution, check log for details.' >&3" ERR
 #trap '{ set +x; } 2>/dev/null; echo -n "[$(date -Is)]  "; set -x' DEBUG
