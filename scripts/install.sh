@@ -101,43 +101,31 @@ function store_repo_data() {
         echo "Creating $REPO_DATA..."
         # Create REPO_DATA file
         touch "$REPO_DATA"
-        echo "Storing printcfg configuration in $REPO_DATA..."
-        # Open printcfg config file for writing
-        # Add moonraker=$moonraker
-        echo "moonraker=$moonraker" >> "$REPO_DATA"
-        # Add printer=$printer
-        echo "printer=$printer" >> "$REPO_DATA"
-        # Add klipper=$klipper
-        echo "klipper=$klipper" >> "$REPO_DATA"
-        # Add klipper_dir=$klipper_dir
-        echo "klipper_dir=$klipper_dir" >> "$REPO_DATA"
-        # Add moonraker_dir=$moonraker_dir
-        echo "moonraker_dir=$moonraker_dir" >> "$REPO_DATA"
-        # Add repo=$repo
-        echo "repo=$repo" >> "$REPO_DATA"
     else
         # Update REPO_DATA file
         echo "Updating $REPO_DATA..."
-        # Find and replace moonraker=*
-        #sed -n -e '/^FOOBAR=/!p' -e '$aFOOBAR=newvalue' infile
-        sed -n -e '/^moonraker=/!p' -e '$amoonraker=$moonraker' "$REPO_DATA"
-        #sed -i '/^moonraker=/{h;s/=.*/=$moonraker/};${x;/^$/{s//moonraker=$moonraker/;H};x}' "$REPO_DATA"
-        # Find and replace printer=*
-        sed -n -e '/^printer=/!p' -e '$aprinter=$printer' "$REPO_DATA"
-        #sed - '/^printer=/{h;s/=.*/=$printer/};${x;/^$/{s//printer=$printer/;H};x}' "$REPO_DATA"
-        # Find and replace klipper=*
-        sed -n -e '/^klipper=/!p' -e '$aklipper=$klipper' "$REPO_DATA"
-        #sed -i '/^klipper=/{h;s/=.*/=$klipper/};${x;/^$/{s//klipper=$klipper/;H};x}' "$REPO_DATA"
-        # Find and replace klipper_dir=*
-        sed -n -e '/^klipper_dir=/!p' -e '$aklipper_dir=$klipper_dir' "$REPO_DATA"
-        #sed -i '/^klipper_dir=/{h;s/=.*/=$klipper_dir/};${x;/^$/{s//klipper_dir=$klipper_dir/;H};x}' "$REPO_DATA"
-        # Find and replace moonraker_dir=*
-        sed -n -e '/^moonraker_dir=/!p' -e '$amoonraker_dir=$moonraker_dir' "$REPO_DATA"
-        #sed -i '/^moonraker_dir=/{h;s/=.*/=$moonraker_dir/};${x;/^$/{s//moonraker_dir=$moonraker_dir/;H};x}' "$REPO_DATA"
-        # Find and replace repo=*
-        sed -n -e '/^repo=/!p' -e '$arepo=$repo' "$REPO_DATA"
-        #sed -i '/^repo=/{h;s/=.*/=$repo/};${x;/^$/{s//repo=$repo/;H};x}' "$REPO_DATA"
+        # Delete REPO_DATA file
+        rm "$REPO_DATA"
+        # Create REPO_DATA file
+        touch "$REPO_DATA"
     fi
+    echo "Storing printcfg configuration in $REPO_DATA..."
+    stty_orig=`stty -g`
+    stty -echo
+    # Open printcfg config file for writing
+    # Add moonraker=$moonraker
+    echo "moonraker=$moonraker" >> "$REPO_DATA"
+    # Add printer=$printer
+    echo "printer=$printer" >> "$REPO_DATA"
+    # Add klipper=$klipper
+    echo "klipper=$klipper" >> "$REPO_DATA"
+    # Add klipper_dir=$klipper_dir
+    echo "klipper_dir=$klipper_dir" >> "$REPO_DATA"
+    # Add moonraker_dir=$moonraker_dir
+    echo "moonraker_dir=$moonraker_dir" >> "$REPO_DATA"
+    # Add repo=$repo
+    echo "repo=$repo" >> "$REPO_DATA"
+    stty $stty_orig
 }
 
 # Welcome message
