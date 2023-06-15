@@ -138,6 +138,7 @@ def find_profile(path: str):
 def normal_ops():
     """Run the script normally."""
     logger.info("Starting normal operations...")
+    print(f"Starting {REPO}...")
     try:
         profile_name = find_profile(profile_path)
     except ValueError as errnorm:
@@ -155,12 +156,14 @@ def normal_ops():
         sys.exit(1)
     # Exit gracefully
     logger.info("Startup script complete, exiting.")
+    print(f"{REPO} started.")
     sys.exit(0)
 
 
 def generate_service():
     """Generate the printcfg service."""
     logger.info("Generating %s service...", REPO)
+    print(f"Generating {REPO} service...")
     # Define the path to the second script
     script_dir = f"{user_home}/{REPO}/"
     logger.debug("Script directory: %s", script_dir)
@@ -175,9 +178,8 @@ def generate_service():
         logger.error("Error: The script '%s' does not exist.", script_path)
         return
     # Start the second script as root with the current user name as the first argument
-    command = f"sudo python3 {script_path} {current_user} {user_home} {mode}"
+    command = ["sudo", "python3", script_path, current_user, user_home, mode]
     logger.debug("Executing command: %s", command)
-    print(f"Executing command: {command}")
     try:
         result = subprocess.run(command, capture_output=True, check=False)
     except subprocess.CalledProcessError as errgen:
@@ -196,11 +198,14 @@ def generate_service():
         return
     # Exit gracefully
     logger.info("%s service generated successfully.", REPO)
+    print(f"{REPO} service generated successfully.")
     sys.exit(0)
 
 
 def change_profile(profile_name: str):
     """Change the profile."""
+    logger.info("Changing profile to %s...", profile_name)
+    print(f"Changing profile to {profile_name}...")
     # Define the path to the second script
     script_path = f"{user_home}/{REPO}/scripts/change_profile.sh"
     logger.debug("Script path: %s", script_path)
@@ -226,6 +231,8 @@ def change_profile(profile_name: str):
 
 def update_printcfg():
     """Update printcfg."""
+    logger.info("Updating %s...", REPO)
+    print(f"Updating {REPO}...")
     # Define the path to the second script
     script_path = f"{user_home}/{REPO}/scripts/install.sh"
     # Check if the second script exists
@@ -258,6 +265,8 @@ def restart_service(service_name: str):
     Returns:
         True if the service was restarted successfully, False otherwise.
     """
+    logger.info("Restarting %s service...", service_name)
+    print(f"Restarting {service_name} service...")
     command = ["systemctl", "restart", f"{service_name}.service"]
     logger.debug("Executing command: %s", command)
     try:
@@ -274,6 +283,7 @@ def restart_service(service_name: str):
 def change_branch(branch_name: str):
     """Changes the branch of the printcfg repo."""
     logger.info("Changing to branch '%s'.", branch_name)
+    print(f"Changing to branch '{branch_name}'.")
     # Define the path to the second script
     script_path = f"{user_home}/{REPO}/scripts/install.sh"
     logger.debug("Script: %s", script_path)
@@ -304,6 +314,8 @@ def change_branch(branch_name: str):
 
 def repair_printcfg():
     """Repairs printcfg."""
+    logger.info("Repairing %s...", REPO)
+    print(f"Repairing {REPO}...")
     # Define the path to the second script
     script_path = f"{user_home}/{REPO}/scripts/setup.sh"
     # Check if the second script exists
@@ -329,6 +341,8 @@ def repair_printcfg():
 
 def remove_printcfg():
     """Remove printcfg from the system."""
+    logger.info("Removing %s...", REPO)
+    print(f"Removing {REPO}...")
     # Define the path to the second script
     script_path = f"{user_home}/{REPO}/scripts/remove_{REPO}.sh"
     logger.debug("Script path: %s", script_path)
@@ -361,6 +375,8 @@ def show_status(service_name: str):
     Returns:
         True if the status was displayed successfully, False otherwise.
     """
+    logger.info("Showing status of %s service...", service_name)
+    print(f"Showing status of {service_name} service...")
     # Get the systemctl status
     command = ["systemctl", "status", f"{service_name}.service"]
     logger.debug("Executing command: %s", command)

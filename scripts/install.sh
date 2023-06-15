@@ -55,11 +55,20 @@ printer=$config/printer.cfg
 moonraker=$config/moonraker.conf
 # Set the default profile
 default_src=default
+# Set the config file
+REPO_DATA="$home"/$repo/$repo.conf
 
+# import logger4bash
+source "$home"/$repo/src/log4bash.sh
+# set log file
 LOGFILE="$home/$repo/logs/install.log"
-exec 3>&1 1>"$LOGFILE" 2>&1
-trap "echo 'ERROR: An error occurred during execution, check log for details.' >&3" ERR
-trap '{ set +x; } 2>/dev/null; echo -n "[$(date -Is)]  "; set -x' DEBUG
+# log start of script
+log_info "Starting $repo install script..."
+
+#exec 3>&1 1>"$LOGFILE" 2>&1
+
+#trap "echo 'ERROR: An error occurred during execution, check log for details.' >&3" ERR
+#trap '{ set +x; } 2>/dev/null; echo -n "[$(date -Is)]  "; set -x' DEBUG
 
 # Check if any parameters were provided
 if [ $# -eq 0 ]
@@ -78,46 +87,93 @@ else
     fi
 fi
 
-# Welcome message
-echo "Welcome to the $repo install script." >&3
-echo "This script will download and install the $repo package from GitHub." >&3
+## TODO Improve and TEST this function
+function store_repo_data() {
+    # Check if REPO_DATA file exists
+    if [ ! -f "$REPO_DATA" ]
+    then
+        echo "Creating $REPO_DATA..."
+        # Create REPO_DATA file
+        touch "$REPO_DATA"
+        echo "Storing printcfg configuration in $REPO_DATA..."
+        # Open printcfg config file for writing
+        # Add moonraker=$moonraker
+        echo "moonraker=$moonraker" >> "$REPO_DATA"
+        # Add printer=$printer
+        echo "printer=$printer" >> "$REPO_DATA"
+        # Add klipper=$klipper
+        echo "klipper=$klipper" >> "$REPO_DATA"
+        # Add klipper_dir=$klipper_dir
+        echo "klipper_dir=$klipper_dir" >> "$REPO_DATA"
+        # Add moonraker_dir=$moonraker_dir
+        echo "moonraker_dir=$moonraker_dir" >> "$REPO_DATA"
+        # Add repo=$repo
+        echo "repo=$repo" >> "$REPO_DATA"
+    else
+        # Update REPO_DATA file
+        echo "Updating $REPO_DATA..."
+        # Find and replace moonraker=*
+        #sed -n -e '/^FOOBAR=/!p' -e '$aFOOBAR=newvalue' infile
+        sed -n -e '/^moonraker=/!p' -e '$amoonraker=$moonraker' "$REPO_DATA"
+        #sed -i '/^moonraker=/{h;s/=.*/=$moonraker/};${x;/^$/{s//moonraker=$moonraker/;H};x}' "$REPO_DATA"
+        # Find and replace printer=*
+        sed -n -e '/^printer=/!p' -e '$aprinter=$printer' "$REPO_DATA"
+        #sed - '/^printer=/{h;s/=.*/=$printer/};${x;/^$/{s//printer=$printer/;H};x}' "$REPO_DATA"
+        # Find and replace klipper=*
+        sed -n -e '/^klipper=/!p' -e '$aklipper=$klipper' "$REPO_DATA"
+        #sed -i '/^klipper=/{h;s/=.*/=$klipper/};${x;/^$/{s//klipper=$klipper/;H};x}' "$REPO_DATA"
+        # Find and replace klipper_dir=*
+        sed -n -e '/^klipper_dir=/!p' -e '$aklipper_dir=$klipper_dir' "$REPO_DATA"
+        #sed -i '/^klipper_dir=/{h;s/=.*/=$klipper_dir/};${x;/^$/{s//klipper_dir=$klipper_dir/;H};x}' "$REPO_DATA"
+        # Find and replace moonraker_dir=*
+        sed -n -e '/^moonraker_dir=/!p' -e '$amoonraker_dir=$moonraker_dir' "$REPO_DATA"
+        #sed -i '/^moonraker_dir=/{h;s/=.*/=$moonraker_dir/};${x;/^$/{s//moonraker_dir=$moonraker_dir/;H};x}' "$REPO_DATA"
+        # Find and replace repo=*
+        sed -n -e '/^repo=/!p' -e '$arepo=$repo' "$REPO_DATA"
+        #sed -i '/^repo=/{h;s/=.*/=$repo/};${x;/^$/{s//repo=$repo/;H};x}' "$REPO_DATA"
+    fi
+}
 
-echo >&3
-echo "Checking dependencies..." >&3
+# Welcome message
+echo "Welcome to the $repo install script."
+echo "This script will download and install the $repo package from GitHub."
+
+echo
+echo "Checking dependencies..."
 if ! which git > /dev/null; then
     need_git=true
-    echo "Missing git." >&3
+    echo "Missing git."
 fi
 if ! which pip > /dev/null; then
     need_pip=true
-    echo "Missing pip." >&3
+    echo "Missing pip."
     sudo apt-get install python3-pip
 fi
 if ! which bc > /dev/null; then
     need_bc=true
-    echo "Missing bc." >&3
+    echo "Missing bc."
     sudo apt-get install bc
 fi
 if ! which wget > /dev/null; then
     need_wget=true
-    echo "Missing wget." >&3
+    echo "Missing wget."
     sudo apt-get install wget
 fi
 
 ## Install missing dependencies
 if [ -n "$need_git" ] || [ -n "$need_pip" ] || [ -n "$need_bc" ] || [ -n "$need_wget" ]; then
-    echo "Installing missing dependencies..." >&3
+    echo "Installing missing dependencies..."
     sudo apt update
     sudo apt-get install -y git python3-pip bc wget
 else
-    echo -e "\e[32mAll dependencies are installed.\e[0m" >&3
+    echo -e "\e[32mAll dependencies are installed.\e[0m"
 fi
 
-echo "Installing $repo..." >&3
+echo "Installing $repo..."
 
 # Check if the repo exists
 if ! git ls-remote https://github.com/"$dev"/"$repo" >/dev/null; then
-    echo "The repo does not exist." >&3
+    echo "The repo does not exist."
     exit 1
 fi
 
@@ -127,22 +183,22 @@ cd "$home" || exit
 # Check if printcfg is already installed
 if [ -d "$home"/$repo ];
 then
-    echo -e "\e[33m$repo repo is already installed.\e[0m" >&3
-    echo "Updating $repo repo..." >&3
+    echo -e "\e[33m$repo repo is already installed.\e[0m"
+    echo "Updating $repo repo..."
     # Change to the repo directory
     cd "$home"/$repo || exit
     # Pull the latest changes
     git pull
 else
-    echo "Installing $repo repo..." >&3
+    echo "Installing $repo repo..."
     # Clone the repo
     git clone https://github.com/"$dev"/"$repo"
     # Check if the repo was cloned
     if [ ! -d "$home"/$repo ]; then
-        echo -e "\e[31mError: Repo not cloned.\e[0m" >&3
+        echo -e "\e[31mError: Repo not cloned.\e[0m"
         exit 1
     else
-        echo "Repo cloned successfully." >&3
+        echo "Repo cloned successfully."
     fi
 fi
 
@@ -155,25 +211,25 @@ current_branch=$(git branch --show-current)
 # Check if the branch was provided
 if [ -n "$2" ]
 then
-    echo "Checking out branch $branch..." >&3
+    echo "Checking out branch $branch..."
     # Check if the branch exists
     if ! git ls-remote --heads
     then
-        echo -e "\e[31mError: Branch $branch does not exist.\e[0m" >&3
+        echo -e "\e[31mError: Branch $branch does not exist.\e[0m"
         exit 1
     fi
 else
-    echo "Staying on branch $current_branch..." >&3
+    echo "Staying on branch $current_branch..."
     branch=$current_branch
 fi
 
 # Check if the branch is already checked out
 if [ "$current_branch" != "$branch" ]; then
     if ! git switch "$branch"; then
-        echo -e "\e[31mError: Branch $branch does not exist.\e[0m" >&3
+        echo -e "\e[31mError: Branch $branch does not exist.\e[0m"
         exit 1
     else
-        echo -e "\e[32mBranch switched successfully.\e[0m" >&3
+        echo -e "\e[32mBranch switched successfully.\e[0m"
         pull_branch=true
     fi
 else
@@ -182,50 +238,95 @@ fi
 
 # Pull the latest changes
 if [ -n "$pull_branch" ]; then
-    echo "Pulling latest changes..." >&3
+    echo "Pulling latest changes..."
     git pull
 fi
 
 ### Run any setup scripts ###
 
 # Install the dependencies
-echo "Installing dependencies..." >&3
+echo "Installing dependencies..."
 if [ -f requirements.txt ]; then
     pip3 install -r requirements.txt
-    echo -e "\e[32mDependencies installed successfully.\e[0m" >&3
+    echo -e "\e[32mDependencies installed successfully.\e[0m"
 else
-    echo -e "\e[33mNo dependencies to install.\e[0m" >&3
+    echo -e "\e[33mNo dependencies to install.\e[0m"
 fi
 
 # Check if the service is enabled
-echo "Checking if the ${repo} service is enabled..." >&3
+echo "Checking if the ${repo} service is enabled..."
 if systemctl is-enabled "${repo}" >/dev/null 2>&1; then
-    echo "The ${repo} service is enabled." >&3
+    echo "The ${repo} service is enabled."
 else
-    echo "Installing the ${repo} service..." >&3
-    echo "Acquiring root privileges..." >&3
+    echo "Installing the ${repo} service..."
+    echo "Acquiring root privileges..."
     # Acquire root privileges
     sudo -v
     # Install the python package
     if [ -f "$home"/$repo/src/$repo.py ]; then
         python3 "$home"/$repo/src/$repo.py install
-        echo -e "\e[32m${repo} service installed successfully.\e[0m" >&3
+        echo -e "\e[32m${repo} service installed successfully.\e[0m"
     fi
 fi
 
 # Create printcfg bin
 if [ ! -f /usr/local/bin/$repo ]; then
-    echo "Creating $repo bin..." >&3
+    echo "Creating $repo bin..."
     sudo ln -s "$home"/$repo/src/$repo.py /usr/local/bin/$repo
     sudo chmod +x /usr/local/bin/$repo
-    echo -e "\e[32m$repo bin created successfully.\e[0m" >&3
+    echo -e "\e[32m$repo bin created successfully.\e[0m"
 fi
 
 # Check if log4bash is installed in local directory
 if [ ! -f log4bash.sh ]; then
-    echo "Installing log4bash." >&3
-    # Download log4bash library
-    wget https://raw.githubusercontent.com/fredpalmer/log4bash/master/log4bash.sh -O "$home"/$repo/src/log4bash.sh
+    # Look for log4bash in src directory
+    if [ ! -f "$home"/$repo/src/log4bash.sh ]; then
+        # Look for log4bash in home directory
+        if [ ! -f "$home"/log4bash.sh ]; then
+            # Look for log4bash in PATH
+            if ! which log4bash.sh > /dev/null; then
+                echo "Installing log4bash."
+                # Download log4bash library
+                wget https://raw.githubusercontent.com/fredpalmer/log4bash/master/log4bash.sh -O "$home"/$repo/src/log4bash.sh
+                # Check if log4bash was downloaded
+                if [ ! -f "$home"/$repo/src/log4bash.sh ]; then
+                    echo -e "\e[31mError: log4bash not downloaded.\e[0m"
+                    exit 1
+                else
+                    echo -e "\e[32mlog4bash downloaded successfully.\e[0m"
+                    # symlink log4bash to usr/local/bin
+                    echo "Creating log4bash bin..."
+                    sudo ln -s "$home"/$repo/src/log4bash.sh /usr/local/bin/log4bash.sh
+                    # Check if log4bash was symlinked
+                    if [ ! -f /usr/local/bin/log4bash.sh ]; then
+                        echo -e "\e[31mError: log4bash bin not created.\e[0m"
+                        exit 1
+                    else
+                        # Check if log4bash was added to PATH
+                        if ! which log4bash.sh > /dev/null; then
+                            echo -e "\e[31mError: log4bash not added to PATH.\e[0m"
+                            exit 1
+                        else
+                            # Check if log4bash is executable
+                            if [ ! -x /usr/local/bin/log4bash.sh ]; then
+                                # Make log4bash executable
+                                sudo chmod +x /usr/local/bin/log4bash.sh
+                                # Check if log4bash is executable
+                                if [ ! -x /usr/local/bin/log4bash.sh ]; then
+                                    echo -e "\e[31mError: log4bash not executable.\e[0m"
+                                    exit 1
+                                else
+                                    echo -e "\e[32mlog4bash bin created successfully.\e[0m"
+                                fi
+                            else
+                                echo -e "\e[32mlog4bash bin created successfully.\e[0m"
+                            fi
+                        fi
+                    fi
+                fi
+            fi
+        fi
+    fi
 fi
 
 ### Install into klippers config ###
@@ -233,16 +334,16 @@ fi
 # Check if config directory exists
 if [ ! -d "$config" ]
 then
-    echo -e "\e[31mError: Directory '$config' not found.\e[0m" >&3
-    echo "Please make sure you have klipper installed and your config is located in $config" >&3
+    echo -e "\e[31mError: Directory '$config' not found.\e[0m"
+    echo "Please make sure you have klipper installed and your config is located in $config"
     exit 1
 fi
 
 # Check if the file exists
 if [ ! -f "$printer" ]
 then
-    echo -e "\e[31mError: File '$printer' not found.\e[0m" >&3
-    echo "Please make sure you have klipper installed and your config is located in $printer" >&3
+    echo -e "\e[31mError: File '$printer' not found.\e[0m"
+    echo "Please make sure you have klipper installed and your config is located in $printer"
     exit 1
 fi
 
@@ -252,16 +353,16 @@ then
     # Check if profile config exists
     if [ ! -f "$home"/$repo/profiles/"$src"/config.cfg ]
     then
-        echo -e "\e[31mError: Config Profile '$src' not found.\e[0m" >&3
-        echo "Using default config profile: $default_src" >&3
+        echo -e "\e[31mError: Config Profile '$src' not found.\e[0m"
+        echo "Using default config profile: $default_src"
         src=$default_src
     fi
     # Copy user profile to config directory
-    echo -e "\e[36mUsing config profile: $src\e[0m" >&3
-    echo "Creating user_config in config directory..." >&3
+    echo -e "\e[36mUsing config profile: $src\e[0m"
+    echo "Creating user_config in config directory..."
     cp -r "$home"/$repo/profiles/"$src"/config.cfg "$config"/user_config.cfg
 else
-    echo -e "\e[32mUser config already exists.\e[0m" >&3
+    echo -e "\e[32mUser config already exists.\e[0m"
 fi
 
 # Check if user profile file exists
@@ -270,41 +371,41 @@ then
     # Check if profile exists
     if [ ! -f "$home"/$repo/profiles/"$src"/variables.cfg ]
     then
-        echo -e "\e[31mError: Profile '$src' not found.\e[0m" >&3
-        echo "Using default variables profile: $default_src" >&3
+        echo -e "\e[31mError: Profile '$src' not found.\e[0m"
+        echo "Using default variables profile: $default_src"
         src=$default_src
     fi
     # Copy user profile to config directory
-    echo -e "\e[36mUsing variables profile: $src\e[0m" >&3
-    echo "Creating user profile in config directory..." >&3
+    echo -e "\e[36mUsing variables profile: $src\e[0m"
+    echo "Creating user profile in config directory..."
     cp -r "$home"/$repo/profiles/"$src"/variables.cfg "$config"/user_profile.cfg
 else
-    echo -e "\e[32mUser profile already exists.\e[0m" >&3
+    echo -e "\e[32mUser profile already exists.\e[0m"
 fi
 
 # Check if link already exists
 if [ ! -L "$config"/$repo ]
 then
     # Link printcfg to the printer config directory
-    echo "Linking $repo to the printer config directory..." >&3
+    echo "Linking $repo to the printer config directory..."
     ln -s "$home"/$repo "$config"/$repo
     # Check if the link was created
     if [ ! -L "$config"/$repo ]
     then
-        echo -e "\e[31mError: Link not created.\e[0m" >&3
+        echo -e "\e[31mError: Link not created.\e[0m"
         exit 1
     fi
 else
-    echo -e "\e[33m$repo symlink already exists.\e[0m" >&3
+    echo -e "\e[33m$repo symlink already exists.\e[0m"
 fi
 
 # Check if include line exists in printer.cfg
 uconfig_pattern="[include user_config.cfg]"
 if grep -qFx "$uconfig_pattern" "$printer"
 then
-    echo -e "\e[33m$repo config already included.\e[0m" >&3
+    echo -e "\e[33m$repo config already included.\e[0m"
 else
-    echo "Adding $repo config to $printer..." >&3
+    echo "Adding $repo config to $printer..."
     # Add printcfg config to beginning of file
     python3 "$home"/$repo/src/search_replace.py "$uconfig_pattern" "$uconfig_pattern" "$printer"
 fi
@@ -312,23 +413,100 @@ fi
 # Verify moonraker is installed
 if [ ! -f "$moonraker" ]
 then
-    echo -e "\e[31mError: File '$moonraker' not found.\e[0m" >&3
-    echo "Please make sure you have moonraker installed and your config is located in $moonraker" >&3
-    exit 1
+    # Attempt to find moonraker service in /etc/systemd/system
+    if [ ! -f /etc/systemd/system/moonraker.service ]
+    then
+        echo -e "\e[31mError: File '$moonraker' not found.\e[0m"
+        echo "Please make sure you have moonraker installed and your config is located in $moonraker"
+        exit 1
+    else
+        moonraker_service=/etc/systemd/system/moonraker.service
+        ## Look inside for the line starting with EnvironmentFile= and store the rest of that line
+        moonraker_env=$(grep -oP '(?<=EnvironmentFile=).*' "$moonraker_service")
+        ## Look inside for the line starting with WorkingDirectory= and store the rest of that line
+        moonraker_dir=$(grep -oP '(?<=WorkingDirectory=).*' "$moonraker_service")
+        ## Check if that moonraker_env file exists
+        if [ ! -f "$moonraker_env" ]
+        then
+            echo -e "\e[31mError: File '$moonraker_env' not found.\e[0m"
+            echo "Please make sure you have moonraker installed and your config is located in $moonraker_env"
+            exit 1
+        else
+            ## In that moonraker env file look for the part of the line that starts with -d and store the rest of that line
+            printer_dir=$(grep -oP '(?<=-d ).*' "$moonraker_env")
+            ## Check if that printer_dir exists
+            if [ ! -d "$printer_dir" ]
+            then
+                echo -e "\e[31mError: Directory '$printer_dir' not found.\e[0m"
+                echo "Please make sure you have moonraker installed and your config is located in $printer_dir"
+                exit 1
+            else
+                ## Check if the file exists
+                if [ ! -f "$printer_dir"/moonraker.conf ]
+                then
+                    echo -e "\e[31mError: File '$printer_dir'/moonraker.conf not found.\e[0m"
+                    echo "Please make sure you have moonraker installed and your config is located in $printer_dir/moonraker.conf"
+                    exit 1
+                else
+                    moonraker="$printer_dir"/moonraker.conf
+                fi
+            fi
+        fi
+    fi
+fi
+
+## Repeat the same process for the klipper service
+if [ ! -f "$printer" ]
+then
+    if [ ! -f /etc/systemd/system/klipper.service ]
+    then
+        echo -e "\e[31mError: File '$klipper' not found.\e[0m"
+        echo "Please make sure you have klipper installed and your config is located in $klipper"
+        exit 1
+    else
+        klipper_service=/etc/systemd/system/klipper.service
+        klipper_env=$(grep -oP '(?<=EnvironmentFile=).*' "$klipper_service")
+        klipper_dir=$(grep -oP '(?<=WorkingDirectory=).*' "$klipper_service")
+        if [ ! -f "$klipper_env" ]
+        then
+            echo -e "\e[31mError: File '$klipper_env' not found.\e[0m"
+            echo "Please make sure you have klipper installed and your config is located in $klipper_env"
+            exit 1
+        else
+            printer_dir=$(grep -oP '(?<=-d ).*' "$klipper_env")
+            if [ ! -d "$printer_dir" ]
+            then
+                echo -e "\e[31mError: Directory '$printer_dir' not found.\e[0m"
+                echo "Please make sure you have klipper installed and your config is located in $printer_dir"
+                exit 1
+            else
+                if [ ! -f "$printer_dir"/config/printer.cfg ]
+                then
+                    echo -e "\e[31mError: File '$printer_dir'/printer.cfg not found.\e[0m"
+                    echo "Please make sure you have klipper installed and your config is located in $printer_dir/config/printer.cfg"
+                    exit 1
+                else
+                    printer="$printer_dir"/config/printer.cfg
+                    config="$printer_dir"/config
+                    printer_data=$printer_dir
+                fi
+            fi
+        fi
+    fi
 fi
 
 # Check if the moonraker-printcfg.conf file exists
 if [ ! -f "$config"/moonraker-$repo.conf ]
 then
     # Copy moonraker config to config directory
-    echo "Creating moonraker config in config directory..." >&3
+    echo "Creating moonraker config in config directory..."
     cp -r "$home"/$repo/src/mooncfg.conf "$config"/moonraker-$repo.conf
 else
-    echo -e "\e[32mMoonraker config already exists.\e[0m" >&3
+    echo -e "\e[32mMoonraker config already exists.\e[0m"
 fi
 
 # Set branch in moonraker-printcfg.conf
-echo "Setting branch in moonraker config..." >&3
+echo "Setting branch in moonraker config..."
 # Define search pattern
 branch_pattern="primary_branch:"
 # Set branch to current branch
@@ -340,123 +518,129 @@ new_moon="[include moonraker-$repo.conf]"
 
 if grep -qFx "$new_moon" "$moonraker"
 then
-    echo -e "\e[33m$repo moonraker already included.\e[0m" >&3
+    echo -e "\e[33m$repo moonraker already included.\e[0m"
 else
-    echo "Adding $repo config to $moonraker..." >&3
+    echo "Adding $repo config to $moonraker..."
     # Add printcfg config to moonraker
     python3 "$home"/$repo/src/search_replace.py "$moon_pattern" "$new_moon" "$moonraker"
 fi
 
 # Add printcfg to moonraker.asvc
-echo "Checking for $repo service in moonraker allowlist..." >&3
+echo "Checking for $repo service in moonraker allowlist..."
 # Define allowlist file
 allowlist="$printer_data/moonraker.asvc"
 # Verify printcfg is in allowlist
 if grep -qFx "$repo" "$allowlist"
 then
-    echo -e "\e[33m$repo service already in allowlist.\e[0m" >&3
+    echo -e "\e[33m$repo service already in allowlist.\e[0m"
 else
-    echo "Adding $repo service to moonraker allowlist..." >&3
+    echo "Adding $repo service to moonraker allowlist..."
     # Add printcfg service to moonraker allowlist
     echo "$repo" >> "$allowlist"
     if grep -qFx "$repo" "$allowlist"
     then
-        echo -e "\e[32m$repo service added to allowlist successfully.\e[0m" >&3
+        echo -e "\e[32m$repo service added to allowlist successfully.\e[0m"
     else
-        echo -e "\e[31mError: $repo service not added to allowlist.\e[0m" >&3
+        echo -e "\e[31mError: $repo service not added to allowlist.\e[0m"
         exit 1
     fi
 fi
 
-echo -e "\e[32mInstall complete.\e[0m" >&3
-echo >&3
+echo -e "\e[32mInstall complete.\e[0m"
+echo
+
+# Store repo data
+store_repo_data
 
 # Perform all checks to make sure printcfg is installed correctly
-echo "Checking $repo installation..." >&3
+echo "Checking $repo installation..."
 
 # Check if the repo exists
 if [ ! -d "$home"/$repo ]; then
-    echo -e "\e[31mError: Repo not cloned.\e[0m" >&3
+    echo -e "\e[31mError: Repo not cloned.\e[0m"
     exit 1
 fi
 
 # Check if the printer.cfg exists
 if [ ! -f "$printer" ]
 then
-    echo -e "\e[31mError: File '$printer' not found.\e[0m" >&3
-    echo "Please make sure you have klipper installed and your config is located in $printer" >&3
+    echo -e "\e[31mError: File '$printer' not found.\e[0m"
+    echo "Please make sure you have klipper installed and your config is located in $printer"
     exit 1
 fi
 
 # Check if moonraker config exists
 if [ ! -f "$moonraker" ]
 then
-    echo -e "\e[31mError: File '$moonraker' not found.\e[0m" >&3
-    echo "Please make sure you have moonraker installed and your config is located in $moonraker" >&3
+    echo -e "\e[31mError: File '$moonraker' not found.\e[0m"
+    echo "Please make sure you have moonraker installed and your config is located in $moonraker"
     exit 1
 fi
 
 # Check if printcfg is included in the printer.cfg file
 if ! grep -qFx "$uconfig_pattern" "$printer"
 then
-    echo -e "\e[31mError: $repo config not included in $printer\e[0m" >&3
+    echo -e "\e[31mError: $repo config not included in $printer\e[0m"
     exit 1
 fi
 
 # Check if the moonraker config contains printcfg config
 if ! grep -qFx "$new_moon" "$moonraker"
 then
-    echo -e "\e[31mError: $repo config not included in $moonraker\e[0m" >&3
+    echo -e "\e[31mError: $repo config not included in $moonraker\e[0m"
     exit 1
 fi
 
 # Check if printcfg symlink exists
 if [ ! -L "$config"/$repo ]
 then
-    echo -e "\e[31mError: $repo symlink not created.\e[0m" >&3
+    echo -e "\e[31mError: $repo symlink not created.\e[0m"
     exit 1
 fi
 
 # Check if user config exists
 if [ ! -f "$config"/user_config.cfg ]
 then
-    echo -e "\e[31mError: $repo user config not found.\e[0m" >&3
+    echo -e "\e[31mError: $repo user config not found.\e[0m"
     exit 1
 fi
 
 # Check if user profile exists
 if [ ! -f "$config"/user_profile.cfg ]
 then
-    echo -e "\e[31mError: $repo user profile not found.\e[0m" >&3
+    echo -e "\e[31mError: $repo user profile not found.\e[0m"
     exit 1
 fi
 
 # Acknowledge that the installation checks passed
-echo -e "\e[32m$repo installation checks passed.\e[0m" >&3
+echo -e "\e[32m$repo installation checks passed.\e[0m"
 echo
 
 # Success!
-echo >&3
-echo -e "\e[32mPrintcfg has been successfully downloaded and installed.\e[0m" >&3
-echo >&3
+echo
+echo -e "\e[32mPrintcfg has been successfully downloaded and installed.\e[0m"
+echo
 
 # Perform setup checks
-echo "Performing Setup Checks..." >&3
-echo >&3
+echo "Performing Setup Checks..."
+echo
 
 bash "$home"/$repo/scripts/setup.sh "$src"
 
-echo -e "\e[32mSetup checks passed.\e[0m" >&3
+echo -e "\e[32mSetup checks passed.\e[0m"
 
-echo >&3
+echo
+
+# Store repo data
+store_repo_data
 
 # Restart klipper
-echo "Restarting klipper..." >&3
+echo "Restarting klipper..."
 systemctl restart klipper
 
 # Restart moonraker
-echo "Restarting moonraker..." >&3
+echo "Restarting moonraker..."
 systemctl restart moonraker
 
-echo >&3
-echo -e "\e[32mInstallation completed successfully.\e[0m" >&3
+echo
+echo -e "\e[32mInstallation completed successfully.\e[0m"
