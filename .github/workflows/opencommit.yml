@@ -1,10 +1,10 @@
-name: 'OpenCommit Action'
+name: "OpenCommit Action"
 
 on:
   push:
     # this list of branches is often enough,
     # but you may still ignore other public branches
-    branches-ignore: [master, main, dev]
+    branches: [test]
     paths:
       - "src/**"
       - "scripts/**"
@@ -28,7 +28,7 @@ jobs:
       - name: Setup Node.js Environment
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: "16"
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -44,7 +44,7 @@ jobs:
 
           # customization
           OCO_OPENAI_MAX_TOKENS: 500
-          OCO_OPENAI_BASE_PATH: ''
+          OCO_OPENAI_BASE_PATH: ""
           OCO_DESCRIPTION: false
           OCO_EMOJI: false
           OCO_MODEL: gpt-3.5-turbo
