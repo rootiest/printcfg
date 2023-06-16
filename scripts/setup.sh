@@ -294,7 +294,7 @@ fi
 # Check that printcfg.conf exists
 echo >&3
 echo "Checking $repo config..." >&3
-$repoconf="$home"/$repo/$repo.conf
+$repoconf="$home/$repo/$repo.conf"
 if [ ! -f "$repoconf" ]
 then
     echo -e "\e[31m$repoconf does not exist.\e[0m" >&3
