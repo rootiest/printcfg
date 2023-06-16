@@ -116,7 +116,35 @@ def show_help():
     print("  help: Show this help message")
     logger.info("Help message shown.")
     sys.exit(0)
-    
+
+
+def is_service_active(service: str):
+    """Determine whether a systemctl system service is active."""
+    # Check if the service exists
+    logger.debug("Checking if service exists: %s", service)
+    if not os.path.exists(f"/etc/systemd/system/{service}.service"):
+        logger.debug("Service does not exist: %s", service)
+        return False
+    else:
+        logger.debug("Service exists: %s", service)
+        # Check if service is enabled
+        logger.debug("Checking if service is enabled: %s", service)
+        if subprocess.run(
+            ["systemctl", "is-enabled", service], capture_output=True
+        ).stdout.decode("utf-8") == "enabled\n":
+            logger.debug("Service is enabled: %s", service)
+            # Check if service is active
+            logger.debug("Checking if service is active: %s", service)
+            if subprocess.run(
+                ["systemctl", "is-active", service], capture_output=True
+            ).stdout.decode("utf-8") == "active\n":
+                logger.debug("Service is active: %s", service)
+                return True
+            else:
+                logger.debug("Service is not active: %s", service)
+                return False
+
+
 def load_config():
     """
         Load the printcfg.conf config file.
@@ -418,9 +446,17 @@ def show_status(service_name: str):
         return False
     # Print the status
     print(result.stdout.decode("utf-8"))
-    logger.info("Loading config file...")
-    print(f"Loading {REPO} config file...")
+    logger.info("Showing config file...")
+    print(f"{REPO} config:")
     load_config()
+    # Check if printcfg service is active
+    if not is_service_active(service_name):
+        print(f"Error: {service_name} service is not active.")
+        logger.error("%s service is not active.", service_name)
+        return False
+    else:
+        print(f"{service_name} service is active.")
+        logger.info("%s service is active.", service_name)
     # Exit gracefully
     logger.info("Status shown successfully.")
     return True
