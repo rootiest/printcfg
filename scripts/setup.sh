@@ -256,9 +256,9 @@ else
     fi
     
     # Find version of user profile
-    user_vars_version=$(grep -oP '(variable_version: ).*' $user_vars)
+    user_vars_version=$(grep -oP '(variable_version: ).*' "$user_vars")
     user_vars_version=${user_vars_version#variable_version: }
-    src_vars_version=$(grep -oP '(variable_version: ).*' $src_vars)
+    src_vars_version=$(grep -oP '(variable_version: ).*' "$src_vars")
     src_vars_version=${src_vars_version#variable_version: }
     #user_vars_version=$(python3 "$home"/$repo/src/find_string.py "variable_version: " "$user_vars")
     #src_vars_version=$(python3 "$home"/$repo/src/find_string.py "variable_version: " "$src_vars")

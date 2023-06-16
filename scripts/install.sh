@@ -65,7 +65,7 @@ LOGFILE="$home/$repo/logs/install.log"
 
 exec 3>&1 4>&2
 trap 'exec 2>&4 1>&3' 0 1 2 3
-exec 1>$LOGFILE 2>&1
+exec 1>"$LOGFILE" 2>&1
 
 # log start of script
 log_info "Starting $repo install script..."
@@ -108,7 +108,6 @@ function read_repo_data() {
         log_info "$REPO_DATA read."
         log_debug "moonraker=$moonraker"
         log_debug "printer=$printer"
-        log_debug "klipper=$klipper"
         log_debug "klipper_dir=$klipper_dir"
         log_debug "moonraker_dir=$moonraker_dir"
         log_debug "repo=$repo"
@@ -135,28 +134,26 @@ function store_repo_data() {
         touch "$REPO_DATA"
     fi
     echo "Storing printcfg configuration in $REPO_DATA..."
-    stty_orig=`stty -g`
+    stty_orig=$(stty -g)
     stty -echo
     # Open printcfg config file for writing
     # Add moonraker=$moonraker
     echo "moonraker=$moonraker" >> "$REPO_DATA"
     # Add printer=$printer
     echo "printer=$printer" >> "$REPO_DATA"
-    # Add klipper=$klipper
-    echo "klipper=$klipper" >> "$REPO_DATA"
     # Add klipper_dir=$klipper_dir
     echo "klipper_dir=$klipper_dir" >> "$REPO_DATA"
     # Add moonraker_dir=$moonraker_dir
     echo "moonraker_dir=$moonraker_dir" >> "$REPO_DATA"
     # Add repo=$repo
     echo "repo=$repo" >> "$REPO_DATA"
-    stty $stty_orig
+    stty "$stty_orig"
     echo "printcfg configuration stored in $REPO_DATA."
 }
 
 # Check if a file exists
 function file_exists() {
-    if [ ! -f"$1" ]
+    if [ ! -f "$1" ]
     then
         echo -e "\e[31mError: Directory '$1' not found.\e[0m"
         echo "Please make sure you have $2 installed and your config is located in $1"
@@ -166,7 +163,7 @@ function file_exists() {
 
 # Check if a directory exists
 function dir_exists() {
-    if [ ! -d"$1" ]
+    if [ ! -d "$1" ]
     then
         echo -e "\e[31mError: Directory '$1' not found.\e[0m"
         echo "Please make sure you have $2 installed and your config is located in $1"
