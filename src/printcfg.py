@@ -153,6 +153,9 @@ def load_config():
     logger.info("Loading config file...")
     # Set the config file path
     config_path = f"{user_home}/{REPO}/printcfg.conf"
+    # Log and print the config file path
+    logger.debug("Config file path: %s", config_path)
+    print(f"{config_path}:")
     # Check if the config file exists
     if not os.path.exists(config_path):
         logger.error("Config file not found: %s", config_path)
