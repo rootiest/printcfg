@@ -294,13 +294,13 @@ fi
 # Check that printcfg.conf exists
 echo >&3
 echo "Checking $repo config..." >&3
-$repo_conf="$home"/$repo/$repo.conf
-if [ ! -f "$repo_conf" ]
+$repoconf="$home"/$repo/$repo.conf
+if [ ! -f "$repoconf" ]
 then
-    echo -e "\e[31m$repo_conf does not exist.\e[0m" >&3
+    echo -e "\e[31m$repoconf does not exist.\e[0m" >&3
     exit 1
 else
-    echo -e "\e[32m$repo config: $repo_conf\e[0m" >&3
+    echo -e "\e[32m$repo config: $repoconf\e[0m" >&3
 fi
 
 # Check that printcfg service is enabled
