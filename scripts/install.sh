@@ -105,18 +105,27 @@ function read_repo_data() {
             # Set the key and value
             declare "$key=$value"
         done < "$REPO_DATA"
+        # Correct naming
+        klipper_service=$klipper
+        # Log repo data
         log_info "$REPO_DATA read."
         log_debug "moonraker=$moonraker"
         log_debug "printer=$printer"
+        log_debug "klipper=$klipper_service"
         log_debug "klipper_dir=$klipper_dir"
         log_debug "moonraker_dir=$moonraker_dir"
         log_debug "repo=$repo"
+        log_debug "repo_dir=$repo_dir"
+        log_debug "profile=$profile"
     else
         log_info "$REPO_DATA does not exist. Falling back to defaults."
     fi
 }
 
 function store_repo_data() {
+    # Set names
+    profile=$src
+    repo_dir=$home/$repo
     # Check if REPO_DATA file exists
     if [ ! -f "$REPO_DATA" ]
     then
@@ -141,12 +150,18 @@ function store_repo_data() {
     echo "moonraker=$moonraker" >> "$REPO_DATA"
     # Add printer=$printer
     echo "printer=$printer" >> "$REPO_DATA"
+    # Add klipper=$klipper_service
+    echo "klipper=$klipper_service" >> "$REPO_DATA"
     # Add klipper_dir=$klipper_dir
     echo "klipper_dir=$klipper_dir" >> "$REPO_DATA"
     # Add moonraker_dir=$moonraker_dir
     echo "moonraker_dir=$moonraker_dir" >> "$REPO_DATA"
     # Add repo=$repo
     echo "repo=$repo" >> "$REPO_DATA"
+    # Add repo_dir=$repo_dir
+    echo "repo_dir=$repo_dir" >> "$REPO_DATA"
+    # Add profile=$profile
+    echo "profile=$profile" >> "$REPO_DATA"
     stty "$stty_orig"
     echo "printcfg configuration stored in $REPO_DATA."
 }
@@ -453,6 +468,14 @@ else
 fi
 
 # Verify moonraker is installed
+if [ -f /etc/systemd/system/moonraker.service ]
+then
+    moonraker_service=/etc/systemd/system/moonraker.service
+    ## Look inside for the line starting with EnvironmentFile= and store the rest of that line
+    moonraker_env=$(grep -oP '(?<=EnvironmentFile=).*' "$moonraker_service")
+    ## Look inside for the line starting with WorkingDirectory= and store the rest of that line
+    moonraker_dir=$(grep -oP '(?<=WorkingDirectory=).*' "$moonraker_service")
+fi
 if [ ! -f "$moonraker" ]
 then
     # Attempt to find moonraker service in /etc/systemd/system
@@ -476,6 +499,8 @@ then
         else
             ## In that moonraker env file look for the part of the line that starts with -d and store the rest of that line
             printer_dir=$(grep -oP '(?<=-d ).*' "$moonraker_env")
+            # Remove double-quote from the end of printer_dir
+            printer_dir=${printer_dir%\"}
             ## Check if that printer_dir exists
             if [ ! -d "$printer_dir" ]
             then
@@ -484,21 +509,26 @@ then
                 exit 1
             else
                 ## Check if the file exists
-                if [ ! -f "$printer_dir"/moonraker.conf ]
+                if [ ! -f "$printer_dir/config/moonraker.conf" ]
                 then
-                    echo -e "\e[31mError: File '$printer_dir'/moonraker.conf not found.\e[0m"
-                    echo "Please make sure you have moonraker installed and your config is located in $printer_dir/moonraker.conf"
+                    echo -e "\e[31mError: File '$printer_dir/config/moonraker.conf' not found.\e[0m"
+                    echo "Please make sure you have moonraker installed and your config is located in $printer_dir/config/moonraker.conf"
                     exit 1
                 else
-                    moonraker="$printer_dir"/moonraker.conf
+                    moonraker="$printer_dir/config/moonraker.conf"
                 fi
             fi
         fi
     fi
 fi
 
-
 ## Repeat the same process for the klipper service
+if [ -f /etc/systemd/system/klipper.service ]
+then
+    klipper_service=/etc/systemd/system/klipper.service
+    klipper_env=$(grep -oP '(?<=EnvironmentFile=).*' "$klipper_service")
+    klipper_dir=$(grep -oP '(?<=WorkingDirectory=).*' "$klipper_service")
+fi
 if [ ! -f "$printer" ]
 then
     # if $klipper_service is not defined
@@ -535,9 +565,11 @@ then
                     echo "Please make sure you have klipper installed and your config is located in $printer_dir/config/printer.cfg"
                     exit 1
                 else
-                    printer="$printer_dir"/config/printer.cfg
-                    config="$printer_dir"/config
                     printer_data=$printer_dir
+                    config="$printer_dir/config"
+                    klipper_service=/etc/systemd/system/klipper.service
+                    klipper_env=$(grep -oP '(?<=EnvironmentFile=).*' "$klipper_service")
+                    klipper_dir=$(grep -oP '(?<=WorkingDirectory=).*' "$klipper_service")
                 fi
             fi
         fi
