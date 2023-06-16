@@ -67,8 +67,6 @@ exec 3>&1 4>&2
 trap 'exec 2>&4 1>&3' 0 1 2 3
 exec 1>$LOGFILE 2>&1
 
-#exec 3>&1 1>"$LOGFILE" 2>&1
-
 # log start of script
 log_info "Starting $repo install script..."
 
@@ -93,13 +91,40 @@ else
     fi
 fi
 
-## TODO Improve and TEST this function
+function read_repo_data() {
+    # Check if REPO_DATA file exists
+    log_info "Checking if $REPO_DATA exists..."
+    if [ -f "$REPO_DATA" ]; then
+        log_info "$REPO_DATA exists."
+        # Read REPO_DATA file
+        echo "Reading $REPO_DATA..."
+        log_info "Reading $REPO_DATA..."
+        # Read REPO_DATA file
+        while IFS='=' read -r key value
+        do
+            # Set the key and value
+            declare "$key=$value"
+        done < "$REPO_DATA"
+        log_info "$REPO_DATA read."
+        log_debug "moonraker=$moonraker"
+        log_debug "printer=$printer"
+        log_debug "klipper=$klipper"
+        log_debug "klipper_dir=$klipper_dir"
+        log_debug "moonraker_dir=$moonraker_dir"
+        log_debug "repo=$repo"
+    else
+        log_info "$REPO_DATA does not exist. Falling back to defaults."
+    fi
+}
+
 function store_repo_data() {
     # Check if REPO_DATA file exists
     if [ ! -f "$REPO_DATA" ]
     then
+        log_info "$REPO_DATA does not exist."
         echo "Creating $REPO_DATA..."
         # Create REPO_DATA file
+        log_info "Creating $REPO_DATA..."
         touch "$REPO_DATA"
     else
         # Update REPO_DATA file
@@ -126,6 +151,36 @@ function store_repo_data() {
     # Add repo=$repo
     echo "repo=$repo" >> "$REPO_DATA"
     stty $stty_orig
+    echo "printcfg configuration stored in $REPO_DATA."
+}
+
+# Check if a file exists
+function file_exists() {
+    if [ ! -f"$1" ]
+    then
+        echo -e "\e[31mError: Directory '$1' not found.\e[0m"
+        echo "Please make sure you have $2 installed and your config is located in $1"
+        exit 1
+    fi
+}
+
+# Check if a directory exists
+function dir_exists() {
+    if [ ! -d"$1" ]
+    then
+        echo -e "\e[31mError: Directory '$1' not found.\e[0m"
+        echo "Please make sure you have $2 installed and your config is located in $1"
+        exit 1
+    fi
+}
+
+# Check if profile exists
+function profile_exists() {
+    if [ ! -d "$home/$repo/profiles/$1" ]
+    then
+        echo -e "\e[31mError: Profile '$1' not found.\e[0m"
+        echo "Please make sure you have $1 installed and your config is located in $home/$repo/$1"
+    fi
 }
 
 # Welcome message
@@ -199,6 +254,9 @@ fi
 # Change to the repo directory
 cd "$home"/$repo || exit
 
+# Attempt to read REPO_DATA file
+read_repo_data
+
 # Find the current branch
 current_branch=$(git branch --show-current)
 
@@ -271,7 +329,7 @@ if [ ! -f /usr/local/bin/$repo ]; then
     echo -e "\e[32m$repo bin created successfully.\e[0m"
 fi
 
-# Check if log4bash is installed in local directory
+# Look for and install log4bash if it is missing
 if [ ! -f log4bash.sh ]; then
     # Look for log4bash in src directory
     if [ ! -f "$home"/$repo/src/log4bash.sh ]; then
@@ -326,20 +384,10 @@ fi
 ### Install into klippers config ###
 
 # Check if config directory exists
-if [ ! -d "$config" ]
-then
-    echo -e "\e[31mError: Directory '$config' not found.\e[0m"
-    echo "Please make sure you have klipper installed and your config is located in $config"
-    exit 1
-fi
+dir_exists "$config" "klipper"
 
 # Check if the file exists
-if [ ! -f "$printer" ]
-then
-    echo -e "\e[31mError: File '$printer' not found.\e[0m"
-    echo "Please make sure you have klipper installed and your config is located in $printer"
-    exit 1
-fi
+file_exists "$printer" "klipper"
 
 # Check if user_config file exists
 if [ ! -f "$config"/user_config.cfg ]
@@ -358,6 +406,9 @@ then
 else
     echo -e "\e[32mUser config already exists.\e[0m"
 fi
+
+# Check if profile exists
+profile_exists "$src"
 
 # Check if user profile file exists
 if [ ! -f "$config"/user_profile.cfg ]
@@ -503,8 +554,9 @@ fi
 echo "Setting branch in moonraker config..."
 # Define search pattern
 branch_pattern="primary_branch:"
-# Set branch to current branch
-python3 "$home"/$repo/src/search_replace.py "$branch_pattern" "$branch_pattern $branch" "$config/moonraker-$repo.conf"
+# Set branch to current branch using sed
+sed -i "s/$branch_pattern.*/$branch_pattern $branch/" "$config"/moonraker-$repo.conf
+#python3 "$home"/$repo/src/search_replace.py "$branch_pattern" "$branch_pattern $branch" "$config/moonraker-$repo.conf"
 
 # Check if the moonraker config already contains the old printcfg config
 moon_pattern="[include $repo/moonraker-$repo.conf]"
@@ -556,20 +608,10 @@ if [ ! -d "$home"/$repo ]; then
 fi
 
 # Check if the printer.cfg exists
-if [ ! -f "$printer" ]
-then
-    echo -e "\e[31mError: File '$printer' not found.\e[0m"
-    echo "Please make sure you have klipper installed and your config is located in $printer"
-    exit 1
-fi
+file_exists "$printer" "klipper"
 
 # Check if moonraker config exists
-if [ ! -f "$moonraker" ]
-then
-    echo -e "\e[31mError: File '$moonraker' not found.\e[0m"
-    echo "Please make sure you have moonraker installed and your config is located in $moonraker"
-    exit 1
-fi
+file_exists "$moonraker" "moonraker"
 
 # Check if printcfg is included in the printer.cfg file
 if ! grep -qFx "$uconfig_pattern" "$printer"
