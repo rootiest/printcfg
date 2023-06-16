@@ -475,6 +475,20 @@ then
     moonraker_env=$(grep -oP '(?<=EnvironmentFile=).*' "$moonraker_service")
     ## Look inside for the line starting with WorkingDirectory= and store the rest of that line
     moonraker_dir=$(grep -oP '(?<=WorkingDirectory=).*' "$moonraker_service")
+    if [ -f "$moonraker_env" ]
+    then
+        ## In that moonraker env file look for the part of the line that starts with -d and store the rest of that line
+        printer_dir=$(grep -oP '(?<=-d ).*' "$moonraker_env")
+        # Remove double-quote from the end of printer_dir
+        printer_dir=${printer_dir%\"}
+        ## Check if that printer_dir exists
+        if [ ! -d "$printer_dir" ]
+        then
+            echo -e "\e[31mError: Directory '$printer_dir' not found.\e[0m"
+            echo "Please make sure you have moonraker installed and your printer_data is located in $printer_dir"
+            exit 1
+        fi
+    fi
 fi
 if [ ! -f "$moonraker" ]
 then
@@ -505,14 +519,14 @@ then
             if [ ! -d "$printer_dir" ]
             then
                 echo -e "\e[31mError: Directory '$printer_dir' not found.\e[0m"
-                echo "Please make sure you have moonraker installed and your config is located in $printer_dir"
+                echo "Please make sure you have moonraker installed and your printer_data is located in $printer_dir"
                 exit 1
             else
                 ## Check if the file exists
                 if [ ! -f "$printer_dir/config/moonraker.conf" ]
                 then
                     echo -e "\e[31mError: File '$printer_dir/config/moonraker.conf' not found.\e[0m"
-                    echo "Please make sure you have moonraker installed and your config is located in $printer_dir/config/moonraker.conf"
+                    echo "Please make sure you have moonraker installed and your printer_data is located in $printer_dir/config/moonraker.conf"
                     exit 1
                 else
                     moonraker="$printer_dir/config/moonraker.conf"
