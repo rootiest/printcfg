@@ -447,8 +447,9 @@ def show_status(service_name: str):
     # Print the status
     print(result.stdout.decode("utf-8"))
     logger.info("Showing config file...")
-    print(f"{REPO} config:")
+    print(f"Current {REPO} configuration:")
     load_config()
+    print("")
     # Check if printcfg service is active
     if not is_service_active(service_name):
         print(f"Error: {service_name} service is not active.")
