@@ -91,6 +91,28 @@ else
     fi
 fi
 
+# Determine profile
+function determine_profile() {
+    # Set user vars
+    user_vars="$config"/user_profile.cfg
+    # Log user vars
+    log_debug "user_vars=$user_vars"
+    # Read profile from user_pofile.cfg
+    if [ -f "$user_vars" ]
+    then
+        profile_pattern="# Profile:"
+        # Find profile in user_pofile.cfg (the rest of the line after the pattern)
+        profile=$(grep "$profile_pattern" "$user_vars" | sed "s/$profile_pattern//")
+        # Log profile
+        log_info "Profile set to $profile."
+        echo "Profile set to $profile."
+    else
+        # Log lack of profile
+        log_error "No profile set."
+        echo "No profile set."
+    fi
+}
+
 function read_repo_data() {
     # Check if REPO_DATA file exists
     log_info "Checking if $REPO_DATA exists..."
@@ -118,7 +140,7 @@ function read_repo_data() {
 
 function store_repo_data() {
     # Set names
-    profile=$src
+    determine_profile
     repo_dir=$home/$repo
     # Check if REPO_DATA file exists
     if [ ! -f "$REPO_DATA" ]
