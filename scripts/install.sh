@@ -497,13 +497,20 @@ then
     fi
 fi
 
+
 ## Repeat the same process for the klipper service
 if [ ! -f "$printer" ]
 then
-    if [ ! -f /etc/systemd/system/klipper.service ]
+    # if $klipper_service is not defined
+    if [ -z "$klipper_service" ]
     then
-        echo -e "\e[31mError: File '$klipper' not found.\e[0m"
-        echo "Please make sure you have klipper installed and your config is located in $klipper"
+        # Attempt to find klipper service in /etc/systemd/system
+        klipper_service=/etc/systemd/system/klipper.service
+    fi
+    if [ ! -f $klipper_service ]
+    then
+        echo -e "\e[31mError: File '$klipper_service' not found.\e[0m"
+        echo "Please make sure you have klipper installed and your config is located in $klipper_service"
         exit 1
     else
         klipper_service=/etc/systemd/system/klipper.service
