@@ -129,8 +129,6 @@ function read_repo_data() {
             # Log repo data
             log_debug "$key=$value"
         done < "$REPO_DATA"
-        # Correct naming
-        klipper_service=$klipper
         # Log repo data
         log_info "$REPO_DATA read."
     else
@@ -167,11 +165,13 @@ function store_repo_data() {
     # Add printer=$printer
     echo "printer=$printer" >> "$REPO_DATA"
     # Add klipper=$klipper_service
-    echo "klipper=$klipper_service" >> "$REPO_DATA"
+    echo "klipper_service=$klipper_service" >> "$REPO_DATA"
     # Add klipper_dir=$klipper_dir
     echo "klipper_dir=$klipper_dir" >> "$REPO_DATA"
     # Add printer_dir=$printer_dir
     echo "printer_dir=$printer_dir" >> "$REPO_DATA"
+    # Add moonraker_service=$moonraker_service
+    echo "moonraker_service=$moonraker_service" >> "$REPO_DATA"
     # Add moonraker_dir=$moonraker_dir
     echo "moonraker_dir=$moonraker_dir" >> "$REPO_DATA"
     # Add allowlist=$allowlist
