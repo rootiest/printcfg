@@ -104,19 +104,13 @@ function read_repo_data() {
         do
             # Set the key and value
             declare "$key=$value"
+            # Log repo data
+            log_debug "$key=$value"
         done < "$REPO_DATA"
         # Correct naming
         klipper_service=$klipper
         # Log repo data
         log_info "$REPO_DATA read."
-        log_debug "moonraker=$moonraker"
-        log_debug "printer=$printer"
-        log_debug "klipper=$klipper_service"
-        log_debug "klipper_dir=$klipper_dir"
-        log_debug "moonraker_dir=$moonraker_dir"
-        log_debug "repo=$repo"
-        log_debug "repo_dir=$repo_dir"
-        log_debug "profile=$profile"
     else
         log_info "$REPO_DATA does not exist. Falling back to defaults."
     fi
@@ -154,8 +148,14 @@ function store_repo_data() {
     echo "klipper=$klipper_service" >> "$REPO_DATA"
     # Add klipper_dir=$klipper_dir
     echo "klipper_dir=$klipper_dir" >> "$REPO_DATA"
+    # Add printer_dir=$printer_dir
+    echo "printer_dir=$printer_dir" >> "$REPO_DATA"
     # Add moonraker_dir=$moonraker_dir
     echo "moonraker_dir=$moonraker_dir" >> "$REPO_DATA"
+    # Add allowlist=$allowlist
+    echo "allowlist=$allowlist" >> "$REPO_DATA"
+    # Add config=$config
+    echo "config=$config" >> "$REPO_DATA"
     # Add repo=$repo
     echo "repo=$repo" >> "$REPO_DATA"
     # Add repo_dir=$repo_dir
@@ -648,6 +648,9 @@ file_exists "$printer" "klipper"
 
 # Check if moonraker config exists
 file_exists "$moonraker" "moonraker"
+
+# Verify the moonraker allowlist exists
+file_exists "$allowlist" "moonraker allowlist"
 
 # Check if printcfg is included in the printer.cfg file
 if ! grep -qFx "$uconfig_pattern" "$printer"
