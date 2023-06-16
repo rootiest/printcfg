@@ -116,6 +116,26 @@ def show_help():
     print("  help: Show this help message")
     logger.info("Help message shown.")
     sys.exit(0)
+    
+def load_config():
+    """
+        Load the printcfg.conf config file.
+        And output its contents.
+    """
+    logger.info("Loading config file...")
+    # Set the config file path
+    config_path = f"{user_home}/{REPO}/printcfg.conf"
+    # Check if the config file exists
+    if not os.path.exists(config_path):
+        logger.error("Config file not found: %s", config_path)
+        raise FileNotFoundError(f"Config file not found: {config_path}")
+    # Load the config file
+    with open(config_path, "r", encoding="utf-8") as config_file:
+        for line in config_file:
+            print(line, end="")
+            logger.debug("Config line: %s", line)
+    logger.info("Config file loaded.")
+
 
 
 def find_profile(path: str):
@@ -155,7 +175,10 @@ def normal_ops():
         # Exit with error
         sys.exit(1)
     # Exit gracefully
-    logger.info("Startup script complete, exiting.")
+    logger.info("Startup script complete.")
+    logger.info("Loading config file...")
+    print(f"Loading {REPO} config file...")
+    load_config()
     print(f"{REPO} started.")
     sys.exit(0)
 
