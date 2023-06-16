@@ -130,13 +130,13 @@ def is_service_active(service: str):
         # Check if service is enabled
         logger.debug("Checking if service is enabled: %s", service)
         if subprocess.run(
-            ["systemctl", "is-enabled", service], capture_output=True
+            ["systemctl", "is-enabled", service], capture_output=True, check=True
         ).stdout.decode("utf-8") == "enabled\n":
             logger.debug("Service is enabled: %s", service)
             # Check if service is active
             logger.debug("Checking if service is active: %s", service)
             if subprocess.run(
-                ["systemctl", "is-active", service], capture_output=True
+                ["systemctl", "is-active", service], capture_output=True, check=True
             ).stdout.decode("utf-8") == "active\n":
                 logger.debug("Service is active: %s", service)
                 return True
