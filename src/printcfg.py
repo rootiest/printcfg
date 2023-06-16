@@ -176,9 +176,6 @@ def normal_ops():
         sys.exit(1)
     # Exit gracefully
     logger.info("Startup script complete.")
-    logger.info("Loading config file...")
-    print(f"Loading {REPO} config file...")
-    load_config()
     print(f"{REPO} started.")
     sys.exit(0)
 
@@ -421,6 +418,9 @@ def show_status(service_name: str):
         return False
     # Print the status
     print(result.stdout.decode("utf-8"))
+    logger.info("Loading config file...")
+    print(f"Loading {REPO} config file...")
+    load_config()
     # Exit gracefully
     logger.info("Status shown successfully.")
     return True
