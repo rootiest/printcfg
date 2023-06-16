@@ -53,6 +53,8 @@ user_vars=$config/user_profile.cfg
 old_user_vars=$config/$repo/user_profile.cfg
 user_cfg=$config/user_config.cfg
 old_user_cfg=$config/$repo/user_config.cfg
+# Set the config file
+REPO_DATA="$home"/$repo/$repo.conf
 
 LOGFILE="$home/$repo/logs/setup.log"
 exec 3>&1 1>"$LOGFILE" 2>&1
@@ -294,13 +296,12 @@ fi
 # Check that printcfg.conf exists
 echo >&3
 echo "Checking $repo config..." >&3
-$repoconf="$home/$repo/$repo.conf"
-if [ ! -f "$repoconf" ]
+if [ ! -f "$REPO_DATA" ]
 then
-    echo -e "\e[31m$repoconf does not exist.\e[0m" >&3
+    echo -e "\e[31m$REPO_DATA does not exist.\e[0m" >&3
     exit 1
 else
-    echo -e "\e[32m$repo config: $repoconf\e[0m" >&3
+    echo -e "\e[32m$repo config: $REPO_DATA\e[0m" >&3
 fi
 
 # Check that printcfg service is enabled
