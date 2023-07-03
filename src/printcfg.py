@@ -26,9 +26,9 @@
 #   remove: Remove the printcfg service
 #   update: Update printcfg
 """
-    PrintCFG Klipper Suite - 
+    PrintCFG Klipper Suite -
     A configuration manager
-    and macro suite 
+    and macro suite
     for Klipper printers.
 """
 import datetime
