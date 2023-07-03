@@ -26,12 +26,11 @@
 #   remove: Remove the printcfg service
 #   update: Update printcfg
 
-""" PrintCFG Klipper Suite - 
-
+"""
+    PrintCFG Klipper Suite - 
     A configuration manager
     and macro suite 
     for Klipper printers.
-    
 """
 import datetime
 import getpass
@@ -168,8 +167,6 @@ def load_config():
     print(f"### END OF {config_path} FILE ###")
     logger.info("Config file loaded.")
 
-
-
 def find_profile(path: str):
     """Find the profile name in the given file."""
     logger.debug("Searching for profile name in file: %s", path)
@@ -185,7 +182,6 @@ def find_profile(path: str):
     # If no profile was found, raise an error
     logger.error("Profile not found in file: %s", path)
     raise ValueError(f"Profile not found in file: {path}")
-
 
 def normal_ops():
     """Run the script normally."""
