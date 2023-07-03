@@ -59,6 +59,7 @@ default_src=default
 REPO_DATA="$home"/$repo/$repo.conf
 
 # import logger4bash
+# shellcheck source=/dev/null
 source "$home"/$repo/src/log4bash.sh
 # set log file
 LOGFILE="$home/$repo/logs/install.log"
@@ -573,7 +574,7 @@ then
         # Attempt to find klipper service in /etc/systemd/system
         klipper_service=/etc/systemd/system/klipper.service
     fi
-    if [ ! -f $klipper_service ]
+    if [ ! -f "$klipper_service" ]
     then
         echo -e "\e[31mError: File '$klipper_service' not found.\e[0m"
         echo "Please make sure you have klipper installed and your config is located in $klipper_service"

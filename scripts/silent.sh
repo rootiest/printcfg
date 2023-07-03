@@ -72,7 +72,7 @@ log_info "Output will be saved to $LOGFILE."
 
 exec 3>&1 4>&2
 trap 'exec 2>&4 1>&3' 0 1 2 3
-exec 1>$LOGFILE 2>&1
+exec 1>"$LOGFILE" 2>&1
 
 # Find the extension of the script
 EXTENSION="${SCRIPT##*.}"
@@ -90,7 +90,7 @@ if [ ! -x "$SCRIPT" ]; then
         else
             log_debug "Python3 is installed."
             #Check if the script can be executed by python3
-            if ! python3 $SCRIPT; then
+            if ! python3 "$SCRIPT"; then
                 log_error "Script $SCRIPT is not executable."
                 exit 1
             else
@@ -103,7 +103,7 @@ if [ ! -x "$SCRIPT" ]; then
         elif [[ "$EXTENSION" == "sh" ]]; then
         log_debug "Script $SCRIPT is a shell script."
         # Check if the script is executable
-        if ! bash $SCRIPT; then
+        if ! bash "$SCRIPT"; then
             log_error "Script $SCRIPT is not executable."
             exit 1
         else
