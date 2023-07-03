@@ -161,30 +161,32 @@ function store_repo_data() {
     stty_orig=$(stty -g)
     stty -echo
     # Open printcfg config file for writing
-    # Add moonraker=$moonraker
-    echo "moonraker=$moonraker" >> "$REPO_DATA"
-    # Add printer=$printer
-    echo "printer=$printer" >> "$REPO_DATA"
-    # Add klipper=$klipper_service
-    echo "klipper_service=$klipper_service" >> "$REPO_DATA"
-    # Add klipper_dir=$klipper_dir
-    echo "klipper_dir=$klipper_dir" >> "$REPO_DATA"
-    # Add printer_dir=$printer_dir
-    echo "printer_dir=$printer_dir" >> "$REPO_DATA"
-    # Add moonraker_service=$moonraker_service
-    echo "moonraker_service=$moonraker_service" >> "$REPO_DATA"
-    # Add moonraker_dir=$moonraker_dir
-    echo "moonraker_dir=$moonraker_dir" >> "$REPO_DATA"
-    # Add allowlist=$allowlist
-    echo "allowlist=$allowlist" >> "$REPO_DATA"
-    # Add config=$config
-    echo "config=$config" >> "$REPO_DATA"
-    # Add repo=$repo
-    echo "repo=$repo" >> "$REPO_DATA"
-    # Add repo_dir=$repo_dir
-    echo "repo_dir=$repo_dir" >> "$REPO_DATA"
-    # Add profile=$profile
-    echo "profile=$profile" >> "$REPO_DATA"
+    {
+        # Add moonraker=$moonraker
+        echo "moonraker=$moonraker"
+        # Add printer=$printer
+        echo "printer=$printer"
+        # Add klipper=$klipper_service
+        echo "klipper_service=$klipper_service"
+        # Add klipper_dir=$klipper_dir
+        echo "klipper_dir=$klipper_dir"
+        # Add printer_dir=$printer_dir
+        echo "printer_dir=$printer_dir"
+        # Add moonraker_service=$moonraker_service
+        echo "moonraker_service=$moonraker_service"
+        # Add moonraker_dir=$moonraker_dir
+        echo "moonraker_dir=$moonraker_dir"
+        # Add allowlist=$allowlist
+        echo "allowlist=$allowlist"
+        # Add config=$config
+        echo "config=$config"
+        # Add repo=$repo
+        echo "repo=$repo"
+        # Add repo_dir=$repo_dir
+        echo "repo_dir=$repo_dir"
+        # Add profile=$profile
+        echo "profile=$profile"
+    } >> "$REPO_DATA"
     stty "$stty_orig"
     echo "printcfg configuration stored in $REPO_DATA."
 }
