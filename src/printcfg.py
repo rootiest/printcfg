@@ -25,8 +25,12 @@
 #   change: Change the printcfg profile
 #   remove: Remove the printcfg service
 #   update: Update printcfg
-
-""" printcfg - A configuration manager for Klipper printers."""
+"""
+    PrintCFG Klipper Suite -
+    A configuration manager
+    and macro suite
+    for Klipper printers.
+"""
 import datetime
 import getpass
 import logging
@@ -112,6 +116,60 @@ def show_help():
     sys.exit(0)
 
 
+def is_service_active(service: str):
+    """Determine whether a systemctl system service is active."""
+    # Check if the service exists
+    logger.debug("Checking if service exists: %s", service)
+    if not os.path.exists(f"/etc/systemd/system/{service}.service"):
+        logger.debug("Service does not exist: %s", service)
+        return False
+    else:
+        logger.debug("Service exists: %s", service)
+        # Check if service is enabled
+        logger.debug("Checking if service is enabled: %s", service)
+        if (
+            subprocess.run(
+                ["systemctl", "is-enabled", service], capture_output=True, check=True
+            ).stdout.decode("utf-8")
+            == "enabled\n"
+        ):
+            if (
+                subprocess.run(
+                    ["systemctl", "is-active", service], capture_output=True, check=True
+                ).stdout.decode("utf-8")
+                == "active\n"
+            ):
+                logger.debug("Service is active: %s", service)
+                return True
+            else:
+                logger.debug("Service is not active: %s", service)
+                return False
+
+
+def load_config():
+    """
+    Load the printcfg.conf config file.
+    And output its contents.
+    """
+    logger.info("Loading config file...")
+    # Set the config file path
+    config_path = f"{user_home}/{REPO}/printcfg.conf"
+    # Log and print the config file path
+    logger.debug("Config file path: %s", config_path)
+    print(f"### START OF {config_path} FILE ###")
+    # Check if the config file exists
+    if not os.path.exists(config_path):
+        logger.error("Config file not found: %s", config_path)
+        raise FileNotFoundError(f"Config file not found: {config_path}")
+    # Load the config file
+    with open(config_path, "r", encoding="utf-8") as config_file:
+        for line in config_file:
+            print(line, end="")
+            logger.debug("Config line: %s", line)
+    print(f"### END OF {config_path} FILE ###")
+    logger.info("Config file loaded.")
+
+
 def find_profile(path: str):
     """Find the profile name in the given file."""
     logger.debug("Searching for profile name in file: %s", path)
@@ -132,6 +190,7 @@ def find_profile(path: str):
 def normal_ops():
     """Run the script normally."""
     logger.info("Starting normal operations...")
+    print(f"Starting {REPO}...")
     try:
         profile_name = find_profile(profile_path)
     except ValueError as errnorm:
@@ -148,13 +207,15 @@ def normal_ops():
         # Exit with error
         sys.exit(1)
     # Exit gracefully
-    logger.info("Startup script complete, exiting.")
+    logger.info("Startup script complete.")
+    print(f"{REPO} started.")
     sys.exit(0)
 
 
 def generate_service():
     """Generate the printcfg service."""
     logger.info("Generating %s service...", REPO)
+    print(f"Generating {REPO} service...")
     # Define the path to the second script
     script_dir = f"{user_home}/{REPO}/"
     logger.debug("Script directory: %s", script_dir)
@@ -169,9 +230,8 @@ def generate_service():
         logger.error("Error: The script '%s' does not exist.", script_path)
         return
     # Start the second script as root with the current user name as the first argument
-    command = f"sudo python3 {script_path} {current_user} {user_home} {mode}"
+    command = ["sudo", "python3", script_path, current_user, user_home, mode]
     logger.debug("Executing command: %s", command)
-    print(f"Executing command: {command}")
     try:
         result = subprocess.run(command, capture_output=True, check=False)
     except subprocess.CalledProcessError as errgen:
@@ -190,11 +250,14 @@ def generate_service():
         return
     # Exit gracefully
     logger.info("%s service generated successfully.", REPO)
+    print(f"{REPO} service generated successfully.")
     sys.exit(0)
 
 
 def change_profile(profile_name: str):
     """Change the profile."""
+    logger.info("Changing profile to %s...", profile_name)
+    print(f"Changing profile to {profile_name}...")
     # Define the path to the second script
     script_path = f"{user_home}/{REPO}/scripts/change_profile.sh"
     logger.debug("Script path: %s", script_path)
@@ -220,6 +283,8 @@ def change_profile(profile_name: str):
 
 def update_printcfg():
     """Update printcfg."""
+    logger.info("Updating %s...", REPO)
+    print(f"Updating {REPO}...")
     # Define the path to the second script
     script_path = f"{user_home}/{REPO}/scripts/install.sh"
     # Check if the second script exists
@@ -252,6 +317,8 @@ def restart_service(service_name: str):
     Returns:
         True if the service was restarted successfully, False otherwise.
     """
+    logger.info("Restarting %s service...", service_name)
+    print(f"Restarting {service_name} service...")
     command = ["systemctl", "restart", f"{service_name}.service"]
     logger.debug("Executing command: %s", command)
     try:
@@ -268,6 +335,7 @@ def restart_service(service_name: str):
 def change_branch(branch_name: str):
     """Changes the branch of the printcfg repo."""
     logger.info("Changing to branch '%s'.", branch_name)
+    print(f"Changing to branch '{branch_name}'.")
     # Define the path to the second script
     script_path = f"{user_home}/{REPO}/scripts/install.sh"
     logger.debug("Script: %s", script_path)
@@ -298,6 +366,8 @@ def change_branch(branch_name: str):
 
 def repair_printcfg():
     """Repairs printcfg."""
+    logger.info("Repairing %s...", REPO)
+    print(f"Repairing {REPO}...")
     # Define the path to the second script
     script_path = f"{user_home}/{REPO}/scripts/setup.sh"
     # Check if the second script exists
@@ -323,6 +393,8 @@ def repair_printcfg():
 
 def remove_printcfg():
     """Remove printcfg from the system."""
+    logger.info("Removing %s...", REPO)
+    print(f"Removing {REPO}...")
     # Define the path to the second script
     script_path = f"{user_home}/{REPO}/scripts/remove_{REPO}.sh"
     logger.debug("Script path: %s", script_path)
@@ -355,6 +427,8 @@ def show_status(service_name: str):
     Returns:
         True if the status was displayed successfully, False otherwise.
     """
+    logger.info("Showing status of %s service...", service_name)
+    print(f"Showing status of {service_name} service...")
     # Get the systemctl status
     command = ["systemctl", "status", f"{service_name}.service"]
     logger.debug("Executing command: %s", command)
@@ -376,6 +450,18 @@ def show_status(service_name: str):
         return False
     # Print the status
     print(result.stdout.decode("utf-8"))
+    logger.info("Showing config file...")
+    print(f"Current {REPO} configuration:")
+    load_config()
+    print("")
+    # Check if printcfg service is active
+    if not is_service_active(service_name):
+        print(f"Error: {service_name} service is not active.")
+        logger.error("%s service is not active.", service_name)
+        return False
+    else:
+        print(f"{service_name} service is active.")
+        logger.info("%s service is active.", service_name)
     # Exit gracefully
     logger.info("Status shown successfully.")
     return True

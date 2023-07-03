@@ -14,3 +14,8 @@
         Door Variables (see 4.0.0/vars.patch)
     MANUAL:
         Add '# End Custom Variables #` line before read-only variables in _printcfg macro.
+4.1.0:
+    - Add new filament and driver controls.
+    Add:
+        Filament Change Parking Variables (optional)
+        TMC backend control variables (do not change)

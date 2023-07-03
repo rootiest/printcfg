@@ -22,16 +22,35 @@ import logging
 import os
 import sys
 
-S_TEXT = sys.argv[1]
-F_NAME = sys.argv[2]
+# Get the current user name
+CURRENT_USER = getpass.getuser()
+USER_HOME = os.path.expanduser("~")
+# Get the current script name
+SCRIPT_NAME = os.path.basename(__file__)
+
+# Define arguments
+S_TEXT: str
+F_NAME: str
+
+
+def show_help():
+    """Show help message."""
+    print(f"Usage: {SCRIPT_NAME} <search_text> <file_name>")
+    sys.exit(1)
+
+
+if len(sys.argv) < 3:
+    print("Not enough arguments.")
+    show_help()
+    sys.exit(1)
+else:
+    S_TEXT = sys.argv[1]
+    F_NAME = sys.argv[2]
 
 logger: logging.Logger = logging.getLogger(__name__)
 
-# Get the current user name
-current_user = getpass.getuser()
-user_home = os.path.expanduser("~")
 # Set the logfile
-logfile = f"{user_home}/printcfg/logs/find_string.log"
+logfile = f"{USER_HOME}/printcfg/logs/find_string.log"
 
 # Check the date of the first log entry
 # If it is older than 30 days, delete the logfile
@@ -142,14 +161,14 @@ def string_exists(search_text: str, file_name: str) -> bool:
 # Check if the script was run from the command line
 if __name__ == "__main__":
     # Log the current user
-    logger.info("Current user: %s", current_user)
+    logger.info("Current user: %s", CURRENT_USER)
     # Log arguments
     logger.info("Arguments: %s", sys.argv)
     # Check for help argument
     if len(sys.argv) == 2 and sys.argv[1] == "--help" or sys.argv[1] == "-h":
-        print("Usage: find_string.py <search_text> <file_name> [options]")
+        print(f"Usage: {SCRIPT_NAME} <search_text> <file_name> [options]")
         print("Search for a string in a file.")
-        print("Example: find_string.py 'hello world' hello.txt")
+        print(f"Example: {SCRIPT_NAME} 'hello world' hello.txt")
         print("Options:")
         print("  --exists, -e  Search for the string and return True or False.")
         print("  --help, -h   Show this help message and exit.")
@@ -169,11 +188,13 @@ if __name__ == "__main__":
         print(exists)
     else:
         # Print an error message
-        print("Usage: find_string.py <search_text> <file_name>")
+        print("Invalid arguments.")
+        show_help()
         # Exit with an error code
         exit(1)
 else:
     # Print an error message
     print("This script must be run from the command line.")
+    show_help()
     # Exit with an error code
     sys.exit(1)

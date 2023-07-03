@@ -18,8 +18,8 @@
 # along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 
 #####################################
-##      Printcfg Setup Script    ##
-##      Version 4.0.0 2023-6-5     ##
+##      Printcfg Setup Script      ##
+##      Version 4.1.0 2023-7-3     ##
 #####################################
 
 # This script will check the user profile and update it if necessary.
@@ -53,6 +53,8 @@ user_vars=$config/user_profile.cfg
 old_user_vars=$config/$repo/user_profile.cfg
 user_cfg=$config/user_config.cfg
 old_user_cfg=$config/$repo/user_config.cfg
+# Set the config file
+REPO_DATA="$home"/$repo/$repo.conf
 
 LOGFILE="$home/$repo/logs/setup.log"
 exec 3>&1 1>"$LOGFILE" 2>&1
@@ -256,12 +258,12 @@ else
     fi
     
     # Find version of user profile
-    #user_vars_version=$(grep -oP '(variable_version: ).*' $user_vars)
-    #user_vars_version=${user_vars_version#variable_version: }
-    #src_vars_version=$(grep -oP '(variable_version: ).*' $src_vars)
-    #src_vars_version=${src_vars_version#variable_version: }
-    user_vars_version=$(python3 "$home"/$repo/src/find_string.py "variable_version: " "$user_vars")
-    src_vars_version=$(python3 "$home"/$repo/src/find_string.py "variable_version: " "$src_vars")
+    user_vars_version=$(grep -oP '(variable_version: ).*' "$user_vars")
+    user_vars_version=${user_vars_version#variable_version: }
+    src_vars_version=$(grep -oP '(variable_version: ).*' "$src_vars")
+    src_vars_version=${src_vars_version#variable_version: }
+    #user_vars_version=$(python3 "$home"/$repo/src/find_string.py "variable_version: " "$user_vars")
+    #src_vars_version=$(python3 "$home"/$repo/src/find_string.py "variable_version: " "$src_vars")
     
     # Check if user profile is up to date
     
@@ -289,6 +291,17 @@ else
         echo "User profile:   $profile_used" >&3
         echo "Profile version:   $user_vars_version" >&3
     fi
+fi
+
+# Check that printcfg.conf exists
+echo >&3
+echo "Checking $repo config..." >&3
+if [ ! -f "$REPO_DATA" ]
+then
+    echo -e "\e[31m$REPO_DATA does not exist.\e[0m" >&3
+    exit 1
+else
+    echo -e "\e[32m$repo config: $REPO_DATA\e[0m" >&3
 fi
 
 # Check that printcfg service is enabled

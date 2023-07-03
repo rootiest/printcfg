@@ -3,3 +3,4 @@ user_config.cfg
 logs/*
 src/**.service
 log4bash.sh
+printcfg.conf
