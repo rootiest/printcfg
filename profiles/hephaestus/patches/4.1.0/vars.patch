@@ -1,0 +1,12 @@
+## Filament Change Parking
+## NOTE: These values are used to define the
+##       behavior of the filament change macros.
+##       These variables are optional and the default
+##       parking coordinates will be used if they
+##       are not defined.
+variable_filament_park_x: 50
+variable_filament_park_y: 303
+
+## TMC Drivers (DO NOT CHANGE)
+variable_tmc_x: ''
+variable_tmc_y: ''
