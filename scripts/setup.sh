@@ -18,7 +18,7 @@
 # along with printcfg.  If not, see <http://www.gnu.org/licenses/>.
 
 #####################################
-##      Printcfg Setup Script    ##
+##      Printcfg Setup Script      ##
 ##      Version 4.1.0 2023-7-3     ##
 #####################################
 

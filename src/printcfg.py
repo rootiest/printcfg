@@ -25,7 +25,6 @@
 #   change: Change the printcfg profile
 #   remove: Remove the printcfg service
 #   update: Update printcfg
-
 """
     PrintCFG Klipper Suite - 
     A configuration manager
@@ -128,15 +127,18 @@ def is_service_active(service: str):
         logger.debug("Service exists: %s", service)
         # Check if service is enabled
         logger.debug("Checking if service is enabled: %s", service)
-        if subprocess.run(
-            ["systemctl", "is-enabled", service], capture_output=True, check=True
-        ).stdout.decode("utf-8") == "enabled\n":
-            logger.debug("Service is enabled: %s", service)
-            # Check if service is active
-            logger.debug("Checking if service is active: %s", service)
-            if subprocess.run(
-                ["systemctl", "is-active", service], capture_output=True, check=True
-            ).stdout.decode("utf-8") == "active\n":
+        if (
+            subprocess.run(
+                ["systemctl", "is-enabled", service], capture_output=True, check=True
+            ).stdout.decode("utf-8")
+            == "enabled\n"
+        ):
+            if (
+                subprocess.run(
+                    ["systemctl", "is-active", service], capture_output=True, check=True
+                ).stdout.decode("utf-8")
+                == "active\n"
+            ):
                 logger.debug("Service is active: %s", service)
                 return True
             else:
@@ -146,8 +148,8 @@ def is_service_active(service: str):
 
 def load_config():
     """
-        Load the printcfg.conf config file.
-        And output its contents.
+    Load the printcfg.conf config file.
+    And output its contents.
     """
     logger.info("Loading config file...")
     # Set the config file path
@@ -167,6 +169,7 @@ def load_config():
     print(f"### END OF {config_path} FILE ###")
     logger.info("Config file loaded.")
 
+
 def find_profile(path: str):
     """Find the profile name in the given file."""
     logger.debug("Searching for profile name in file: %s", path)
@@ -182,6 +185,7 @@ def find_profile(path: str):
     # If no profile was found, raise an error
     logger.error("Profile not found in file: %s", path)
     raise ValueError(f"Profile not found in file: {path}")
+
 
 def normal_ops():
     """Run the script normally."""
