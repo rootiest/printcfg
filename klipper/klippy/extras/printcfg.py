@@ -137,6 +137,7 @@ class PrintCFG:
     def cmd_SETUP_PRINTCFG(self, gcmd):
         logging.info("SETUP_PRINTCFG %s", self.name)
         self.setup()
+        self.gcode.run_script_from_command("_printcfg_tester")
 
     def setup(self, leds=None):
         if leds is not None:
