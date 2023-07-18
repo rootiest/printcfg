@@ -106,7 +106,7 @@ class PrintCFG:
                 if ymin <= yp <= ymax:
                     self.y_park = yp
                 else:
-                    raise config.error("printcfg.park_y value %0.3f is not between %0.3f and %0.3f" % (yp, ymin, ymax))
+                    raise config.error("printcfg.park_y value %0.f is not between %0.f and %0.f" % (yp, ymin, ymax))
         else:
             if config.has_section('stepper_y'):
                 yconfig = config.getsection('stepper_y')
