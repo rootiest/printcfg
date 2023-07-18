@@ -67,7 +67,9 @@ class PrintCFG:
         self.leds = config.get('led_name', default=None)
         if self.leds is not None:
             self.led_object = "neopixel " + self.leds
-            if not self.printer.lookup_object(self.led_object):
+            try:
+                self.printer.lookup_object(self.led_object)
+            except Exception:
                 raise config.error(
                     "Could not find neopixel section '[%s]' required by printcfg"
                     % (self.led_object))
