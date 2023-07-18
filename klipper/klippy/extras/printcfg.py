@@ -40,6 +40,10 @@ The 'park_x' and 'park_y' parameters specify the X and Y coordinates
 that you wish to use for parking.  If you don't specify these
 parameters, printcfg will not assign default parking coordinates.
 '''
+import math
+import re
+import logging
+import os
 import configfile
 
 class PrintCFG:
