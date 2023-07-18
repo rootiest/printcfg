@@ -64,9 +64,9 @@ class PrintCFG:
         # Master toggle
         self.enabled = config.getboolean('enabled')
         # LED control
-        self.leds = config.get('led_name', default=None)
-        if self.leds is not None:
-            self.led_object = "neopixel " + self.leds
+        self.leds_name = config.get('led_name', default=None)
+        if self.leds_name is not None:
+            self.led_object = "neopixel " + self.leds_name
             if not self.printer.lookup_object(self.led_object):
                 raise config.error(
                     "Could not find neopixel section '[%s]' required by printcfg"
@@ -103,11 +103,11 @@ class PrintCFG:
         return self.status
     def update_status(self):
         self.status = {
-            "leds": self.leds,
+            "leds": self.leds_name,
             "park_x": 0,
             "park_y": 0
         }
-        self.status['leds'] = self.leds
+        self.status['leds'] = self.leds_name
         if self.x_park is not None:
             self.status['park_x'] = self.x_park
         if self.y_park is not None:
@@ -120,14 +120,14 @@ class PrintCFG:
 
     def setup(self, leds=None):
         if leds is not None:
-            self.leds = leds
-            self.led_object = "neopixel " + self.leds
-            logging.info("Changed LEDs to %s", self.leds)
+            self.leds_name = leds
+            self.led_object = "neopixel " + self.leds_name
+            logging.info("Changed LEDs to %s", self.leds_name)
         else:
-            if self.leds is None:
+            if self.leds_name is None:
                 raise config.error("No LEDs specified")
             else:
-                logging.info("Using LEDs %s", self.leds)
+                logging.info("Using LEDs %s", self.leds_name)
 
 
 def load_config(config):
