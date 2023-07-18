@@ -87,7 +87,7 @@ class PrintCFG:
                 if xmin <= xp <= xmax:
                     self.x_park = xp
                 else:
-                    raise config.error("printcfg.park_x value %f is not between %f and %f" % (xp, xmin, xmax))
+                    raise config.error("printcfg.park_x value %0.f is not between %0.f and %0.f" % (xp, xmin, xmax))
         else:
             if config.has_section('stepper_x'):
                 xconfig = config.getsection('stepper_x')
