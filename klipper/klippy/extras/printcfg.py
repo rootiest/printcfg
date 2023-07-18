@@ -46,6 +46,7 @@ class PrintCFG:
     '''This class implements the printcfg plugin for Klipper'''
     def __init__(self, config):
         self.printer = config.get_printer()
+        self.name = config.get_name()
         # Get configfile
         pconfig = self.printer.lookup_object('configfile')
         dir_name = os.path.dirname(os.path.realpath(__file__))
@@ -56,7 +57,6 @@ class PrintCFG:
             raise config.error("Cannot load config '%s'" % (filename,))
         for c in dconfig.get_prefix_sections(''):
             self.printer.load_object(dconfig, c.get_name())
-        self.name = config.get_name()
         # Master toggle
         self.enabled = config.getboolean('enabled', default=True)
         # LED control
@@ -118,5 +118,5 @@ class PrintCFG:
                 logging.info("Using LEDs %s", self.leds)
 
 
-def load_config_prefix(config):
+def load_config(config):
     return PrintCFG(config)
