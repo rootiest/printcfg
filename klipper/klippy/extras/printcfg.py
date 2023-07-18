@@ -29,7 +29,7 @@ class PrintCFG:
             raise config.error("Cannot load config '%s'" % (filename,))
         for c in dconfig.get_prefix_sections(''):
             self.printer.load_object(dconfig, c.get_name())
-        self.name = config.get_name().split()[-1]
+        #self.name = config.get_name().split()[-1]
         # Master toggle
         self.enabled = config.getboolean('enabled', default=True)
         # LED control
