@@ -65,11 +65,14 @@ class PrintCFG:
         self.enabled = config.getboolean('enabled', default=True)
         # LED control
         self.leds = config.getfloat('led_name', default=None)
-        self.led_object = "neopixel " + self.leds
-        if not self.printer.lookup_object(self.led_object):
-            raise config.error(
-                "Could not find neopixel section '[%s]' required by printcfg"
-                % (self.led_object))
+        if self.leds is not None:
+            self.led_object = "neopixel " + self.leds
+            if not self.printer.lookup_object(self.led_object):
+                raise config.error(
+                    "Could not find neopixel section '[%s]' required by printcfg"
+                    % (self.led_object))
+        else:
+            self.led_object = None
         # Parking position
         self.x_park = config.getfloat('park_x', minval=0.)
         if config.has_section('stepper_x'):
