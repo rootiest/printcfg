@@ -74,10 +74,12 @@ class PrintCFG:
                 try:
                     self.led_type = "dotstar"
                     self.led_object = self.led_type + " " + self.leds
+                    self.printer.lookup_object(self.led_object)
                 except Exception:
                     try:
                         self.led_type = "led"
                         self.led_object = self.led_type + " " + self.leds
+                        self.printer.lookup_object(self.led_object)
                     except Exception:
                         raise config.error(
                             "Could not find 'neopixel', 'dotstar' or 'led' section '%s' required by printcfg"
