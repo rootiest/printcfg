@@ -64,15 +64,17 @@ class PrintCFG:
         # Master toggle
         self.enabled = config.getboolean('enabled')
         # LED control
-        self.leds = config.get('led_name', default=None)
-        if self.leds is not None:
-            self.led_object = "neopixel " + self.leds
+        ls = config.get('led_name', default=None)
+        if ls is not None:
+            self.leds = ls
+            self.led_object = "neopixel " + ls
             if not self.printer.lookup_object(self.led_object):
                 raise config.error(
                     "Could not find neopixel section '[%s]' required by printcfg"
                     % (self.led_object))
         else:
             self.led_object = None
+            self.leds = None
         # Parking position
         xp = config.getfloat('park_x', default=None)
         if xp is not None:
