@@ -74,7 +74,7 @@ class PrintCFG:
         else:
             self.led_object = None
         # Parking position
-        self.x_park = config.getfloat('park_x', default=None)
+        self.x_park = config.getfloat('park_x')
         if self.x_park is None:
             if config.has_section('stepper_x'):
                 xconfig = config.getsection('stepper_x')
@@ -82,7 +82,7 @@ class PrintCFG:
                                                 note_valid=False)
             else:
                 raise config.error("Could not find stepper_x section required by printcfg")
-        self.y_park = config.getfloat('park_y', default=None)
+        self.y_park = config.getfloat('park_y')
         if self.y_park is None:
             if config.has_section('stepper_y'):
                 yconfig = config.getsection('stepper_y')
