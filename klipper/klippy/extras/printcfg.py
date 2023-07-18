@@ -64,17 +64,15 @@ class PrintCFG:
         # Master toggle
         self.enabled = config.getboolean('enabled')
         # LED control
-        ls = config.get('led_name', default=None)
-        if ls is not None:
-            self.leds = ls
-            self.led_object = "neopixel " + ls
+        self.leds = config.get('led_name', default=None)
+        if self.leds is not None:
+            self.led_object = "neopixel " + self.leds
             if not self.printer.lookup_object(self.led_object):
                 raise config.error(
                     "Could not find neopixel section '[%s]' required by printcfg"
                     % (self.led_object))
         else:
             self.led_object = None
-            self.leds = None
         # Parking position
         xp = config.getfloat('park_x', default=None)
         if xp is not None:
@@ -105,12 +103,11 @@ class PrintCFG:
         return self.status
     def update_status(self):
         self.status = {
-            "leds": "None",
+            "leds": self.leds,
             "park_x": 0,
             "park_y": 0
         }
-        if self.leds is not None:
-            self.status['leds'] = self.leds
+        self.status['leds'] = self.leds
         if self.x_park is not None:
             self.status['park_x'] = self.x_park
         if self.y_park is not None:
