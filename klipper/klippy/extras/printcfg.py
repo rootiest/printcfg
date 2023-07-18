@@ -82,7 +82,7 @@ class PrintCFG:
                         self.printer.lookup_object(self.led_object)
                     except Exception:
                         raise config.error(
-                            "Could not find 'neopixel', 'dotstar' or 'led' section '%s' required by printcfg"
+                            "Could not find 'neopixel', 'dotstar' or 'led' section '%s' expected by PrintCFG"
                             % (self.leds))
         else:
             self.led_object = None
@@ -105,7 +105,7 @@ class PrintCFG:
                 self.x_park = xconfig.getfloat('position_max', 0.,
                                                 note_valid=False)
             else:
-                raise config.error("Could not find stepper_x section required by printcfg")
+                raise config.error("Could not find stepper_x section expected by PrintCFG")
         yp = config.getfloat('park_y', default=None)
         if yp is not None:
             if config.has_section('stepper_y'):
@@ -124,7 +124,7 @@ class PrintCFG:
                 self.y_park = xconfig.getfloat('position_max', 0.,
                                                 note_valid=False)
             else:
-                raise config.error("Could not find stepper_y section required by printcfg")
+                raise config.error("Could not find stepper_y section expected by PrintCFG")
         self.gcode = self.printer.lookup_object('gcode')
         self.gcode.register_command('SETUP_PRINTCFG', self.cmd_SETUP_PRINTCFG,
                                     desc=self.cmd_SETUP_PRINTCFG_help)
