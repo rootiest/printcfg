@@ -71,14 +71,23 @@ class PrintCFG:
                 self.printer.lookup_object(self.led_object)
             except Exception:
                 raise config.error(
-                    "Could not find neopixel section '[%s]' required by printcfg"
-                    % (self.led_object))
+                    "Could not find neopixel section '%s' required by printcfg"
+                    % (self.leds))
         else:
             self.led_object = None
         # Parking position
         xp = config.getfloat('park_x', default=None)
         if xp is not None:
-            self.x_park = xp
+            if config.has_section('stepper_x'):
+                xconfig = config.getsection('stepper_x')
+                xmin =  xconfig.getfloat('position_min', 0.,
+                                                note_valid=False)
+                xmax =  xconfig.getfloat('position_max', 0.,
+                                                note_valid=False)
+                if xmin <= xp <= xmax:
+                    self.x_park = xp
+                else:
+                    raise config.error("printcfg.park_x value %f is not between %f and %f" % (xp, xmin, xmax))
         else:
             if config.has_section('stepper_x'):
                 xconfig = config.getsection('stepper_x')
@@ -88,7 +97,16 @@ class PrintCFG:
                 raise config.error("Could not find stepper_x section required by printcfg")
         yp = config.getfloat('park_y', default=None)
         if yp is not None:
-            self.y_park = yp
+            if config.has_section('stepper_y'):
+                yconfig = config.getsection('stepper_y')
+                ymin =  yconfig.getfloat('position_min', 0.,
+                                                note_valid=False)
+                ymax =  yconfig.getfloat('position_max', 0.,
+                                                note_valid=False)
+                if ymin <= yp <= ymax:
+                    self.y_park = yp
+                else:
+                    raise config.error("printcfg.park_y value %f is not between %f and %f" % (yp, ymin, ymax))
         else:
             if config.has_section('stepper_y'):
                 yconfig = config.getsection('stepper_y')
