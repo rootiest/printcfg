@@ -124,6 +124,7 @@ class PrintCFG:
     def update_status(self):
         self.status = {
             "leds": self.leds,
+            "led_object": self.led_object,
             "park_x": 0,
             "park_y": 0
         }
