@@ -127,16 +127,13 @@ class PrintCFG:
         return self.status
     def update_status(self):
         self.status = {
+            "enabled": self.enabled,
             "leds": self.leds,
+            "led_type": self.led_type,
             "led_object": self.led_object,
-            "park_x": 0,
-            "park_y": 0
+            "park_x": self.x_park,
+            "park_y": self.y_park
         }
-        self.status['leds'] = self.leds
-        if self.x_park is not None:
-            self.status['park_x'] = self.x_park
-        if self.y_park is not None:
-            self.status['park_y'] = self.y_park
 
     cmd_SETUP_PRINTCFG_help = "Apply autotuning configuration to TMC stepper driver"
     def cmd_SETUP_PRINTCFG(self, gcmd):
