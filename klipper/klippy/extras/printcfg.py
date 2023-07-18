@@ -64,7 +64,7 @@ class PrintCFG:
         # Master toggle
         self.enabled = config.getboolean('enabled')
         # LED control
-        self.leds = config.getfloat('led_name', default=None)
+        self.leds = config.getfloat('led_name')
         if self.leds is not None:
             self.led_object = "neopixel " + self.leds
             if not self.printer.lookup_object(self.led_object):
