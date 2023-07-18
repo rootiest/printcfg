@@ -74,9 +74,10 @@ class PrintCFG:
                 try:
                     self.led_type = "led"
                     self.led_object = self.led_type + " " + self.leds
-                raise config.error(
-                    "Could not find 'neopixel' or 'led' section '%s' required by printcfg"
-                    % (self.leds))
+                except Exception:
+                    raise config.error(
+                        "Could not find 'neopixel' or 'led' section '%s' required by printcfg"
+                        % (self.leds))
         else:
             self.led_object = None
         # Parking position
