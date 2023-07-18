@@ -62,7 +62,7 @@ class PrintCFG:
         for c in dconfig.get_prefix_sections(''):
             self.printer.load_object(dconfig, c.get_name())
         # Master toggle
-        self.enabled = config.getboolean('enabled', default=True)
+        self.enabled = config.getboolean('enabled')
         # LED control
         self.leds = config.getfloat('led_name', default=None)
         if self.leds is not None:
@@ -74,14 +74,14 @@ class PrintCFG:
         else:
             self.led_object = None
         # Parking position
-        self.x_park = config.getfloat('park_x', minval=0.)
+        self.x_park = config.getfloat('park_x', default=0)
         if config.has_section('stepper_x'):
             xconfig = config.getsection('stepper_x')
             self.x_park = xconfig.getfloat('position_max', 0.,
                                             note_valid=False)
         else:
             raise config.error("Could not find stepper_x section required by printcfg")
-        self.y_park = config.getfloat('park_y', minval=0.)
+        self.y_park = config.getfloat('park_y', default=0)
         if config.has_section('stepper_y'):
             yconfig = config.getsection('stepper_y')
             self.y_park = xconfig.getfloat('position_max', 0.,
