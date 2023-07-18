@@ -84,7 +84,7 @@ class PrintCFG:
             else:
                 raise config.error("Could not find stepper_x section required by printcfg")
         if config.getfloat('park_y'):
-            self.x_park = config.getfloat('park_x')
+            self.y_park = config.getfloat('park_y')
         else:
             if config.has_section('stepper_y'):
                 yconfig = config.getsection('stepper_y')
