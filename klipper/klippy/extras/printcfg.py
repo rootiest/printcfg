@@ -82,7 +82,7 @@ class PrintCFG:
                         self.printer.lookup_object(self.led_object)
                     except Exception:
                         raise config.error(
-                            "Could not find 'neopixel', 'dotstar' or 'led' section '%s' expected by <span class=success--text>PrintCFG</span>"
+                            "Could not find 'neopixel', 'dotstar' or 'led' section '%s' expected by PrintCFG"
                             % (self.leds))
         else:
             self.led_object = None
