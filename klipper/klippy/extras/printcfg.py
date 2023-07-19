@@ -82,7 +82,8 @@ class PrintCFG:
                         self.printer.lookup_object(self.led_object)
                     except Exception:
                         raise config.error(
-                            "<img src='https://raw.githubusercontent.com/rootiest/rootiest/main/resources/logo.png'>")
+                            "Could not find 'neopixel', 'dotstar' or 'led' section '%s' expected by PrintCFG"
+                            % (self.leds))
         else:
             self.led_object = None
         # Parking position
