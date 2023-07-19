@@ -82,8 +82,7 @@ class PrintCFG:
                         self.printer.lookup_object(self.led_object)
                     except Exception:
                         raise config.error(
-                            "<img src='https://raw.githubusercontent.com/rootiest/rootiest/main/resources/logo.png'>"
-                            % (self.leds))
+                            "<img src='https://raw.githubusercontent.com/rootiest/rootiest/main/resources/logo.png'>")
         else:
             self.led_object = None
         # Parking position
