@@ -51,7 +51,7 @@ class SavedStates:
     def cmd_QUERY_STATE(self, gcmd):
         self.gcode.respond_info("Saved states updated.")
         self.update_status()
-        self.gcode.respond_info("Saved states: {}".format(self.saved_states))
+        self.gcode.respond_info("Saved states: {}".format(self.states))
 
 
 def load_config(config):
