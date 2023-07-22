@@ -33,12 +33,15 @@ class SavedStates:
     def __init__(self, config):
         self.printer = config.get_printer()
         self.name = config.get_name()
-        self.saved_states = {}
+        self.states = {}
         self.gcode = self.printer.lookup_object("gcode")
         self.gcode.register_command(
             "QUERY_STATE", self.cmd_QUERY_STATE, desc=self.cmd_QUERY_STATE_help
         )
         self.update_status()
+
+    def get_status(self, eventtime=None):
+        return self.status
 
     def update_status(self):
         """Update the status of the saved states"""
