@@ -134,6 +134,7 @@ class PrintCFG:
         self.gcode.register_command('SETUP_EXTRA_FANS', self.cmd_SETUP_EXTRA_FANS,
                                     desc=self.cmd_SETUP_EXTRA_FANS_help)
         self.update_status()
+        self.gcode.run_script_from_command("_setup_extra_fans")
         
     def get_status(self, eventtime=None):
         return self.status
