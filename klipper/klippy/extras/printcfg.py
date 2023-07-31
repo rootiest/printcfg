@@ -147,6 +147,11 @@ class PrintCFG:
             "park_y": self.y_park,
             "extra_fans:": self.extra_fans
         }
+    cmd_SETUP_EXTRA_FANS_help = "Set up PrintCFG Extra Fans"
+    def cmd_SETUP_EXTRA_FANS(self, gcmd):
+        logging.info("SETUP_EXTRA_FANS %s", self.name)
+        self.setup()
+        self.gcode.run_script_from_command("_setup_extra_fans")
 
     cmd_SETUP_PRINTCFG_help = "Set up PrintCFG Module"
     def cmd_SETUP_PRINTCFG(self, gcmd):
@@ -164,13 +169,6 @@ class PrintCFG:
                 raise config.error("No LEDs specified")
             else:
                 logging.info("Using LEDs %s", self.leds)
-                
-    cmd_SETUP_EXTRA_FANS_help = "Set up PrintCFG Extra Fans"
-    def cmd_SETUP_EXTRA_FANS(self, gcmd):
-        logging.info("SETUP_EXTRA_FANS %s", self.name)
-        self.setup()
-        self.gcode.run_script_from_command("_setup_extra_fans")
-
 
 def load_config(config):
     return PrintCFG(config)
