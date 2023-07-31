@@ -125,6 +125,8 @@ class PrintCFG:
                                                 note_valid=False)
             else:
                 raise config.error("Could not find stepper_y section expected by PrintCFG")
+        # Extra fans
+        self.extra_fans = config.get('extra_fans', default=None)
         self.gcode = self.printer.lookup_object('gcode')
         self.gcode.register_command('SETUP_PRINTCFG', self.cmd_SETUP_PRINTCFG,
                                     desc=self.cmd_SETUP_PRINTCFG_help)
@@ -158,6 +160,12 @@ class PrintCFG:
                 raise config.error("No LEDs specified")
             else:
                 logging.info("Using LEDs %s", self.leds)
+                
+    cmd_SETUP_EXTRA_FANS_help = "Set up PrintCFG Extra Fans"
+    def cmd_SETUP_EXTRA_FANS(self, gcmd):
+        logging.info("SETUP_EXTRA_FANS %s", self.name)
+        self.setup()
+        self.gcode.run_script_from_command("_setup_extra_fans")
 
 
 def load_config(config):
