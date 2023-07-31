@@ -142,11 +142,11 @@ class PrintCFG:
             "park_y": self.y_park
         }
 
-    cmd_SETUP_PRINTCFG_help = "Apply autotuning configuration to TMC stepper driver"
+    cmd_SETUP_PRINTCFG_help = "Set up PrintCFG Module"
     def cmd_SETUP_PRINTCFG(self, gcmd):
         logging.info("SETUP_PRINTCFG %s", self.name)
         self.setup()
-        self.gcode.run_script_from_command("_printcfg_tester")
+        self.gcode.run_script_from_command("_printcfg_wizard")
 
     def setup(self, leds=None):
         if leds is not None:
