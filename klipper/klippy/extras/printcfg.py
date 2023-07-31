@@ -126,7 +126,7 @@ class PrintCFG:
             else:
                 raise config.error("Could not find stepper_y section expected by PrintCFG")
         # Extra fans
-        self.extra_fans = config.get('extra_fans', default=[])
+        self.extra_fans = config.getlist('extra_fans', default=[])
         # Gcode commands
         self.gcode = self.printer.lookup_object('gcode')
         self.gcode.register_command('SETUP_PRINTCFG', self.cmd_SETUP_PRINTCFG,
