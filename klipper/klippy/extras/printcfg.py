@@ -125,9 +125,14 @@ class PrintCFG:
                                                 note_valid=False)
             else:
                 raise config.error("Could not find stepper_y section expected by PrintCFG")
+        # Extra fans
+        self.extra_fans = config.getlist('extra_fans', default=[])
+        # Gcode commands
         self.gcode = self.printer.lookup_object('gcode')
         self.gcode.register_command('SETUP_PRINTCFG', self.cmd_SETUP_PRINTCFG,
                                     desc=self.cmd_SETUP_PRINTCFG_help)
+        self.gcode.register_command('SETUP_EXTRA_FANS', self.cmd_SETUP_EXTRA_FANS,
+                                    desc=self.cmd_SETUP_EXTRA_FANS_help)
         self.update_status()
         
     def get_status(self, eventtime=None):
@@ -139,14 +144,20 @@ class PrintCFG:
             "led_type": self.led_type,
             "led_object": self.led_object,
             "park_x": self.x_park,
-            "park_y": self.y_park
+            "park_y": self.y_park,
+            "extra_fans:": self.extra_fans
         }
+    cmd_SETUP_EXTRA_FANS_help = "Set up PrintCFG Extra Fans"
+    def cmd_SETUP_EXTRA_FANS(self, gcmd):
+        logging.info("SETUP_EXTRA_FANS %s", self.name)
+        self.setup()
+        self.gcode.run_script_from_command("_setup_extra_fans")
 
-    cmd_SETUP_PRINTCFG_help = "Apply autotuning configuration to TMC stepper driver"
+    cmd_SETUP_PRINTCFG_help = "Set up PrintCFG Module"
     def cmd_SETUP_PRINTCFG(self, gcmd):
         logging.info("SETUP_PRINTCFG %s", self.name)
         self.setup()
-        self.gcode.run_script_from_command("_printcfg_tester")
+        self.gcode.run_script_from_command("_printcfg_wizard")
 
     def setup(self, leds=None):
         if leds is not None:
@@ -158,7 +169,6 @@ class PrintCFG:
                 raise config.error("No LEDs specified")
             else:
                 logging.info("Using LEDs %s", self.leds)
-
 
 def load_config(config):
     return PrintCFG(config)
