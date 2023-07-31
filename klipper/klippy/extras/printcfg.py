@@ -127,9 +127,12 @@ class PrintCFG:
                 raise config.error("Could not find stepper_y section expected by PrintCFG")
         # Extra fans
         self.extra_fans = config.get('extra_fans', default=None)
+        # Gcode commands
         self.gcode = self.printer.lookup_object('gcode')
         self.gcode.register_command('SETUP_PRINTCFG', self.cmd_SETUP_PRINTCFG,
                                     desc=self.cmd_SETUP_PRINTCFG_help)
+        self.gcode.register_command('SETUP_EXTRA_FANS', self.cmd_SETUP_EXTRA_FANS,
+                                    desc=self.cmd_SETUP_EXTRA_FANS_help)
         self.update_status()
         
     def get_status(self, eventtime=None):
@@ -141,7 +144,8 @@ class PrintCFG:
             "led_type": self.led_type,
             "led_object": self.led_object,
             "park_x": self.x_park,
-            "park_y": self.y_park
+            "park_y": self.y_park,
+            "extra_fans:": self.extra_fans
         }
 
     cmd_SETUP_PRINTCFG_help = "Set up PrintCFG Module"
